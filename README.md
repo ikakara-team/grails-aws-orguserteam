@@ -5,7 +5,7 @@ Description:
 Grails plugin, for a "Org-User-Team" design pattern used by apps like Trello.com and implemented using AWS DyanmoDB.
 
 * Org - an abstraction to organize users/teams.  Organization members can view/join teams.
-* User - a user can create/join organizations and teams and invite others users to join organizations/teams.
+* User - a user can create/join organizations and teams and invite other users to join organizations/teams.
 * Team - an abstraction to further group users around projects, venues, boards (Trello), etc
 
 ![Class Diagram](/grails-app/assets/images/OrgUserTeam.png?raw=true "Class Diagram")
@@ -42,6 +42,21 @@ grails {
 ```
 See <a href="https://github.com/ikakara-team/grails-aws-instance">aws-instance README</a>
 
+By default, automatically creates DynamoDB tables w/ "DEV" prefix.  Sys (admin) controllers to manage
+Orgs, Users and Teams use the homePath of "/".
+```
+grails {
+  plugin {
+    awsorguserteam {
+      homePath = "/"
+      dataSource {
+        dbPrefix="DEV"
+        dbCreate="create" //'create', 'create-drop',''
+      }
+    }
+  }
+}
+```
 Usage:
 --------------
 
