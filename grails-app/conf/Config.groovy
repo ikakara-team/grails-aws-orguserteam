@@ -14,3 +14,16 @@ log4j = {
          'org.hibernate',
          'net.sf.ehcache.hibernate'
 }
+
+// for testing
+grails.validateable.classes = [
+  // orguserteam
+  ikakara.orguserteam.dao.dynamo.IdUser,
+  ikakara.orguserteam.dao.dynamo.IdOrg,
+  ikakara.orguserteam.dao.dynamo.IdTeam,
+  ikakara.orguserteam.dao.dynamo.IdEmail,
+  ikakara.orguserteam.dao.dynamo.IdSlug,
+  ikakara.orguserteam.dao.dynamo.IdUserOrg,
+  ikakara.orguserteam.dao.dynamo.IdUserTeam,
+  ikakara.orguserteam.dao.dynamo.IdOrgTeam,
+]
