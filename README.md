@@ -4,9 +4,9 @@ Description:
 --------------
 Grails plugin, for a "Org-User-Team" design pattern used by apps like Trello.com and implemented using AWS DyanmoDB.
 
-Org - an abstraction to organize users/teams.  Organization members can view/join teams.
-User - a user can create/join organizations and teams and invite others users to join organizations/teams.
-Team - an abstraction to further group users around projects, venues, boards (Trello), etc
+* Org - an abstraction to organize users/teams.  Organization members can view/join teams.
+* User - a user can create/join organizations and teams and invite others users to join organizations/teams.
+* Team - an abstraction to further group users around projects, venues, boards (Trello), etc
 
 ![Class Diagram](/grails-app/assets/images/OrgUserTeam.png?raw=true "Class Diagram")
 
@@ -25,9 +25,53 @@ Installation:
   }
 ```
 
+Configuration:
+--------------
+Add the following to grails-app/conf/Config.groovy:
+```
+grails {
+  plugin {
+    awsinstance {
+      accessKey='AWS_ACCESSKEY'
+      secretKey='AWS_SECRETKEY'
+      s3.bucketName='AWS_S3_BUCKETNAME'
+      ses.mailFrom='AWS_SES_MAILFROM'
+    }
+  }
+}
+```
+See <a href="https://github.com/ikakara-team/grails-aws-instance">aws-instance README</a>
+
 Usage:
 --------------
 
+Services:
+--------------
+* orgUserTeamService
+  * ```AIdBase findIdObjBySlugId(String slugId)```
+  * ```boolean exist(AIdBase id)```
+  * ```IdUser user(String userId)```
+  * ```List<IdUser> listUser(IdOrg org)```
+  * ```List<IdUser> listUser(IdTeam team)```
+  * ```IdUser createUser(IdUser user, String name, String initials, String desc, String shortName)```
+  * ```IdUser updateUser(IdUser user, String name, String initials, String desc, String shortName)```
+  * ```boolean deleteUser(IdUser user)```
+  * ```IdOrg org(String orgId)```
+  * ```List<IdOrg> listOrg(IdUser user)```
+  * ```IdOrg getOrg(IdTeam team)```
+  * ```List<IdOrg> listOrg(IdTeam team)```
+  * ```IdOrg createOrg(IdUser user, String orgName, String orgDescription)```
+  * ```IdSlug updateOrg(IdOrg org, String name, String desc, String web_url, String shortName)```
+  * ```boolean deleteOrg(IdOrg org)```
+  * ```IdTeam team(String teamId)```
+  * ```List<IdTeam> listTeamVisible(IdOrg org, IdUser user)```
+  * ```List<IdTeam> listTeam(IdOrg org)```
+  * ```List<IdTeam> listTeam(IdUser user)```
+  * ```List<IdTeam> listOrgTeams(IdUser user, String myOrgName)```
+  * ```IdTeam createTeam(IdUser user, String teamName, Integer privacy, String orgId))```
+  * ```IdSlug updateTeam(IdTeam team, String name, Integer privacy, String description, String shortName)```
+  * ```boolean updateTeamOwner(IdTeam team, String orgId)```
+  * ```boolean deleteTeam(IdTeam team)```
 
 Copyright & License:
 --------------
