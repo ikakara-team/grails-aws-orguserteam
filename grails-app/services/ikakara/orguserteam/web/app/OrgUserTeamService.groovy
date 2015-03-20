@@ -22,6 +22,8 @@ import ikakara.orguserteam.dao.dynamo.IdTeam
 import ikakara.orguserteam.dao.dynamo.IdUser
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
 import ikakara.orguserteam.dao.dynamo.IdUserTeam
+import ikakara.orguserteam.dao.dynamo.IdEmailTeam
+import ikakara.orguserteam.dao.dynamo.IdEmailOrg
 
 class OrgUserTeamService {
   static transactional = false

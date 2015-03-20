@@ -68,7 +68,7 @@ public class IdEmail extends AIdBase {
 
   @Override
   public Item marshalItemOUT(boolean removeAttributeNull) {
-    Item outItem = super.marshalItemOUT(bRemoveAttributeNull)
+    Item outItem = super.marshalItemOUT(removeAttributeNull)
     if (outItem == null) {
       outItem = new Item()
     }
