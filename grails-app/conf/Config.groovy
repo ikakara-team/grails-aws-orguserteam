@@ -6,6 +6,8 @@ import ikakara.orguserteam.dao.dynamo.IdSlug
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
 import ikakara.orguserteam.dao.dynamo.IdUserTeam
 import ikakara.orguserteam.dao.dynamo.IdOrgTeam
+import ikakara.orguserteam.dao.dynamo.IdEmailOrg
+import ikakara.orguserteam.dao.dynamo.IdEmailTeam
 
 log4j = {
 
@@ -16,4 +18,4 @@ log4j = {
 }
 
 // for testing
-grails.validateable.classes = [IdUser, IdOrg, IdTeam, IdEmail, IdSlug, IdUserOrg, IdUserTeam, IdOrgTeam]
+grails.validateable.classes = [IdUser, IdOrg, IdTeam, IdEmail, IdSlug, IdUserOrg, IdUserTeam, IdOrgTeam, IdEmailOrg, IdEmailTeam]

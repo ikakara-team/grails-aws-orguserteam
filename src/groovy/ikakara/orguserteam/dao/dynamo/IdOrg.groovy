@@ -132,7 +132,7 @@ class IdOrg extends AIdBase {
     } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Visibility")
     }
-    if (name != null) {
+    if (name) {
       outItem = outItem.withString("Name", name)
     } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Name")

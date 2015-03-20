@@ -24,9 +24,8 @@ grails.project.dependency.resolution = {
 
     // needed for config management
     compile ':plugin-config:0.2.0'
-    compile ':simple-marshaller:0.1.2'
 
-    // needed for userstore
+    compile ':simple-marshaller:0.1.2'
     compile ':aws-instance:0.3.3'
 
     build(":release:3.1.0", ":rest-client-builder:2.0.3") {

@@ -30,22 +30,20 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 @Validateable(nullable = true)
 @Slf4j("LOG")
 @CompileStatic
-public class IdEmailTeam extends AMemberGroupBase {
+class IdEmailTeam extends AMemberGroupBase {
 
-  static public final String ID_TYPE = "EmailTeam"
+  public static final String ID_TYPE = "EmailTeam"
 
   @Override
   @DynamoDBAttribute(attributeName = "IdType")
-  public String getType() {
+  String getType() {
     return ID_TYPE
   }
 
-  public IdEmailTeam() {
-    super()
+  IdEmailTeam() {
   }
 
-  public IdEmailTeam(Map params) {
-    super()
+  IdEmailTeam(Map params) {
     initParameters(params)
   }
 }

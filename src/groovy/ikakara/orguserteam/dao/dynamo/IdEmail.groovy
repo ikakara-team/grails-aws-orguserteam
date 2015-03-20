@@ -25,6 +25,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore
 import com.amazonaws.services.dynamodbv2.document.Item
 
+
+import ikakara.awsinstance.util.StringUtil
+import ikakara.simplemarshaller.annotation.SimpleMarshaller
+
 /**
  *
  * @author Allen
@@ -63,7 +67,7 @@ public class IdEmail extends AIdBase {
   }
 
   @Override
-  public Item marshalItemOUT(boolean bRemoveAttributeNull) {
+  public Item marshalItemOUT(boolean removeAttributeNull) {
     Item outItem = super.marshalItemOUT(bRemoveAttributeNull)
     if (outItem == null) {
       outItem = new Item()
@@ -71,7 +75,7 @@ public class IdEmail extends AIdBase {
 
     if (status != null) {
       outItem = outItem.withNumber("Status", status)
-    } else if (bRemoveAttributeNull) {
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Status")
     }
 
@@ -84,7 +88,7 @@ public class IdEmail extends AIdBase {
     //if (params != null && !params.isEmpty()) {
 
     try {
-      status = (Integer) params.get("status")
+      status = (Integer) params.status
     } catch (Exception e) {
 
     }
@@ -93,11 +97,9 @@ public class IdEmail extends AIdBase {
   }
 
   public IdEmail() {
-    super()
   }
 
-  public IdEmail(Map params) {
-    super()
+   IdEmail(Map params) {
     initParameters(params)
   }
 
