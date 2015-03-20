@@ -16,7 +16,6 @@ package ikakara.orguserteam.web.platform
 
 import static org.springframework.http.HttpStatus.*
 import grails.converters.JSON
-import grails.converters.XML
 
 import ikakara.orguserteam.dao.dynamo.IdTeam
 
@@ -25,50 +24,45 @@ import ikakara.orguserteam.dao.dynamo.IdTeam
 //@Secured(['ROLE_ADMIN'])
 class SysTeamController {
 
-  static allowedMethods = [
-    save: "POST", update: "PUT", delete: "DELETE"]
+  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-  def orgUserTeamService;
+  def orgUserTeamService
 
   //////////////////////////////////////////////////////////////////////////////
   // IdTeam
   //////////////////////////////////////////////////////////////////////////////
 
   def index(Integer max) {
-    println "index: ${params}"
 
     params.max = Math.min(max ?: 10, 100)
-    //List results = new IdTeam([app_id: params.long('id')]).findByApp();
-    List results = new IdTeam().queryByType();
+    //List results = new IdTeam([app_id: params.long('id')]).findByApp()
+    List results = new IdTeam().queryByType()
 
-    int count = results != null ? results.size() : 0;
+    int count = results ? results.size() : 0
     //render view: 'index', model:[appList: results, appCount: count]
 
     def json = results as JSON
-    //println ">>>>>>>>>>>>>>>>>>>>>>>>>" + json
+    //log.debug ">>>>>>>>>>>>>>>>>>>>>>>>>$json"
 
     respond results, model: [appList: results, appCount: count]
   }
 
   def show(IdTeam teamInstance) {
-    println "show: ${params} instance: ${teamInstance.id}"
 
     if(params.id) {
-      teamInstance.setId(params.id);
+      teamInstance.id = params.id
     }
 
-    teamInstance.load();
+    teamInstance.load()
     respond teamInstance, model: [teamInstance: teamInstance]
   }
 
   def create() {
-    def config = new IdTeam(params);
-
-    render view: 'create', model:[teamInstance: config]
+    render view: 'create', model:[teamInstance: new IdTeam(params)]
   }
 
   def save(IdTeam teamInstance) {
-    if (teamInstance == null) {
+    if (!teamInstance) {
       notFoundTeam()
       return
     }
@@ -80,76 +74,75 @@ class SysTeamController {
 
     teamInstance.withCreatedUpdated()
 
-    boolean bcreated = teamInstance.create()
-    if(!bcreated) {
-      flash.message = "Failed to create: ${teamInstance.getId()}"
+    boolean created = teamInstance.create()
+    if(!created) {
+      flash.message = "Failed to create: $teamInstance.id"
       render view: 'create', model:[teamInstance: teamInstance]
       return
     }
 
     request.withFormat {
       form multipartForm {
-        flash.message = message(code: 'default.created.message', args: [message(code: 'adminApp.label', default: 'IdTeam'), teamInstance.getId()])
-        redirect action: 'show', id: teamInstance.getId()
+        flash.message = message(code: 'default.created.message', args: [message(code: 'adminApp.label', default: 'IdTeam'), teamInstance.id])
+        redirect action: 'show', id: teamInstance.id
       }
       '*' { respond teamInstance, [status: CREATED] }
     }
   }
 
   def edit(IdTeam teamInstance) {
-    if(params.id) {
-      teamInstance.setId(params.id);
-    } else {
-      response.sendError(404);
-      return;
+    if(!params.id) {
+      response.sendError(404)
+      return
     }
 
-    teamInstance.load();
+    teamInstance.id = params.id
+    teamInstance.load()
 
     render view: 'edit', model:[teamInstance: teamInstance]
   }
 
   def update(IdTeam teamInstance) {
-    if (teamInstance == null) {
+    if (!teamInstance) {
       notFoundTeam()
       return
     }
 
-    println "update>>>>>>>>>>>>>>>>" + teamInstance.id
+    log.debug "update>>>>>>>>>>>>>>>>$teamInstance.id"
 
     if (teamInstance.hasErrors()) {
       respond teamInstance.errors, view:'edit'
       return
     }
 
-    teamInstance.setUpdatedDate(new Date())
+    teamInstance.updatedDate = new Date()
     teamInstance.save()
 
     request.withFormat {
       form multipartForm {
-        flash.message = message(code: 'default.updated.message', args: [message(code: 'IdTeam.label', default: 'IdTeam'), teamInstance.getId()])
-        redirect action: 'show', id: teamInstance.getId()
+        flash.message = message(code: 'default.updated.message', args: [message(code: 'IdTeam.label', default: 'IdTeam'), teamInstance.id])
+        redirect action: 'show', id: teamInstance.id
       }
       '*'{ respond teamInstance, [status: OK] }
     }
   }
 
   def delete(IdTeam teamInstance) {
-    if (teamInstance == null) {
+    if (!teamInstance) {
       notFoundTeam()
       return
     }
 
     if(params.id) {
-      teamInstance.setId(params.id);
+      teamInstance.id = params.id
     }
 
     teamInstance.delete()
 
     request.withFormat {
       form multipartForm {
-        flash.message = message(code: 'default.deleted.message', args: [message(code: 'IdTeam.label', default: 'IdTeam'), teamInstance.getId()])
-        redirect action:"index", method:"GET"
+        flash.message = message(code: 'default.deleted.message', args: [message(code: 'IdTeam.label', default: 'IdTeam'), teamInstance.id])
+        redirect action:"index"
       }
       '*'{ render status: NO_CONTENT }
     }
@@ -159,10 +152,9 @@ class SysTeamController {
     request.withFormat {
       form multipartForm {
         flash.message = message(code: 'default.not.found.message', args: [message(code: 'adminApp.label', default: 'IdTeam'), params.id])
-        redirect action: "index", method: "GET"
+        redirect action: "index"
       }
       '*'{ render status: NOT_FOUND }
     }
   }
-
 }

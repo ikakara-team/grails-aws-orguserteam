@@ -14,11 +14,6 @@
  */
 package ikakara.orguserteam.dao.dynamo
 
-import java.util.Map
-import java.util.Set
-import java.util.ArrayList
-import java.util.List
-
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -28,73 +23,77 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore
 import com.amazonaws.services.dynamodbv2.document.Item
 
-import ikakara.simplemarshaller.annotation.SimpleMarshaller
 import ikakara.awsinstance.util.StringUtil
+import ikakara.simplemarshaller.annotation.SimpleMarshaller
 
 /**
- *
  * @author Allen
  */
 @Validateable(nullable = true)
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "teamList", "orgList", "status", "name", "imageUrl", "initials", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
-public class IdUser extends AIdBase {
-  static public final String ID_TYPE = "User"
-  static public final String ID_PREFIX = "~"
+class IdUser extends AIdBase {
+  public static final String ID_TYPE = "User"
+  public static final String ID_PREFIX = "~"
 
+  @DynamoDBAttribute(attributeName = "Status")
   Number status
+  @DynamoDBAttribute(attributeName = "Name")
   String name
-  String image_url
+  @DynamoDBAttribute(attributeName = "ImageUrl")
+  String imageUrl
+  @DynamoDBAttribute(attributeName = "Initials")
   String initials
+  @DynamoDBAttribute(attributeName = "Description")
   String description
 
   // transient
-  List<IdTeam> teamList = new ArrayList<>()
-  List<IdOrg> orgList = new ArrayList<>()
+  List<IdTeam> teamList = []
+  List<IdOrg> orgList = []
 
   @DynamoDBIgnore
-  public List<IdTeam> getTeamList() {
+  List<IdTeam> getTeamList() {
     return teamList
   }
 
-  public void teamListAdd(List<IdTeam> list) {
+  void teamListAdd(List<IdTeam> list) {
     teamList.addAll(list)
   }
 
-  public void teamListAdd(IdTeam team) {
-    teamList.add(team)
+  void teamListAdd(IdTeam team) {
+    teamList << team
   }
 
   @DynamoDBIgnore
-  public List<IdOrg> getOrgList() {
+  List<IdOrg> getOrgList() {
     return orgList
   }
 
-  public void orgListAdd(List<IdOrg> list) {
+  void orgListAdd(List<IdOrg> list) {
     orgList.addAll(list)
   }
 
-  public void orgListAdd(IdOrg org) {
-    orgList.add(org)
+  void orgListAdd(IdOrg org) {
+    orgList << org
   }
 
   @Override
   @DynamoDBIgnore
-  public String getTypePrefix() {
+  String getTypePrefix() {
     return ID_PREFIX
   }
 
   @Override
   @DynamoDBAttribute(attributeName = "IdType")
-  public String getType() {
+  String getType() {
     return ID_TYPE
   }
 
   @Override
-  public void marshalAttributesIN(Item item) {
+  void marshalAttributesIN(Item item) {
     super.marshalAttributesIN(item)
-    //if (map != null && !map.isEmpty()) {
+    //if (map) {
     if (item.isPresent("Status")) {
       status = item.getNumber("Status")
     }
@@ -102,7 +101,7 @@ public class IdUser extends AIdBase {
       name = item.getString("Name")
     }
     if (item.isPresent("ImageUrl")) {
-      image_url = item.getString("ImageUrl")
+      imageUrl = item.getString("ImageUrl")
     }
     if (item.isPresent("Initials")) {
       initials = item.getString("Initials")
@@ -114,35 +113,32 @@ public class IdUser extends AIdBase {
   }
 
   @Override
-  public Item marshalItemOUT(boolean bRemoveAttributeNull) {
-    Item outItem = super.marshalItemOUT(bRemoveAttributeNull)
-    if (outItem == null) {
-      outItem = new Item()
-    }
+  Item marshalItemOUT(boolean removeAttributeNull) {
+    Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
 
     if (status != null) {
       outItem = outItem.withNumber("Status", status)
-    } else if (bRemoveAttributeNull) {
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Status")
     }
-    if (name != null && !"".equals(name)) {
+    if (name) {
       outItem = outItem.withString("Name", name)
-    } else if (bRemoveAttributeNull) {
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Name")
     }
-    if (image_url != null && !"".equals(image_url)) {
-      outItem = outItem.withString("ImageUrl", image_url)
-    } else if (bRemoveAttributeNull) {
+    if (imageUrl) {
+      outItem = outItem.withString("ImageUrl", imageUrl)
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("ImageUrl")
     }
-    if (initials != null && !"".equals(initials)) {
+    if (initials) {
       outItem = outItem.withString("Initials", initials)
-    } else if (bRemoveAttributeNull) {
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Initials")
     }
-    if (description != null && !"".equals(description)) {
+    if (description) {
       outItem = outItem.withString("Description", description)
-    } else if (bRemoveAttributeNull) {
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Description")
     }
 
@@ -150,38 +146,35 @@ public class IdUser extends AIdBase {
   }
 
   @Override
-  public void initParameters(Map params) {
+  void initParameters(Map params) {
     super.initParameters(params)
-    //if (params != null && !params.isEmpty()) {
+    //if (params) {
 
     try {
-      status = (Integer) params.get("status")
-      name = (String) params.get("name")
-      image_url = (String) params.get("image_url")
-      initials = (String) params.get("initials")
-      description = (String) params.get("description")
-    } catch (Exception e) {
-
+      status = (Integer) params.status
+      name = (String) params.name
+      imageUrl = (String) params.image_url
+      initials = (String) params.initials
+      description = (String) params.description
+    } catch (ignored) {
     }
 
     //}
   }
 
-  public IdUser() {
-    super()
+  IdUser() {
   }
 
-  public IdUser(Map params) {
-    super()
+  IdUser(Map params) {
     initParameters(params)
   }
 
-  public IdUser slugify(String str) {
-    if (str != null && !"".equals(str)) {
+  IdUser slugify(String str) {
+    if (str) {
       name = str
     }
 
-    if (name == null || "".equals(name)) {
+    if (!name) {
       name = "unknown" + StringUtil.getRandomNumbers(10)
     }
 
@@ -190,65 +183,15 @@ public class IdUser extends AIdBase {
     return this
   }
 
-  static public IdUser fromSlug(String slugId) {
+  static IdUser fromSlug(String slugId) {
     IdSlug slug = (IdSlug) new IdSlug().withId(slugId)
-    boolean bload = slug.load()
-    if (!bload) {
+    boolean load = slug.load()
+    if (!load) {
       return null
     }
 
     // verify that the slug is for an user
-    AIdBase user = slug.getAlias()
-    if (user instanceof IdUser) {
-      return (IdUser) user
-    }
-
-    return null
+    AIdBase user = slug.alias
+    return (user instanceof IdUser) ? (IdUser) user : null
   }
-
-  @DynamoDBAttribute(attributeName = "Status")
-  public Number getStatus() {
-    return status
-  }
-
-  public void setStatus(Number d) {
-    status = d
-  }
-
-  @DynamoDBAttribute(attributeName = "Name")
-  public String getName() {
-    return name
-  }
-
-  public void setName(String d) {
-    name = d
-  }
-
-  @DynamoDBAttribute(attributeName = "ImageUrl")
-  public String getImageUrl() {
-    return image_url
-  }
-
-  public void setImageUrl(String d) {
-    image_url = d
-  }
-
-  @DynamoDBAttribute(attributeName = "Initials")
-  public String getInitials() {
-    return initials
-  }
-
-  public void setInitials(String d) {
-    initials = d
-  }
-
-  @DynamoDBAttribute(attributeName = "Description")
-  public String getDescription() {
-    return description
-  }
-
-  public void setDescription(String d) {
-    description = d
-  }
-
 }

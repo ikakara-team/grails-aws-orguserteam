@@ -15,75 +15,65 @@
 package ikakara.orguserteam.web.app
 
 import ikakara.orguserteam.dao.dynamo.AIdBase
-import ikakara.orguserteam.dao.dynamo.IdTeam
 import ikakara.orguserteam.dao.dynamo.IdOrg
 import ikakara.orguserteam.dao.dynamo.IdOrgTeam
 import ikakara.orguserteam.dao.dynamo.IdSlug
+import ikakara.orguserteam.dao.dynamo.IdTeam
 import ikakara.orguserteam.dao.dynamo.IdUser
-import ikakara.orguserteam.dao.dynamo.IdUserTeam
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
+import ikakara.orguserteam.dao.dynamo.IdUserTeam
 
-public class OrgUserTeamService {
+class OrgUserTeamService {
   static transactional = false
 
   def findIdObjBySlugId(String slugId) {
     def list = new IdSlug().queryByAlias(slugId)
     if(list?.size() == 1) {
       return list[0]
-    } else {
-      log.error("findIdObjBySlugId - invalid result for ${slugId}")
     }
 
-    return null
+    log.error("findIdObjBySlugId - invalid result for $slugId")
   }
 
-  def exist(AIdBase id) {
-    return id?.load() ? true : false;
+  boolean exist(AIdBase id) {
+    return id?.load()
   }
 
   /////////////////////////////////////////////////////////////////////////////
   // User
   /////////////////////////////////////////////////////////////////////////////
   // should we verify if user exist?
-  def user(String userId) {
+  IdUser user(String userId) {
     def user = new IdUser(id: userId)
-    def bload = user.load();
-    if(!bload) {
+    def load = user.load()
+    if(!load) {
       // doesn't exist
-      log.warn("User Not Found: " + userId)
+      log.warn("User Not Found: $userId")
       // return null
     }
 
-    return user;
+    return user
   }
 
-  def listUser(IdOrg org) {
-    List listUser = []
-
+  List<IdUser> listUser(IdOrg org) {
     List list = new IdUserOrg().withGroup(org).queryByGroupAndType()
-    for(def userobj in list) {
-      IdUser user = userobj.getMember();
+    return list.collect { userobj ->
+      IdUser user = userobj.member
       user.load()
-      listUser.add(user)
+      user
     }
-
-    return listUser
   }
 
-  def listUser(IdTeam team) {
-    List listUser = []
-
+  List<IdUser> listUser(IdTeam team) {
     List list = new IdUserTeam().withGroup(team).queryByGroupAndType()
-    for(def userobj in list) {
-      IdUser user = userobj.getMember();
+    return list.collect { userobj ->
+      IdUser user = userobj.member
       user.load()
-      listUser.add(user)
+      user
     }
-
-    return listUser
   }
 
-  def createUser(IdUser user, String name, String initials, String desc, String shortName) {
+  IdUser createUser(IdUser user, String name, String initials, String desc, String shortName) {
     // create org
     user.slugify(shortName)
     .withCreatedUpdated()
@@ -92,19 +82,19 @@ public class OrgUserTeamService {
     user.initials = initials
     user.description = desc
 
-    def bcreate = user.create()
-    if(!bcreate) {
+    def create = user.create()
+    if(!create) {
       // failed
       return null
     }
 
     // create slug
-    def slug = new IdSlug(id: user.getAliasId())
+    def slug = new IdSlug(id: user.aliasId)
     .withAlias(user)
     .withCreatedUpdated()
 
-    bcreate = slug.create()
-    if(!bcreate) {
+    create = slug.create()
+    if(!create) {
       // failed
       user.delete()
       return null
@@ -113,16 +103,16 @@ public class OrgUserTeamService {
     return user
   }
 
-  def updateUser(IdUser user, String name, String initials, String desc, String shortName) {
-    def bload = user.load();
-    if(!bload) {
+  IdUser updateUser(IdUser user, String name, String initials, String desc, String shortName) {
+    def load = user.load()
+    if(!load) {
       // not found, create a user
       user = createUser(user, name, initials, desc, shortName)
       return user
     }
 
-    def oldslug = null
-    def newslug = null
+    def oldslug
+    def newslug
 
     if(shortName) {
       if(user.aliasId != shortName) {
@@ -131,13 +121,13 @@ public class OrgUserTeamService {
         .withAlias(user)
         .withCreatedUpdated()
 
-        def bcreate = newslug.create()
-        if(!bcreate) {
+        def create = newslug.create()
+        if(!create) {
           // failed
           return null
         }
 
-        oldslug = user.getAlias()
+        oldslug = user.alias
         user.withAlias(newslug)
       }
     }
@@ -149,9 +139,9 @@ public class OrgUserTeamService {
     user.description = desc
     user.initials = initials
 
-    user.setUpdatedDate(new Date())
-    def bsave = user.save();
-    if(bsave) {
+    user.updatedDate = new Date()
+    def save = user.save()
+    if(save) {
       // cleanup old slug
       if(oldslug) {
         oldslug.delete()
@@ -159,7 +149,7 @@ public class OrgUserTeamService {
     } else {
       // cleanup new slug
       if(newslug) {
-        newslug.delete();
+        newslug.delete()
       }
     }
 
@@ -167,16 +157,15 @@ public class OrgUserTeamService {
   }
 
   // return true if deleted, returns false if not found
-  def deleteUser(IdUser user) {
-    def bload = user.load();
-    if(!bload) {
+  boolean deleteUser(IdUser user) {
+    def load = user.load()
+    if(!load) {
       // not found
       return false
     }
 
     // delete slug
-    def slug = new IdSlug(id: user.getAliasId())
-    slug.delete()
+    new IdSlug(id: user.aliasId).delete()
 
     user.delete()
 
@@ -186,81 +175,69 @@ public class OrgUserTeamService {
   /////////////////////////////////////////////////////////////////////////////
   // Org
   /////////////////////////////////////////////////////////////////////////////
-  def org(String orgId) {
+  IdOrg org(String orgId) {
     def org = new IdOrg().withId(orgId)
-    def bload = org.load()
-    if(!bload) {
+    def load = org.load()
+    if(!load) {
       // doesn't exist
-      log.error("Org Not Found: " + orgId)
-      return null;
-    }
-
-    return org;
-  }
-
-  // This is what sucks about NOSQL (dynamo) ...
-  def listOrg(IdUser user) {
-    List<IdOrg> listOrg = new ArrayList<>();
-
-    List list = new IdUserOrg().withMember(user).queryByMemberAndType()
-
-    // we can optimize this ...
-    for(IdUserOrg userorg in list) {
-      def org = userorg.getGroup();
-      org.load()
-      listOrg.add(org)
-    }
-
-    return listOrg;
-  }
-
-  def getOrg(IdTeam team) {
-    def org = null
-
-    def list = listOrg(team)
-    if(!list?.isEmpty()) {
-      org = list[0] // hacky, should only be one org
+      log.error("Org Not Found: $orgId")
+      return null
     }
 
     return org
   }
 
+  // This is what sucks about NOSQL (dynamo) ...
+  def listOrg(IdUser user) {
+    List list = new IdUserOrg().withMember(user).queryByMemberAndType()
+
+    // we can optimize this ...
+    return list.collect { IdUserOrg userorg ->
+      def org = userorg.group
+      org.load()
+      org
+    }
+  }
+
+  def getOrg(IdTeam team) {
+    def list = listOrg(team)
+    if(list) {
+      return list[0] // hacky, should only be one org
+    }
+  }
+
   // NOSQL compromise for 1 to many, using many to many table
   def listOrg(IdTeam team) {
-    List<IdOrg> listOrg = new ArrayList<>();
-
     List list = new IdOrgTeam().withGroup(team).queryByGroupAndType()
 
     // theoretically, only 1
-    for(IdOrgTeam orgteam in list) {
-      def org = orgteam.getMember();
+    return list.collect { IdOrgTeam orgteam ->
+      def org = orgteam.member
       org.load()
-      listOrg.add(org)
+      org
     }
-
-    return listOrg;
   }
 
-  def createOrg(IdUser user, String orgName, String orgDescription) {
+  IdOrg createOrg(IdUser user, String orgName, String orgDescription) {
     // create org
     def org = new IdOrg(description: orgDescription)
     .initId()
     .slugify(orgName)
     .withCreatedUpdated()
 
-    def bcreate = org.create()
-    if(!bcreate) {
+    def create = org.create()
+    if(!create) {
       // failed
       return null
     }
 
     // create slug
-    def slug = new IdSlug(id: org.getAliasId())
+    def slug = new IdSlug(id: org.aliasId)
     .withAlias(org)
     .withCreatedUpdated()
 
-    bcreate = slug.create()
-    if(!bcreate) {
+    create = slug.create()
+    if(!create) {
       // failed
       org.delete()
       return null
@@ -273,8 +250,8 @@ public class OrgUserTeamService {
       .withGroup(org)
       .withCreatedUpdated()
 
-      bcreate = userorg.create()
-      if(!bcreate) {
+      create = userorg.create()
+      if(!create) {
         // failed
         org.delete()
         slug.delete()
@@ -285,15 +262,15 @@ public class OrgUserTeamService {
     return org
   }
 
-  def updateOrg(IdOrg org, String name, String desc, String web_url, String shortName) {
-    def bload = org.load();
-    if(!bload) {
+  String updateOrg(IdOrg org, String name, String desc, String web_url, String shortName) {
+    def load = org.load()
+    if(!load) {
       // not found
       return
     }
 
-    def oldslug = null
-    def newslug = null
+    def oldslug
+    def newslug
 
     if(shortName) {
       if(org.aliasId != shortName) {
@@ -302,13 +279,13 @@ public class OrgUserTeamService {
         .withAlias(org)
         .withCreatedUpdated()
 
-        def bcreate = newslug.create()
-        if(!bcreate) {
+        def create = newslug.create()
+        if(!create) {
           // failed
           return null
         }
 
-        oldslug = org.getAlias()
+        oldslug = org.alias
         org.withAlias(newslug)
       }
     }
@@ -320,9 +297,9 @@ public class OrgUserTeamService {
     org.description = desc
     org.webUrl = web_url
 
-    org.setUpdatedDate(new Date())
-    def bsave = org.save();
-    if(bsave) {
+    org.updatedDate = new Date()
+    def save = org.save()
+    if(save) {
       // cleanup old slug
       if(oldslug) {
         oldslug.delete()
@@ -330,24 +307,23 @@ public class OrgUserTeamService {
     } else {
       // cleanup new slug
       if(newslug) {
-        newslug.delete();
+        newslug.delete()
       }
     }
 
-    return org.getAliasId()
+    return org.aliasId
   }
 
   // return true if deleted, returns false if not found
-  def deleteOrg(IdOrg org) {
-    def bload = org.load();
-    if(!bload) {
+  boolean deleteOrg(IdOrg org) {
+    def load = org.load()
+    if(!load) {
       // not found
       return false
     }
 
     // delete slug
-    def slug = new IdSlug(id: org.getAliasId())
-    slug.delete()
+    new IdSlug(id: org.aliasId).delete()
 
     org.delete()
 
@@ -358,28 +334,28 @@ public class OrgUserTeamService {
   // Team
   /////////////////////////////////////////////////////////////////////////////
 
-  def team(String teamId) {
+  IdTeam team(String teamId) {
     def team = new IdTeam().withId(teamId)
-    def bload = team.load()
-    if(!bload) {
+    def load = team.load()
+    if(!load) {
       // doesn't exist
-      log.error("App Not Found: " + teamId)
+      log.error("App Not Found: $teamId")
       return null
     }
 
-    return team;
+    return team
   }
 
-  def listTeamVisible(IdOrg org, IdUser user) {
+  List<IdTeam> listTeamVisible(IdOrg org, IdUser user) {
     List listTeam = []
 
     List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
-    for(def orgobj in list) {
-      IdTeam team = orgobj.getGroup();
+    for(orgobj in list) {
+      IdTeam team = orgobj.group
       team.load()
 
       // check if app is visible to user
-      if(!team.isOrgVisible()) {
+      if(!team.orgVisible) {
         // check is member is
         def userteam = team.hasMember(user)
         if(!userteam) {
@@ -387,69 +363,61 @@ public class OrgUserTeamService {
         }
       }
 
-      listTeam.add(team)
+      listTeam << team
     }
 
     return listTeam
   }
 
-  def listTeam(IdOrg org) {
-    List listTeam = []
-
+  List<IdTeam> listTeam(IdOrg org) {
     List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
-    for(def orgobj in list) {
-      IdTeam team = orgobj.getGroup();
+    return list.collect { orgobj ->
+      IdTeam team = orgobj.group
       team.load()
-      listTeam.add(team)
+      team
     }
-
-    return listTeam
   }
 
-  def listTeam(IdUser user) {
-    List listTeam = []
-
+  List<IdTeam> listTeam(IdUser user) {
     List list = new IdUserTeam().withMember(user).queryByMemberAndType()
-    for(def userobj in list) {
-      IdTeam team = userobj.getGroup();
+    return list.collect { userobj ->
+      IdTeam team = userobj.group
       team.load()
-      listTeam.add(team)
+      team
     }
-
-    return listTeam
   }
 
   // this is ridculous ... SQL is so much better at relationships
   def listOrgTeams(IdUser user, String myOrgName) {
-    Map mapApp = new LinkedHashMap();
-    List listOrg = []
-    listOrg.add(new IdOrg(name: myOrgName))
+    Map mapApp = [:]
+    List listOrg = [new IdOrg(name: myOrgName)]
 
     // get all the user teams and orgs
     List list = new IdUserTeam().withMember(user).queryByMember()
     // we can optimize this ...
-    for(def userobj in list) {
+    for(userobj in list) {
       if(userobj instanceof IdUserTeam) {
-        IdTeam team = userobj.getGroup();
+        IdTeam team = userobj.group
         team.load()
-        mapApp.put(team.id, team)
+        mapApp[team.id] = team
       } else if(userobj instanceof IdUserOrg) {
-        def org = userobj.getGroup();
+        def org = userobj.group
         org.load()
-        listOrg.add(org)
+        listOrg << org
       } else {
         // unknown class
       }
     }
 
-    for(int i = 1; i < listOrg.size(); i++) {
+    int size = listOrg.size()
+    for(int i = 1; i < size; i++) {
       def org = listOrg[i]
 
       // get all the teams of the orgs that the user belongs to
       // query by member and privacy
       List list_orgteam = new IdOrgTeam().withMember(org).queryByMemberAndType()
       for(IdOrgTeam orgteam in list_orgteam) {
-        IdTeam team = orgteam.getGroup();
+        IdTeam team = orgteam.group
 
         if(mapApp.containsKey(team.id)) {
           team = mapApp.remove(team.id)
@@ -464,20 +432,20 @@ public class OrgUserTeamService {
     }
 
     // add the remaining teams to 'my apps'
-    for(def team : mapApp.values()){
+    for(team in mapApp.values()){
       listOrg[0].teamListAdd(team)
     }
 
-    return listOrg;
+    return listOrg
   }
 
-  def createTeam(IdUser user, String teamName, Integer privacy, String orgId) {
-    def org =  null
+  IdTeam createTeam(IdUser user, String teamName, Integer privacy, String orgId) {
+    def org
     if(orgId) {
       // check if org exist
       org = new IdOrg(id: orgId)
-      def bload = org.load()
-      if(!bload) {
+      def load = org.load()
+      if(!load) {
         // failed
         return null
       }
@@ -489,19 +457,19 @@ public class OrgUserTeamService {
     .slugify(teamName)
     .withCreatedUpdated()
 
-    def bcreate = team.create()
-    if(!bcreate) {
+    def create = team.create()
+    if(!create) {
       // failed
       return null
     }
 
     // create slug
-    def slug = new IdSlug(id: team.getAliasId())
+    def slug = new IdSlug(id: team.aliasId)
     .withAlias(team)
     .withCreatedUpdated()
 
-    bcreate = slug.create()
-    if(!bcreate) {
+    create = slug.create()
+    if(!create) {
       // failed
       team.delete()
       return null
@@ -513,8 +481,8 @@ public class OrgUserTeamService {
     .withGroup(team)
     .withCreatedUpdated()
 
-    bcreate = userteam.create()
-    if(!bcreate) {
+    create = userteam.create()
+    if(!create) {
       // failed
       team.delete()
       slug.delete()
@@ -528,8 +496,8 @@ public class OrgUserTeamService {
       .withGroup(team)
       .withCreatedUpdated()
 
-      bcreate = orgteam.create()
-      if(!bcreate) {
+      create = orgteam.create()
+      if(!create) {
         // failed
         userteam.delete()
         team.delete()
@@ -538,19 +506,19 @@ public class OrgUserTeamService {
       }
     }
 
-    return team;
+    return team
   }
 
   //user, params.name, params.int('privacy'), params.org, params.aliasId
-  def updateTeam(IdTeam team, String name, Integer privacy, String description, String shortName) {
-    //def bload = team.load();
-    //if(!bload) {
+  String updateTeam(IdTeam team, String name, Integer privacy, String description, String shortName) {
+    //def load = team.load()
+    //if(!load) {
     // not found
     // return
     //}
 
-    def oldslug = null
-    def newslug = null
+    def oldslug
+    def newslug
 
     if(shortName) {
       if(team.aliasId != shortName) {
@@ -559,13 +527,13 @@ public class OrgUserTeamService {
         .withAlias(team)
         .withCreatedUpdated()
 
-        def bcreate = newslug.create()
-        if(!bcreate) {
+        def create = newslug.create()
+        if(!create) {
           // failed
           return null
         }
 
-        oldslug = team.getAlias()
+        oldslug = team.alias
         team.withAlias(newslug)
       }
     }
@@ -577,9 +545,9 @@ public class OrgUserTeamService {
     team.privacy = privacy
     team.description = description
 
-    team.setUpdatedDate(new Date())
-    def bsave = team.save();
-    if(bsave) {
+    team.updatedDate = new Date()
+    def save = team.save()
+    if(save) {
       // cleanup old slug
       if(oldslug) {
         oldslug.delete()
@@ -587,18 +555,17 @@ public class OrgUserTeamService {
     } else {
       // cleanup new slug
       if(newslug) {
-        newslug.delete();
+        newslug.delete()
       }
     }
 
-    return team.getAliasId()
+    return team.aliasId
   }
-
 
   //user, params.name, params.int('privacy'), params.org, params.aliasId
   def updateTeamOwner(IdTeam team, String orgId) {
-    //def bload = team.load();
-    //if(!bload) {
+    //def load = team.load()
+    //if(!load) {
     // not found
     // return
     //}
@@ -606,12 +573,12 @@ public class OrgUserTeamService {
     def curOrg = getOrg(team)
 
     if((orgId || curOrg) && (curOrg?.id != orgId)) {
-      def org = null
+      def org
       if(orgId) {
         // check if org exist
         org = new IdOrg(id: orgId)
-        def bload = org.load()
-        if(!bload) {
+        def load = org.load()
+        if(!load) {
           // failed
           return null
         }
@@ -622,8 +589,8 @@ public class OrgUserTeamService {
         def curorgteam = new IdOrgTeam()
         .withMember(curOrg)
         .withGroup(team)
-        def bdel = curorgteam.delete()
-        if(!bdel) {
+        def del = curorgteam.delete()
+        if(!del) {
           // failed
           return null
         }
@@ -636,8 +603,8 @@ public class OrgUserTeamService {
         .withGroup(team)
         .withCreatedUpdated()
 
-        def bcreate = orgteam.create()
-        if(!bcreate) {
+        def create = orgteam.create()
+        if(!create) {
           // failed
           return null
         }
@@ -648,16 +615,15 @@ public class OrgUserTeamService {
   }
 
   // return true if deleted, returns false if not found
-  def deleteTeam(IdTeam team) {
-    def bload = team.load();
-    if(!bload) {
+  boolean deleteTeam(IdTeam team) {
+    def load = team.load()
+    if(!load) {
       // not found
       return false
     }
 
     // delete slug
-    def slug = new IdSlug(id: team.getAliasId())
-    slug.delete()
+    new IdSlug(id: team.aliasId).delete()
 
     team.delete()
 

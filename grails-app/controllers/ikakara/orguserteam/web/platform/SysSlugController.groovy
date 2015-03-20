@@ -16,7 +16,6 @@ package ikakara.orguserteam.web.platform
 
 import static org.springframework.http.HttpStatus.*
 import grails.converters.JSON
-import grails.converters.XML
 
 import ikakara.orguserteam.dao.dynamo.IdSlug
 
@@ -25,50 +24,45 @@ import ikakara.orguserteam.dao.dynamo.IdSlug
 //@Secured(['ROLE_ADMIN'])
 class SysSlugController {
 
-  static allowedMethods = [
-    save: "POST", update: "PUT", delete: "DELETE"]
+  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-  def orgUserTeamService;
+  def orgUserTeamService
 
   //////////////////////////////////////////////////////////////////////////////
   // IdSlug
   //////////////////////////////////////////////////////////////////////////////
 
   def index(Integer max) {
-    println "index: ${params}"
 
     params.max = Math.min(max ?: 10, 100)
-    //List results = new IdSlug([app_id: params.long('id')]).findByApp();
-    List results = new IdSlug().queryByType();
+    //List results = new IdSlug([app_id: params.long('id')]).findByApp()
+    List results = new IdSlug().queryByType()
 
-    int count = results != null ? results.size() : 0;
+    int count = results ? results.size() : 0
     //render view: 'index', model:[slugList: results, slugCount: count]
 
     def json = results as JSON
-    //println ">>>>>>>>>>>>>>>>>>>>>>>>>" + json
+    //log.debug ">>>>>>>>>>>>>>>>>>>>>>>>>$json"
 
     respond results, model: [slugList: results, slugCount: count]
   }
 
   def show(IdSlug slugInstance) {
-    println "show: ${params} instance: ${slugInstance.id}"
 
     if(params.id) {
-      slugInstance.setId(params.id);
+      slugInstance.id = params.id
     }
 
-    slugInstance.load();
+    slugInstance.load()
     respond slugInstance, model: [slugInstance: slugInstance]
   }
 
   def create() {
-    def config = new IdSlug(params);
-
-    render view: 'create', model:[slugInstance: config]
+    render view: 'create', model:[slugInstance: new IdSlug(params)]
   }
 
   def save(IdSlug slugInstance) {
-    if (slugInstance == null) {
+    if (!slugInstance) {
       notFoundSlug()
       return
     }
@@ -80,76 +74,75 @@ class SysSlugController {
 
     slugInstance.withCreatedUpdated()
 
-    boolean bcreated = slugInstance.create()
-    if(!bcreated) {
-      flash.message = "Failed to create: ${slugInstance.getId()}"
+    boolean created = slugInstance.create()
+    if(!created) {
+      flash.message = "Failed to create: $slugInstance.id"
       render view: 'create', model:[slugInstance: slugInstance]
       return
     }
 
     request.withFormat {
       form multipartForm {
-        flash.message = message(code: 'default.created.message', args: [message(code: 'adminApp.label', default: 'IdSlug'), slugInstance.getId()])
-        redirect action: 'show', id: slugInstance.getId()
+        flash.message = message(code: 'default.created.message', args: [message(code: 'adminApp.label', default: 'IdSlug'), slugInstance.id])
+        redirect action: 'show', id: slugInstance.id
       }
       '*' { respond slugInstance, [status: CREATED] }
     }
   }
 
   def edit(IdSlug slugInstance) {
-    if(params.id) {
-      slugInstance.setId(params.id);
-    } else {
-      response.sendError(404);
-      return;
+    if(!params.id) {
+      response.sendError(404)
+      return
     }
 
-    slugInstance.load();
+    slugInstance.id = params.id
+    slugInstance.load()
 
     render view: 'edit', model:[slugInstance: slugInstance]
   }
 
   def update(IdSlug slugInstance) {
-    if (slugInstance == null) {
+    if (!slugInstance) {
       notFoundSlug()
       return
     }
 
-    println "update>>>>>>>>>>>>>>>>" + slugInstance.id
+    log.debug "update>>>>>>>>>>>>>>>>$slugInstance.id"
 
     if (slugInstance.hasErrors()) {
       respond slugInstance.errors, view:'edit'
       return
     }
 
-    slugInstance.setUpdatedDate(new Date())
+    slugInstance.updatedDate = new Date()
     slugInstance.save()
 
     request.withFormat {
       form multipartForm {
-        flash.message = message(code: 'default.updated.message', args: [message(code: 'IdSlug.label', default: 'IdSlug'), slugInstance.getId()])
-        redirect action: 'show', id: slugInstance.getId()
+        flash.message = message(code: 'default.updated.message', args: [message(code: 'IdSlug.label', default: 'IdSlug'), slugInstance.id])
+        redirect action: 'show', id: slugInstance.id
       }
       '*'{ respond slugInstance, [status: OK] }
     }
   }
 
   def delete(IdSlug slugInstance) {
-    if (slugInstance == null) {
+    if (!slugInstance) {
       notFoundSlug()
       return
     }
 
     if(params.id) {
-      slugInstance.setId(params.id);
+      slugInstance.id = params.id
     }
 
     slugInstance.delete()
 
     request.withFormat {
       form multipartForm {
-        flash.message = message(code: 'default.deleted.message', args: [message(code: 'IdSlug.label', default: 'IdSlug'), slugInstance.getId()])
-        redirect action:"index", method:"GET"
+        flash.message = message(code: 'default.deleted.message', args: [message(code: 'IdSlug.label', default: 'IdSlug'), slugInstance.id])
+        redirect action:"index"
       }
       '*'{ render status: NO_CONTENT }
     }
@@ -159,10 +152,9 @@ class SysSlugController {
     request.withFormat {
       form multipartForm {
         flash.message = message(code: 'default.not.found.message', args: [message(code: 'adminApp.label', default: 'IdSlug'), params.id])
-        redirect action: "index", method: "GET"
+        redirect action: "index"
       }
       '*'{ render status: NOT_FOUND }
     }
   }
-
 }

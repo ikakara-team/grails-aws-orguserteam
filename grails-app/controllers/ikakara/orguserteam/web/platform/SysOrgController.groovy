@@ -25,55 +25,48 @@ import ikakara.orguserteam.dao.dynamo.IdOrg
 //@Secured(['ROLE_ADMIN'])
 class SysOrgController {
 
-  static allowedMethods = [
-    save: "POST", update: "PUT", delete: "DELETE"]
+  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-  def orgUserTeamService;
+  def orgUserTeamService
 
   //////////////////////////////////////////////////////////////////////////////
   // IdOrg
   //////////////////////////////////////////////////////////////////////////////
 
   def index(Integer max) {
-    println "index: ${params}"
 
     params.max = Math.min(max ?: 10, 100)
-    List results = new IdOrg().queryByType();
+    List results = new IdOrg().queryByType()
 
-    int count = results != null ? results.size() : 0;
+    int count = results ? results.size() : 0
 
     def json = results as JSON
-    //println ">>>>>>>>>>>>>>>>>>>>>>>>>" + json
+    //log.debug ">>>>>>>>>>>>>>>>>>>>>>>>>$json"
 
     respond results, model: [orgList: results, orgCount: count]
   }
 
   def show(IdOrg orgInstance) {
-    println "show: ${params} instance: ${orgInstance.id}"
 
     if(params.id) {
-      orgInstance.setId(params.id);
+      orgInstance.id = params.id
     }
 
-    orgInstance.load();
+    orgInstance.load()
 
-    def listUser = orgUserTeamService.listUser(orgInstance)
-    userInstance.userListAdd(listUser)
+    userInstance.userListAdd(orgUserTeamService.listUser(orgInstance))
 
-    def listTeam = orgUserTeamService.listTeam(orgInstance)
-    userInstance.teamListAdd(listTeam)
+    userInstance.teamListAdd(orgUserTeamService.listTeam(orgInstance))
 
     respond orgInstance, model: [orgInstance: orgInstance]
   }
 
   def create() {
-    def config = new IdOrg(params);
-
-    render view: 'create', model:[orgInstance: config]
+    render view: 'create', model:[orgInstance: new IdOrg(params)]
   }
 
   def save(IdOrg orgInstance) {
-    if (orgInstance == null) {
+    if (!orgInstance) {
       notFoundOrg()
       return
     }
@@ -81,7 +74,7 @@ class SysOrgController {
     orgInstance = orgUserTeamService.createOrg(null, params.name, params.description)
 
     if(!orgInstance) {
-      flash.message = "Failed to create: ${orgInstance.getId()}"
+      flash.message = "Failed to create: $orgInstance.id"
       render view: 'create', model:[orgInstance: orgInstance]
       return
     }
@@ -94,27 +87,26 @@ class SysOrgController {
         render orgInstance as XML, [status: CREATED]
       }
       '*' {
-        flash.message = message(code: 'default.created.message', args: [message(code: 'adminApp.label', default: 'IdOrg'), orgInstance.getId()])
-        redirect action: 'show', id: orgInstance.getId()
+        flash.message = message(code: 'default.created.message', args: [message(code: 'adminApp.label', default: 'IdOrg'), orgInstance.id])
+        redirect action: 'show', id: orgInstance.id
       }
     }
   }
 
   def edit(IdOrg orgInstance) {
-    if(params.id) {
-      orgInstance.setId(params.id);
-    } else {
-      response.sendError(404);
-      return;
+    if(!params.id) {
+      response.sendError(404)
+      return
     }
 
-    orgInstance.load();
+    orgInstance.id = params.id
+    orgInstance.load()
 
     render view: 'edit', model:[orgInstance: orgInstance]
   }
 
   def update(IdOrg orgInstance) {
-    if (orgInstance == null) {
+    if (!orgInstance) {
       notFoundOrg()
       return
     }
@@ -133,28 +125,28 @@ class SysOrgController {
         render orgInstance as XML, [status: OK]
       }
       '*' {
-        flash.message = message(code: 'default.updated.message', args: [message(code: 'IdOrg.label', default: 'IdOrg'), orgInstance.getId()])
-        redirect action: 'show', id: orgInstance.getId()
+        flash.message = message(code: 'default.updated.message', args: [message(code: 'IdOrg.label', default: 'IdOrg'), orgInstance.id])
+        redirect action: 'show', id: orgInstance.id
       }
     }
   }
 
   def delete(IdOrg orgInstance) {
-    if (orgInstance == null) {
+    if (!orgInstance) {
       notFoundOrg()
       return
     }
 
     if(params.id) {
-      orgInstance.setId(params.id);
+      orgInstance.id = params.id
     }
 
     orgInstance.delete()
 
     request.withFormat {
       form multipartForm {
-        flash.message = message(code: 'default.deleted.message', args: [message(code: 'IdOrg.label', default: 'IdOrg'), orgInstance.getId()])
-        redirect action:"index", method:"GET"
+        flash.message = message(code: 'default.deleted.message', args: [message(code: 'IdOrg.label', default: 'IdOrg'), orgInstance.id])
+        redirect action:"index"
       }
       '*'{ render status: NO_CONTENT }
     }
@@ -170,9 +162,8 @@ class SysOrgController {
       }
       '*' { // form multipartForm
         flash.message = message(code: 'default.not.found.message', args: [message(code: 'adminApp.label', default: 'IdOrg'), params.id])
-        redirect action: "index", method: "GET"
+        redirect action: "index"
       }
     }
   }
-
 }

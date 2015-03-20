@@ -14,12 +14,9 @@
  */
 package ikakara.orguserteam.dao.dynamo
 
-import java.util.Map
-
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-//import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey
 import com.amazonaws.services.dynamodbv2.document.Item
 
@@ -28,92 +25,71 @@ import ikakara.awsinstance.dao.dynamo.ADynamoObject
 import ikakara.awsinstance.util.StringUtil
 
 /**
- *
  * @author Allen
  */
 @Slf4j("LOG")
 @CompileStatic
-abstract public class AIdObject extends ACreatedUpdatedObject {
+abstract class AIdObject extends ACreatedUpdatedObject {
 
-  protected String id
+  @DynamoDBHashKey(attributeName = "Id")
+  String id
 
-  abstract public String getTypePrefix()
-
-  @Override
-  abstract public ADynamoObject newInstance(Item item)
+  abstract String getTypePrefix()
 
   @Override
-  abstract public String tableName()
+  abstract ADynamoObject newInstance(Item item)
 
   @Override
-  abstract public Map initTable()
+  abstract String tableName()
 
   @Override
-  public Object valueHashKey() {
-    return getTypePrefix() + id
+  abstract Map initTable()
+
+  @Override
+  def valueHashKey() {
+    return typePrefix + id
   }
 
   @Override
-  public String nameHashKey() {
+  String nameHashKey() {
     return "Id"
   }
 
   @Override
-  public Object valueRangeKey() {
-    return null
-  }
+  def valueRangeKey() {}
 
   @Override
-  public String nameRangeKey() {
-    return null
-  }
+  String nameRangeKey() {}
 
   @Override
-  public void marshalAttributesIN(Item item) {
+  void marshalAttributesIN(Item item) {
     super.marshalAttributesIN(item)
-    //if (map != null && !map.isEmpty()) {
+    //if (map) {
     if (item.isPresent("Id")) {
       String str = item.getString("Id")
-      id = str.substring(this.getTypePrefix().length())
+      id = str.substring(typePrefix.length())
     }
     //}
   }
 
   @Override
-  public Item marshalItemOUT(boolean bRemoveAttributeNull) {
-    Item outItem = super.marshalItemOUT(bRemoveAttributeNull)
-    if (outItem == null) {
-      outItem = new Item()
-    }
-
-    return outItem
+  Item marshalItemOUT(boolean removeAttributeNull) {
+    super.marshalItemOUT(removeAttributeNull) ?: new Item()
   }
 
   @Override
-  public void initParameters(Map params) {
+  void initParameters(Map params) {
     super.initParameters(params)
-    //if (params != null && !params.isEmpty()) {
-    id = (String) params.get("id")
+    //if (params) {
+    id = (String) params.id
     //}
   }
 
-  public String urlEncodedId() {
+  String urlEncodedId() {
     return StringUtil.urlEncodeExt(id)
   }
 
-  public void urlDecodeId(String id) {
+  void urlDecodeId(String id) {
     this.id = StringUtil.urlDecode(id)
   }
-
-  @DynamoDBHashKey(attributeName = "Id")
-  @Override
-  public String getId() {
-    return id
-  }
-
-  @Override
-  public void setId(String id) {
-    this.id = id
-  }
-
 }

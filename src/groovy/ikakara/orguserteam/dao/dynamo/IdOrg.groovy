@@ -14,11 +14,6 @@
  */
 package ikakara.orguserteam.dao.dynamo
 
-import java.util.Map
-import java.util.Set
-import java.util.List
-import java.util.ArrayList
-
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -28,85 +23,89 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore
 import com.amazonaws.services.dynamodbv2.document.Item
 
-import ikakara.simplemarshaller.annotation.SimpleMarshaller
 import ikakara.awsinstance.util.StringUtil
+import ikakara.simplemarshaller.annotation.SimpleMarshaller
 
 /**
- *
  * @author Allen
  */
 @Validateable(nullable = true)
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "teamList", "userList", "visibility", "name", "imageUrl", "webUrl", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
-public class IdOrg extends AIdBase {
+class IdOrg extends AIdBase {
 
-  static public final String ID_TYPE = "Org"
-  static public final String ID_PREFIX = "@"
+  public static final String ID_TYPE = "Org"
+  public static final String ID_PREFIX = "@"
 
-  static public final Integer VISIBILITY_PUBLIC = 0
-  static public final Integer VISIBILITY_PRIVATE = 10
+  public static final Integer VISIBILITY_PUBLIC = 0
+  public static final Integer VISIBILITY_PRIVATE = 10
 
+  @DynamoDBAttribute(attributeName = "Visibility")
   Number visibility = VISIBILITY_PRIVATE
+  @DynamoDBAttribute(attributeName = "Name")
   String name
-  String image_url
-  String web_url
+  @DynamoDBAttribute(attributeName = "ImageUrl")
+  String imageUrl
+  @DynamoDBAttribute(attributeName = "WebUrl")
+  String webUrl
+  @DynamoDBAttribute(attributeName = "Description")
   String description
 
   // transient
-  List<IdTeam> teamList = new ArrayList<>()
-  List<IdUser> userList = new ArrayList<>()
+  List<IdTeam> teamList = []
+  List<IdUser> userList = []
 
   @DynamoDBIgnore
-  public List<IdTeam> getTeamList() {
+  List<IdTeam> getTeamList() {
     return teamList
   }
 
-  public void teamListAdd(List<IdTeam> list) {
+  void teamListAdd(List<IdTeam> list) {
     teamList.addAll(list)
   }
 
-  public void teamListAdd(IdTeam team) {
-    teamList.add(team)
+  void teamListAdd(IdTeam team) {
+    teamList << team
   }
 
   @DynamoDBIgnore
-  public List<IdUser> getUserList() {
+  List<IdUser> getUserList() {
     return userList
   }
 
-  public void userListAdd(List<IdUser> list) {
+  void userListAdd(List<IdUser> list) {
     userList.addAll(list)
   }
 
-  public void userListAdd(IdUser user) {
-    userList.add(user)
+  void userListAdd(IdUser user) {
+    userList << user
   }
 
-  public boolean isVisibilityPrivate() {
+  boolean isVisibilityPrivate() {
     return visibility.intValue() == VISIBILITY_PRIVATE
   }
 
-  public boolean isVisibilityPublic() {
+  boolean isVisibilityPublic() {
     return visibility.intValue() == VISIBILITY_PUBLIC
   }
 
   @Override
   @DynamoDBIgnore
-  public String getTypePrefix() {
+  String getTypePrefix() {
     return ID_PREFIX
   }
 
   @Override
   @DynamoDBAttribute(attributeName = "IdType")
-  public String getType() {
+  String getType() {
     return ID_TYPE
   }
 
   @Override
-  public void marshalAttributesIN(Item item) {
+  void marshalAttributesIN(Item item) {
     super.marshalAttributesIN(item)
-    //if (map != null && !map.isEmpty()) {
+    //if (map) {
     if (item.isPresent("Visibility")) {
       visibility = item.getNumber("Visibility")
     }
@@ -114,10 +113,10 @@ public class IdOrg extends AIdBase {
       name = item.getString("Name")
     }
     if (item.isPresent("ImageUrl")) {
-      image_url = item.getString("ImageUrl")
+      imageUrl = item.getString("ImageUrl")
     }
     if (item.isPresent("WebUrl")) {
-      web_url = item.getString("WebUrl")
+      webUrl = item.getString("WebUrl")
     }
     if (item.isPresent("Description")) {
       description = item.getString("Description")
@@ -126,34 +125,31 @@ public class IdOrg extends AIdBase {
   }
 
   @Override
-  public Item marshalItemOUT(boolean bRemoveAttributeNull) {
-    Item outItem = super.marshalItemOUT(bRemoveAttributeNull)
-    if (outItem == null) {
-      outItem = new Item()
-    }
+  Item marshalItemOUT(boolean removeAttributeNull) {
+    Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
     if (visibility != null) {
       outItem = outItem.withNumber("Visibility", visibility)
-    } else if (bRemoveAttributeNull) {
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Visibility")
     }
     if (name != null) {
       outItem = outItem.withString("Name", name)
-    } else if (bRemoveAttributeNull) {
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Name")
     }
-    if (image_url != null && !"".equals(image_url)) {
-      outItem = outItem.withString("ImageUrl", image_url)
-    } else if (bRemoveAttributeNull) {
+    if (imageUrl) {
+      outItem = outItem.withString("ImageUrl", imageUrl)
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("ImageUrl")
     }
-    if (web_url != null && !"".equals(web_url)) {
-      outItem = outItem.withString("WebUrl", web_url)
-    } else if (bRemoveAttributeNull) {
+    if (webUrl) {
+      outItem = outItem.withString("WebUrl", webUrl)
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("WebUrl")
     }
-    if (description != null && !"".equals(description)) {
+    if (description) {
       outItem = outItem.withString("Description", description)
-    } else if (bRemoveAttributeNull) {
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Description")
     }
 
@@ -161,43 +157,40 @@ public class IdOrg extends AIdBase {
   }
 
   @Override
-  public void initParameters(Map params) {
+  void initParameters(Map params) {
     super.initParameters(params)
-    //if (params != null && !params.isEmpty()) {
+    //if (params) {
 
     try {
-      visibility = (Integer) params.get("visibility")
-      name = (String) params.get("name")
-      image_url = (String) params.get("image_url")
-      web_url = (String) params.get("web_url")
-      description = (String) params.get("description")
-    } catch (Exception e) {
-
+      visibility = (Integer) params.visibility
+      name = (String) params.name
+      imageUrl = (String) params.image_url
+      webUrl = (String) params.web_url
+      description = (String) params.description
+    } catch (ignored) {
     }
 
     //}
   }
 
-  public IdOrg() {
-    super()
+  IdOrg() {
   }
 
-  public IdOrg(Map params) {
-    super()
-    this.initParameters(params)
+  IdOrg(Map params) {
+    initParameters(params)
   }
 
-  public IdOrg initId() {
+  IdOrg initId() {
     id = StringUtil.getRandomChars(6)
     return this
   }
 
-  public IdOrg slugify(String str) {
-    if (str != null && !"".equals(str)) {
+  IdOrg slugify(String str) {
+    if (str) {
       name = str
     }
 
-    if (name == null || "".equals(name)) {
+    if (!name) {
       name = "temporary" + StringUtil.getRandomNumbers(10)
     }
 
@@ -206,87 +199,29 @@ public class IdOrg extends AIdBase {
     return this
   }
 
-  static public IdOrg fromSlug(String slugId) {
+  static IdOrg fromSlug(String slugId) {
     IdSlug slug = (IdSlug) new IdSlug().withId(slugId)
-    boolean bload = slug.load()
-    if (!bload) {
+    boolean load = slug.load()
+    if (!load) {
       return null
     }
 
     // verify that the slug is for an org
-    AIdBase org = slug.getAlias()
-    if (org instanceof IdOrg) {
-      return (IdOrg) org
-    }
-
-    return null
+    AIdBase org = slug.alias
+    return org instanceof IdOrg ? (IdOrg) org : null
   }
 
-  public IdUserOrg hasMember(IdUser user) {
+  IdUserOrg hasMember(IdUser user) {
     // check to see if user is a member of the org
     IdUserOrg userorg = (IdUserOrg) new IdUserOrg().withMember(user).withGroup(this)
-    boolean bload = userorg.load()
-    if (!bload) {
-      return null
-    }
-
-    return userorg
+    boolean load = userorg.load()
+    return load ? userorg : null
   }
 
-  public IdOrgTeam hasTeam(IdTeam team) {
+  IdOrgTeam hasTeam(IdTeam team) {
     // check to see if user is a member of the org
     IdOrgTeam orgteam = (IdOrgTeam) new IdOrgTeam().withMember(this).withGroup(team)
-    boolean bload = orgteam.load()
-    if (!bload) {
-      return null
-    }
-
-    return orgteam
+    boolean load = orgteam.load()
+    return load ? orgteam : null
   }
-
-  @DynamoDBAttribute(attributeName = "Visibility")
-  public Number getVisibility() {
-    return visibility
-  }
-
-  public void setVisibility(Number d) {
-    visibility = d
-  }
-
-  @DynamoDBAttribute(attributeName = "Name")
-  public String getName() {
-    return name
-  }
-
-  public void setName(String d) {
-    name = d
-  }
-
-  @DynamoDBAttribute(attributeName = "ImageUrl")
-  public String getImageUrl() {
-    return image_url
-  }
-
-  public void setImageUrl(String d) {
-    image_url = d
-  }
-
-  @DynamoDBAttribute(attributeName = "WebUrl")
-  public String getWebUrl() {
-    return web_url
-  }
-
-  public void setWebUrl(String d) {
-    web_url = d
-  }
-
-  @DynamoDBAttribute(attributeName = "Description")
-  public String getDescription() {
-    return description
-  }
-
-  public void setDescription(String d) {
-    description = d
-  }
-
 }

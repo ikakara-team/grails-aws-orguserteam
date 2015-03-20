@@ -14,16 +14,15 @@
  */
 package ikakara.orguserteam.dao.dynamo
 
-import java.util.Map
-import java.util.List
-
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore
-
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable
+import com.amazonaws.services.dynamodbv2.document.Item
+import com.amazonaws.services.dynamodbv2.document.RangeKeyCondition
+import com.amazonaws.services.dynamodbv2.document.Table
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest
 import com.amazonaws.services.dynamodbv2.model.GlobalSecondaryIndex
@@ -34,9 +33,6 @@ import com.amazonaws.services.dynamodbv2.model.ProjectionType
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType
 import com.amazonaws.services.dynamodbv2.model.TableDescription
-import com.amazonaws.services.dynamodbv2.document.Table
-import com.amazonaws.services.dynamodbv2.document.Item
-import com.amazonaws.services.dynamodbv2.document.RangeKeyCondition
 
 import ikakara.awsinstance.aws.AWSInstance
 import ikakara.awsinstance.aws.DynamoHelper
@@ -44,34 +40,27 @@ import ikakara.awsinstance.dao.ITypeObject
 import ikakara.awsinstance.dao.dynamo.ADynamoObject
 
 /**
- *
  * @author Allen
  */
 @DynamoDBTable(tableName = "Ids")
 @Slf4j("LOG")
 @CompileStatic
-abstract public class AIdBase extends AIdObject implements ITypeObject {
-  private static String TABLE_NAME = null
+abstract class AIdBase extends AIdObject implements ITypeObject {
+  private static String TABLE_NAME
 
   protected AIdBase alias
 
   @Override
-  abstract public String getTypePrefix()
-
-  @Override
-  abstract public String getType()
-
-  @Override
-  synchronized public String tableName() {
-    if (TABLE_NAME == null) {
-      TABLE_NAME = DynamoHelper.getTableName(AIdBase.class, "grails.plugin.awsorguserteam.dataSource")
+  synchronized String tableName() {
+    if (!TABLE_NAME) {
+      TABLE_NAME = DynamoHelper.getTableName(AIdBase, "grails.plugin.awsorguserteam.dataSource")
       DynamoHelper.initTable(TABLE_NAME, this, "grails.plugin.awsorguserteam.dataSource")
     }
     return TABLE_NAME
   }
 
   @Override
-  public Map initTable() {
+  Map initTable() {
     Map map = DynamoHelper.getTableInformation(tableName())
     if (map == null) {
       // Table doesn't exist.  Let's create it.
@@ -85,7 +74,7 @@ abstract public class AIdBase extends AIdObject implements ITypeObject {
       CreateTableRequest req = new CreateTableRequest()
       .withTableName(tableName())
       .withAttributeDefinitions(
-        new AttributeDefinition(this.nameHashKey(), ScalarAttributeType.S),
+        new AttributeDefinition(nameHashKey(), ScalarAttributeType.S),
         new AttributeDefinition("AliasId", ScalarAttributeType.S),
         //new AttributeDefinition("AliasPrefix", ScalarAttributeType.S),
         new AttributeDefinition("IdType", ScalarAttributeType.S),
@@ -93,7 +82,7 @@ abstract public class AIdBase extends AIdObject implements ITypeObject {
         //new AttributeDefinition("UpdatedTime", ScalarAttributeType.S)
       )
       .withKeySchema(
-        new KeySchemaElement(this.nameHashKey(), KeyType.HASH))
+        new KeySchemaElement(nameHashKey(), KeyType.HASH))
       .withProvisionedThroughput(THRUPUT)
       .withGlobalSecondaryIndexes(
         new GlobalSecondaryIndex()
@@ -119,21 +108,21 @@ abstract public class AIdBase extends AIdObject implements ITypeObject {
         // Wait for the table to become active
         TableDescription desc = table.waitForActive()
         map = DynamoHelper.tableDescriptionToMap(desc)
-      } catch (Exception ie) {
-        LOG.error("initTable" + ie.getMessage())
+      } catch (ie) {
+        LOG.error("initTable $ie.message")
         map = DynamoHelper.getTableInformation(tableName())
       }
-
     }
+
     return map
   }
 
   @Override
-  public void marshalAttributesIN(Item item) {
+  void marshalAttributesIN(Item item) {
     super.marshalAttributesIN(item)
-    //if (map != null && !map.isEmpty()) {
-    String alias_prefix = null
-    String alias_id = null
+    //if (map) {
+    String alias_prefix
+    String alias_id
 
     if (item.isPresent("AliasPrefix")) {
       alias_prefix = item.getString("AliasPrefix")
@@ -148,27 +137,24 @@ abstract public class AIdBase extends AIdObject implements ITypeObject {
   }
 
   @Override
-  public Item marshalItemOUT(boolean bRemoveAttributeNull) {
-    Item outItem = super.marshalItemOUT(bRemoveAttributeNull)
-    if (outItem == null) {
-      outItem = new Item()
-    }
+  Item marshalItemOUT(boolean removeAttributeNull) {
+    Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
 
-    if (getType() != null && !"".equals(getType())) {
-      outItem = outItem.withString("IdType", getType())
-    } else if (bRemoveAttributeNull) {
+    if (type) {
+      outItem = outItem.withString("IdType", type)
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("IdType")
     }
 
-    if (alias != null) {
-      outItem = outItem.withString("AliasPrefix", alias.getTypePrefix())
-    } else if (bRemoveAttributeNull) {
+    if (alias) {
+      outItem = outItem.withString("AliasPrefix", alias.typePrefix)
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("AliasPrefix")
     }
 
-    if (alias != null && !"".equals(alias.getId())) {
-      outItem = outItem.withString("AliasId", alias.getId())
-    } else if (bRemoveAttributeNull) {
+    if (alias && alias.id != "") {
+      outItem = outItem.withString("AliasId", alias.id)
+    } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("AliasId")
     }
 
@@ -176,144 +162,115 @@ abstract public class AIdBase extends AIdObject implements ITypeObject {
   }
 
   @Override
-  public void initParameters(Map params) {
+  void initParameters(Map params) {
     super.initParameters(params)
-    //if (params != null && !params.isEmpty()) {
-    id = (String) params.get("id")
-    String alias_id = (String) params.get("alias_id")
-    String alias_prefix = (String) params.get("alias_prefix")
+    //if (params) {
+    id = (String) params.id
+    String alias_id = (String) params.alias_id
+    String alias_prefix = (String) params.alias_prefix
     alias = toId(alias_prefix + alias_id)
     //}
   }
 
-  public AIdBase withId(String id) {
+  AIdBase withId(String id) {
     this.id = id
     return this
   }
 
-  public AIdBase withAlias(AIdBase obj) {
+  AIdBase withAlias(AIdBase obj) {
     alias = obj
     return this
   }
 
   @DynamoDBIgnore
-  public AIdBase getAlias() {
+  AIdBase getAlias() {
     return alias
   }
 
-  public AIdBase isId(String str) {
-    if (str != null && str.startsWith(getTypePrefix())) {
-      id = str.substring(getTypePrefix().length())
+  AIdBase isId(String str) {
+    if (str?.startsWith(typePrefix)) {
+      id = str.substring(typePrefix.length())
       return this
     }
-
-    return null
   }
 
-  static public AIdBase toId(String id_str) {
+  static AIdBase toId(String id_str) {
     AIdBase obj = new IdUser().isId(id_str)
-    if (obj != null) {
+    if (obj) {
       return obj
     }
 
     obj = new IdOrg().isId(id_str)
-    if (obj != null) {
+    if (obj) {
       return obj
     }
 
     obj = new IdTeam().isId(id_str)
-    if (obj != null) {
+    if (obj) {
       return obj
     }
 
     obj = new IdSlug().isId(id_str)
-    if (obj != null) {
+    if (obj) {
       return obj
     }
 
     obj = new IdEmail().isId(id_str)
-    if (obj != null) {
+    if (obj) {
       return obj
     }
-
-    return null
   }
 
   @Override
-  public ADynamoObject newInstance(Item item) {
-    ADynamoObject obj = null
+  ADynamoObject newInstance(Item item) {
+    ADynamoObject obj
 
-    if (item != null) {
+    if (item) {
       // this is hacky to store different configs into one table
       if (item.isPresent("IdType")) {
         String type = item.getString("IdType")
         switch (type) {
-        case IdUser.ID_TYPE:
-          obj = new IdUser()
-          obj.marshalAttributesIN(item)
-          break
-        case IdOrg.ID_TYPE:
-          obj = new IdOrg()
-          obj.marshalAttributesIN(item)
-          break
-        case IdTeam.ID_TYPE:
-          obj = new IdTeam()
-          obj.marshalAttributesIN(item)
-          break
-        case IdEmail.ID_TYPE:
-          obj = new IdEmail()
-          obj.marshalAttributesIN(item)
-          break
-        case IdSlug.ID_TYPE:
-          obj = new IdSlug()
-          obj.marshalAttributesIN(item)
-          break
+        case IdUser.ID_TYPE:  obj = new IdUser();  break
+        case IdOrg.ID_TYPE:   obj = new IdOrg();   break
+        case IdTeam.ID_TYPE:  obj = new IdTeam();  break
+        case IdEmail.ID_TYPE: obj = new IdEmail(); break
+        case IdSlug.ID_TYPE:  obj = new IdSlug();  break
         }
       }
     }
 
+    obj?.marshalAttributesIN(item)
+
     return obj
   }
 
-  public AIdBase() {
-    super()
+  AIdBase() {
   }
 
-  public AIdBase(Map params) {
-    super()
+  AIdBase(Map params) {
     initParameters(params)
   }
 
   @DynamoDBAttribute(attributeName = "AliasId")
-  public String getAliasId() {
-    if (alias != null) {
-      return alias.getId()
-    }
-    return null
+  String getAliasId() {
+    alias?.id
   }
 
   @DynamoDBAttribute(attributeName = "AliasPrefix")
-  public String getAliasPrefix() {
-    if (alias != null) {
-      return alias.getTypePrefix()
-    }
-    return null
+  String getAliasPrefix() {
+    alias?.typePrefix
   }
 
-  public List<AIdBase> queryByAlias(String aliasId) {
-    List list = super.queryIndex("Idx_AliasId", "AliasId", aliasId)
-    return list
+  List<AIdBase> queryByAlias(String aliasId) {
+    queryIndex("Idx_AliasId", "AliasId", aliasId)
   }
 
-  public List<AIdBase> queryByType() {
-    List list = super.queryIndex("Idx_IdType", "IdType", getType())
-    return list
+  List<AIdBase> queryByType() {
+    queryIndex("Idx_IdType", "IdType", type)
   }
 
-  public List<AIdBase> queryByTypeAndAlias() {
-    RangeKeyCondition rangeKeyCondition = new RangeKeyCondition("AliasId").eq(getAliasId())
-    List list = super.queryIndex("Idx_IdType", "IdType", getType(), rangeKeyCondition)
-    return list
+  List<AIdBase> queryByTypeAndAlias() {
+    RangeKeyCondition rangeKeyCondition = new RangeKeyCondition("AliasId").eq(aliasId)
+    queryIndex("Idx_IdType", "IdType", type, rangeKeyCondition)
   }
-
 }

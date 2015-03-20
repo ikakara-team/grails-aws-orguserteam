@@ -37,6 +37,7 @@ public class IdEmail extends AIdBase {
   static public final String ID_TYPE = "Email"
   static public final String ID_PREFIX = '$'
 
+  @DynamoDBAttribute(attributeName = "Status")
   Number status
 
   @Override
@@ -98,15 +99,6 @@ public class IdEmail extends AIdBase {
   public IdEmail(Map params) {
     super()
     initParameters(params)
-  }
-
-  @DynamoDBAttribute(attributeName = "Status")
-  public Number getStatus() {
-    return status
-  }
-
-  public void setStatus(Number d) {
-    status = d
   }
 
 }
