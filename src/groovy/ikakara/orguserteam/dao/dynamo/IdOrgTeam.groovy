@@ -14,8 +14,6 @@
  */
 package ikakara.orguserteam.dao.dynamo
 
-import java.util.Map
-
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -24,29 +22,25 @@ import grails.validation.Validateable
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 
 /**
- *
  * @author Allen
  */
 @Validateable(nullable = true)
 @Slf4j("LOG")
 @CompileStatic
-public class IdOrgTeam extends AMemberGroupBase {
+class IdOrgTeam extends AMemberGroupBase {
 
-  static public final String ID_TYPE = "OrgTeam"
+  public static final String ID_TYPE = "OrgTeam"
 
   @Override
   @DynamoDBAttribute(attributeName = "IdType")
-  public String getType() {
+  String getType() {
     return ID_TYPE
   }
 
-  public IdOrgTeam() {
-    super()
+  IdOrgTeam() {
   }
 
-  public IdOrgTeam(Map params) {
-    super()
+  IdOrgTeam(Map params) {
     initParameters(params)
   }
-
 }

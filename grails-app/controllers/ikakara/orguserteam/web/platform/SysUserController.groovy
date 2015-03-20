@@ -25,55 +25,48 @@ import ikakara.orguserteam.dao.dynamo.IdUser
 //@Secured(['ROLE_ADMIN'])
 class SysUserController {
 
-  static allowedMethods = [
-    save: "POST", update: "PUT", delete: "DELETE"]
+  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-  def orgUserTeamService;
+  def orgUserTeamService
 
   //////////////////////////////////////////////////////////////////////////////
   // IdUser
   //////////////////////////////////////////////////////////////////////////////
 
   def index(Integer max) {
-    println "index: ${params}"
 
     params.max = Math.min(max ?: 10, 100)
-    List results = new IdUser().queryByType();
+    List results = new IdUser().queryByType()
 
-    int count = results != null ? results.size() : 0;
+    int count = results ? results.size() : 0
 
     def json = results as JSON
-    //println ">>>>>>>>>>>>>>>>>>>>>>>>>" + json
+    //log.debug ">>>>>>>>>>>>>>>>>>>>>>>>>$json"
 
     respond results, model: [userList: results, userCount: count]
   }
 
   def show(IdUser userInstance) {
-    println "show: ${params} instance: ${userInstance.id}"
 
     if(params.id) {
-      userInstance.setId(params.id);
+      userInstance.id = params.id
     }
 
-    userInstance.load();
+    userInstance.load()
 
-    def listOrg = orgUserTeamService.listOrg(userInstance)
-    userInstance.orgListAdd(listOrg)
+    userInstance.orgListAdd(orgUserTeamService.listOrg(userInstance))
 
-    def listTeam = orgUserTeamService.listTeam(userInstance)
-    userInstance.teamListAdd(listTeam)
+    userInstance.teamListAdd(orgUserTeamService.listTeam(userInstance))
 
     respond userInstance, model: [userInstance: userInstance]
   }
 
   def create() {
-    def config = new IdUser(params);
-
-    render view: 'create', model:[userInstance: config]
+    render view: 'create', model:[userInstance: new IdUser(params)]
   }
 
   def save(IdUser userInstance) {
-    if (userInstance == null) {
+    if (!userInstance) {
       notFoundUser()
       return
     }
@@ -83,7 +76,7 @@ class SysUserController {
 
     userInstance = orgUserTeamService.createUser(userInstance, userInstance.name, userInstance.initials, userInstance.description, newalias)
     if(!userInstance) {
-      flash.message = "Failed to create: ${userInstance.getId()}"
+      flash.message = "Failed to create: $userInstance.id"
       render view: 'create', model:[userInstance: userInstance]
       return
     }
@@ -96,27 +89,26 @@ class SysUserController {
         render userInstance as XML, [status: CREATED]
       }
       '*' {
-        flash.message = message(code: 'default.created.message', args: [message(code: 'adminApp.label', default: 'IdUser'), userInstance.getId()])
-        redirect action: 'show', id: userInstance.getId()
+        flash.message = message(code: 'default.created.message', args: [message(code: 'adminApp.label', default: 'IdUser'), userInstance.id])
+        redirect action: 'show', id: userInstance.id
       }
     }
   }
 
   def edit(IdUser userInstance) {
-    if(params.id) {
-      userInstance.setId(params.id);
-    } else {
-      response.sendError(404);
-      return;
+    if(!params.id) {
+      response.sendError(404)
+      return
     }
 
-    userInstance.load();
+    userInstance.id = params.id
+    userInstance.load()
 
     render view: 'edit', model:[userInstance: userInstance]
   }
 
   def update(IdUser userInstance) {
-    if (userInstance == null) {
+    if (!userInstance) {
       notFoundUser()
       return
     }
@@ -135,20 +127,20 @@ class SysUserController {
         render userInstance as XML, [status: OK]
       }
       '*' { // form wasn't working
-        flash.message = message(code: 'default.updated.message', args: [message(code: 'IdUser.label', default: 'IdUser'), userInstance.getId()])
-        redirect action: 'show', id: userInstance.getId()
+        flash.message = message(code: 'default.updated.message', args: [message(code: 'IdUser.label', default: 'IdUser'), userInstance.id])
+        redirect action: 'show', id: userInstance.id
       }
     }
   }
 
   def delete(IdUser userInstance) {
-    if (userInstance == null) {
+    if (!userInstance) {
       notFoundUser()
       return
     }
 
     if(params.id) {
-      userInstance.setId(params.id);
+      userInstance.id = params.id
     }
 
     orgUserTeamService.deleteUser(userInstance)
@@ -161,8 +153,8 @@ class SysUserController {
         render status: NO_CONTENT
       }
       '*' {
-        flash.message = message(code: 'default.deleted.message', args: [message(code: 'IdUser.label', default: 'IdUser'), userInstance.getId()])
-        redirect action:"index", method:"GET"
+        flash.message = message(code: 'default.deleted.message', args: [message(code: 'IdUser.label', default: 'IdUser'), userInstance.id])
+        redirect action:"index"
       }
     }
   }
@@ -177,9 +169,8 @@ class SysUserController {
       }
       '*' {
         flash.message = message(code: 'default.not.found.message', args: [message(code: 'adminApp.label', default: 'IdUser'), params.id])
-        redirect action: "index", method: "GET"
+        redirect action: "index"
       }
     }
   }
-
 }
