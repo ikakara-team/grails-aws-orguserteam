@@ -5,7 +5,7 @@ import ikakara.simplemarshaller.web.app.SimpleMarshallerService
 
 class AwsOrguserteamGrailsPlugin {
   def version = "0.1"
-  def grailsVersion = "2.0 > *"
+  def grailsVersion = "2.2 > *"
   def loadAfter = ['aws-instance']
   def pluginExcludes = [
     "web-app/**"
