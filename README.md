@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.3.3'
-    compile ':aws-orguserteam:0.1'
+    compile ':aws-orguserteam:0.1.1'
 ...
   }
 ```
@@ -99,4 +99,5 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 
 History:
 --------------
-0.1 - initial checkin
+0.1.1 - fix title
+0.1   - initial checkin

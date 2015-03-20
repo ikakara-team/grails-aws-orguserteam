@@ -34,6 +34,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
  * @author Allen
  */
 @Validateable(nullable = true)
+@SimpleMarshaller(includes = ["id", "type", "aliasId", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
 public class IdEmail extends AIdBase {
