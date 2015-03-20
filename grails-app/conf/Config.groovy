@@ -26,4 +26,8 @@ grails.validateable.classes = [
   ikakara.orguserteam.dao.dynamo.IdUserOrg,
   ikakara.orguserteam.dao.dynamo.IdUserTeam,
   ikakara.orguserteam.dao.dynamo.IdOrgTeam,
+  ikakara.orguserteam.dao.dynamo.IdEmailOrg,
+  ikakara.orguserteam.dao.dynamo.IdEmailTeam,
 ]
+
+

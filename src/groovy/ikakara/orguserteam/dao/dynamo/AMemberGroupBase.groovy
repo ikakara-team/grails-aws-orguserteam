@@ -64,7 +64,8 @@ abstract public class AMemberGroupBase extends ACreatedUpdatedObject implements 
 
   protected AIdBase member // mobile, email, hash
   protected AIdBase group
-  protected String member_role
+  protected IdUser  invitedBy
+  protected String  member_role
   protected boolean bLoadMember = false
   protected boolean bLoadGroup = false
 
@@ -90,41 +91,41 @@ abstract public class AMemberGroupBase extends ACreatedUpdatedObject implements 
       Projection PROJECTION_TYPE = new Projection().withProjectionType(ProjectionType.KEYS_ONLY)
 
       CreateTableRequest req = new CreateTableRequest()
-              .withTableName(tableName())
-              .withAttributeDefinitions(
-                      new AttributeDefinition(this.nameHashKey(), ScalarAttributeType.S),
-                      new AttributeDefinition(this.nameRangeKey(), ScalarAttributeType.S),
-                      new AttributeDefinition("IdType", ScalarAttributeType.S),
-                      new AttributeDefinition("CreatedTime", ScalarAttributeType.S)
-              )
-              .withKeySchema(
-                      new KeySchemaElement(this.nameHashKey(), KeyType.HASH),
-                      new KeySchemaElement(this.nameRangeKey(), KeyType.RANGE))
-              .withProvisionedThroughput(THRUPUT)
-              .withLocalSecondaryIndexes(
-                      new LocalSecondaryIndex()
-                      .withIndexName("Idx_" + this.nameHashKey())
-                      .withKeySchema(
-                              new KeySchemaElement(this.nameHashKey(), KeyType.HASH),
-                              new KeySchemaElement("IdType", KeyType.RANGE))
-                      .withProjection(PROJECTION)
-              )
-              .withGlobalSecondaryIndexes(
-                      new GlobalSecondaryIndex()
-                      .withIndexName("Idx_IdType")
-                      .withKeySchema(
-                              new KeySchemaElement("IdType", KeyType.HASH),
-                              new KeySchemaElement("CreatedTime", KeyType.RANGE))
-                      .withProjection(PROJECTION_TYPE)
-                      .withProvisionedThroughput(THRUPUT))
-              .withGlobalSecondaryIndexes(
-                      new GlobalSecondaryIndex()
-                      .withIndexName("Idx_" + this.nameRangeKey())
-                      .withKeySchema(
-                              new KeySchemaElement(this.nameRangeKey(), KeyType.HASH),
-                              new KeySchemaElement("IdType", KeyType.RANGE))
-                      .withProjection(PROJECTION)
-                      .withProvisionedThroughput(THRUPUT))
+      .withTableName(tableName())
+      .withAttributeDefinitions(
+        new AttributeDefinition(this.nameHashKey(), ScalarAttributeType.S),
+        new AttributeDefinition(this.nameRangeKey(), ScalarAttributeType.S),
+        new AttributeDefinition("IdType", ScalarAttributeType.S),
+        new AttributeDefinition("CreatedTime", ScalarAttributeType.S)
+      )
+      .withKeySchema(
+        new KeySchemaElement(this.nameHashKey(), KeyType.HASH),
+        new KeySchemaElement(this.nameRangeKey(), KeyType.RANGE))
+      .withProvisionedThroughput(THRUPUT)
+      .withLocalSecondaryIndexes(
+        new LocalSecondaryIndex()
+        .withIndexName("Idx_" + this.nameHashKey())
+        .withKeySchema(
+          new KeySchemaElement(this.nameHashKey(), KeyType.HASH),
+          new KeySchemaElement("IdType", KeyType.RANGE))
+        .withProjection(PROJECTION)
+      )
+      .withGlobalSecondaryIndexes(
+        new GlobalSecondaryIndex()
+        .withIndexName("Idx_IdType")
+        .withKeySchema(
+          new KeySchemaElement("IdType", KeyType.HASH),
+          new KeySchemaElement("CreatedTime", KeyType.RANGE))
+        .withProjection(PROJECTION_TYPE)
+        .withProvisionedThroughput(THRUPUT))
+      .withGlobalSecondaryIndexes(
+        new GlobalSecondaryIndex()
+        .withIndexName("Idx_" + this.nameRangeKey())
+        .withKeySchema(
+          new KeySchemaElement(this.nameRangeKey(), KeyType.HASH),
+          new KeySchemaElement("IdType", KeyType.RANGE))
+        .withProjection(PROJECTION)
+        .withProvisionedThroughput(THRUPUT))
 
       Table table = AWSInstance.DYNAMO_DB().createTable(req)
 
@@ -177,6 +178,9 @@ abstract public class AMemberGroupBase extends ACreatedUpdatedObject implements 
     if (item.isPresent("GroupId")) {
       setGroupId(item.getString("GroupId"))
     }
+    if (item.isPresent("InvitedById")) {
+      setInvitedById(item.getString("InvitedById"))
+    }
     if (item.isPresent("MemberRole")) {
       member_role = item.getString("MemberRole")
     }
@@ -200,6 +204,12 @@ abstract public class AMemberGroupBase extends ACreatedUpdatedObject implements 
       outItem = outItem.withString("GroupId", (String) group.valueHashKey())
     } else if (bRemoveAttributeNull) {
       outItem = outItem.removeAttribute("GroupId")
+    }
+
+    if (invitedBy != null) {
+      outItem = outItem.withString("InvitedById", (String) invitedBy.valueHashKey())
+    } else if (bRemoveAttributeNull) {
+      outItem = outItem.removeAttribute("InvitedById")
     }
 
     if (member_role != null && !"".equals(member_role)) {
@@ -226,18 +236,26 @@ abstract public class AMemberGroupBase extends ACreatedUpdatedObject implements 
       if (item.isPresent("IdType")) {
         String type = item.getString("IdType")
         switch (type) {
-          case IdUserOrg.ID_TYPE:
-            obj = new IdUserOrg()
-            obj.marshalAttributesIN(item)
-            break
-          case IdUserTeam.ID_TYPE:
-            obj = new IdUserTeam()
-            obj.marshalAttributesIN(item)
-            break
-          case IdOrgTeam.ID_TYPE:
-            obj = new IdOrgTeam()
-            obj.marshalAttributesIN(item)
-            break
+        case IdUserOrg.ID_TYPE:
+          obj = new IdUserOrg()
+          obj.marshalAttributesIN(item)
+          break
+        case IdUserTeam.ID_TYPE:
+          obj = new IdUserTeam()
+          obj.marshalAttributesIN(item)
+          break
+        case IdOrgTeam.ID_TYPE:
+          obj = new IdOrgTeam()
+          obj.marshalAttributesIN(item)
+          break
+        case IdEmailOrg.ID_TYPE:
+          obj = new IdEmailOrg()
+          obj.marshalAttributesIN(item)
+          break
+        case IdEmailTeam.ID_TYPE:
+          obj = new IdEmailTeam()
+          obj.marshalAttributesIN(item)
+          break
         }
       }
     }
@@ -331,6 +349,15 @@ abstract public class AMemberGroupBase extends ACreatedUpdatedObject implements 
     group = AIdBase.toId(id)
   }
 
+  @DynamoDBAttribute(attributeName = "InvitedById")
+  public String getInvitedById() {
+    return (String) invitedBy?.valueHashKey()
+  }
+
+  public void setInvitedById(String id) {
+    invitedBy = AIdBase.toId(id)
+  }
+
   @DynamoDBAttribute(attributeName = "MemberRole")
   public String getMemberRole() {
     return member_role
@@ -353,7 +380,7 @@ abstract public class AMemberGroupBase extends ACreatedUpdatedObject implements 
     // Scan items for IdType
     String where = "IdType = :myIdType"
     ValueMap valueMap = new ValueMap()
-            .withString(":myIdType", getType())
+    .withString(":myIdType", getType())
     List list = super.scan(where, valueMap)
 
     return list
