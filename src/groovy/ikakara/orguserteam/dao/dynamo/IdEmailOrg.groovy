@@ -48,9 +48,4 @@ public class IdEmailOrg extends AMemberGroupBase {
     super()
     initParameters(params)
   }
-
-  public boolean isAdmin() {
-    return ROLE_ADMIN.equals(member_role)
-  }
-
 }

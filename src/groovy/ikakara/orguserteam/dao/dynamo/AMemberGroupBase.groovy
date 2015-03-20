@@ -355,7 +355,7 @@ abstract public class AMemberGroupBase extends ACreatedUpdatedObject implements 
   }
 
   public void setInvitedById(String id) {
-    invitedBy = AIdBase.toId(id)
+    invitedBy = (IdUser)AIdBase.toId(id)
   }
 
   @DynamoDBAttribute(attributeName = "MemberRole")

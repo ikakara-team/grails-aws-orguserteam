@@ -48,5 +48,4 @@ public class IdEmailTeam extends AMemberGroupBase {
     super()
     initParameters(params)
   }
-
 }
