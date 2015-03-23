@@ -100,6 +100,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.2   - add/invite users to join organizations/teams
 0.1.1 - fix title
 0.1   - initial checkin
 ```

@@ -15,13 +15,14 @@
 package ikakara.orguserteam.web.app
 
 import ikakara.orguserteam.dao.dynamo.AIdBase
-import ikakara.orguserteam.dao.dynamo.IdOrg
-import ikakara.orguserteam.dao.dynamo.IdOrgTeam
 import ikakara.orguserteam.dao.dynamo.IdSlug
 import ikakara.orguserteam.dao.dynamo.IdTeam
+import ikakara.orguserteam.dao.dynamo.IdOrg
+import ikakara.orguserteam.dao.dynamo.IdOrgTeam
 import ikakara.orguserteam.dao.dynamo.IdUser
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
 import ikakara.orguserteam.dao.dynamo.IdUserTeam
+import ikakara.orguserteam.dao.dynamo.IdEmail
 import ikakara.orguserteam.dao.dynamo.IdEmailTeam
 import ikakara.orguserteam.dao.dynamo.IdEmailOrg
 
@@ -190,7 +191,7 @@ class OrgUserTeamService {
   }
 
   // This is what sucks about NOSQL (dynamo) ...
-  def listOrg(IdUser user) {
+  List<IdOrg> listOrg(IdUser user) {
     List list = new IdUserOrg().withMember(user).queryByMemberAndType()
 
     // we can optimize this ...
@@ -201,7 +202,7 @@ class OrgUserTeamService {
     }
   }
 
-  def getOrg(IdTeam team) {
+  IdOrg getOrg(IdTeam team) {
     def list = listOrg(team)
     if(list) {
       return list[0] // hacky, should only be one org
@@ -209,7 +210,7 @@ class OrgUserTeamService {
   }
 
   // NOSQL compromise for 1 to many, using many to many table
-  def listOrg(IdTeam team) {
+  List<IdOrg> listOrg(IdTeam team) {
     List list = new IdOrgTeam().withGroup(team).queryByGroupAndType()
 
     // theoretically, only 1
@@ -333,6 +334,82 @@ class OrgUserTeamService {
   }
 
   /////////////////////////////////////////////////////////////////////////////
+  // Email
+  /////////////////////////////////////////////////////////////////////////////
+  IdEmail email(String emailId) {
+    def email = new IdEmail().withId(emailId)
+    def load = email.load()
+    if(!load) {
+      // doesn't exist
+      log.error("Email Not Found: $emailId")
+      return null
+    }
+
+    return email
+  }
+
+  IdEmail createEmail(String emailId) {
+    // create org
+    def org = new IdEmail(id: emailId)
+    .withCreatedUpdated()
+
+    def create = org.create()
+    if(!create) {
+      // failed
+      return null
+    }
+
+    return org
+  }
+
+  IdEmail updateEmail(IdEmail email, IdUser uesr) {
+    def load = email.load()
+    if(!load) {
+      // not found
+      return
+    }
+
+    email.withAlias(user)
+    email.save()
+
+    return email
+  }
+
+  // return true if deleted, returns false if not found
+  boolean deleteEmail(IdEmail email) {
+    def load = email.load()
+    if(!load) {
+      // not found
+      return false
+    }
+
+    email.delete()
+
+    return true
+  }
+
+
+  boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org) {
+    def userorg = new IdUserOrg().withInvitedBy(invitedBy).withMember(user).withGroup(org)
+    userorg.save()
+  }
+
+  boolean addEmailToOrg(IdUser invitedBy, IdEmail email, IdOrg org) {
+    def emailorg = new IdEmailOrg().withInvitedBy(invitedBy).withMember(email).withGroup(org)
+    emailorg.save()
+  }
+
+  boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team) {
+    def userteam = new IdUserTeam().withInvitedBy(invitedBy).withMember(user).withGroup(tea,m)
+    userteam.save()
+  }
+
+  boolean addEmailToTeam(IdUser invitedBy, IdEmail email, IdTeam team) {
+    def emailteam = new IdEmailTeam().withInvitedBy(invitedBy).withMember(email).withGroup(org)
+    emailteam.save()
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
   // Team
   /////////////////////////////////////////////////////////////////////////////
 
@@ -341,7 +418,7 @@ class OrgUserTeamService {
     def load = team.load()
     if(!load) {
       // doesn't exist
-      log.error("App Not Found: $teamId")
+      log.error("Team Not Found: $teamId")
       return null
     }
 
@@ -390,7 +467,7 @@ class OrgUserTeamService {
   }
 
   // this is ridculous ... SQL is so much better at relationships
-  def listOrgTeams(IdUser user, String myOrgName) {
+  List<IdTeam> listOrgTeams(IdUser user, String myOrgName) {
     Map mapApp = [:]
     List listOrg = [new IdOrg(name: myOrgName)]
 
@@ -565,7 +642,7 @@ class OrgUserTeamService {
   }
 
   //user, params.name, params.int('privacy'), params.org, params.aliasId
-  def updateTeamOwner(IdTeam team, String orgId) {
+  boolean updateTeamOwner(IdTeam team, String orgId) {
     //def load = team.load()
     //if(!load) {
     // not found
@@ -582,7 +659,7 @@ class OrgUserTeamService {
         def load = org.load()
         if(!load) {
           // failed
-          return null
+          return false
         }
       }
 
@@ -594,7 +671,7 @@ class OrgUserTeamService {
         def del = curorgteam.delete()
         if(!del) {
           // failed
-          return null
+          return false
         }
       }
 
@@ -608,7 +685,7 @@ class OrgUserTeamService {
         def create = orgteam.create()
         if(!create) {
           // failed
-          return null
+          return false
         }
       }
     }

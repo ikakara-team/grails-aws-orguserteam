@@ -25,7 +25,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore
 import com.amazonaws.services.dynamodbv2.document.Item
 
-
+import ikakara.awsinstance.util.CalendarUtil
 import ikakara.awsinstance.util.StringUtil
 import ikakara.simplemarshaller.annotation.SimpleMarshaller
 
@@ -37,59 +37,91 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
-public class IdEmail extends AIdBase {
+class IdEmail extends AIdBase {
 
   static public final String ID_TYPE = "Email"
   static public final String ID_PREFIX = '$'
 
   @DynamoDBAttribute(attributeName = "Status")
   Number status
+  @DynamoDBAttribute(attributeName = "EmailSentCount")
+  Number emailSentCount;
+  @DynamoDBAttribute(attributeName = "EmailSentLast")
+  String emailSentLast;
+  @DynamoDBAttribute(attributeName = "EmailSentLastError")
+  String emailSentLastError;
+
+  // transient
+  protected Date lastSentDate = null;
+  protected Date lastSentErrorDate = null;
 
   @Override
   @DynamoDBIgnore
-  public String getTypePrefix() {
+  String getTypePrefix() {
     return ID_PREFIX
   }
 
   @Override
   @DynamoDBAttribute(attributeName = "IdType")
-  public String getType() {
+  String getType() {
     return ID_TYPE
   }
 
   @Override
-  public void marshalAttributesIN(Item item) {
+  void marshalAttributesIN(Item item) {
     super.marshalAttributesIN(item)
     //if (map != null && !map.isEmpty()) {
     if (item.isPresent("Status")) {
       status = item.getNumber("Status")
     }
+    if (item.isPresent("EmailSentCount")) {
+      emailSentCount = item.getNumber("EmailSentCount");
+    }
+    if (item.isPresent("EmailSentLast")) {
+      emailSentLast = item.getString("EmailSentLast");
+    }
+    if (item.isPresent("EmailSentLastError")) {
+      emailSentLastError = item.getString("EmailSentLastError");
+    }
     //}
   }
 
   @Override
-  public Item marshalItemOUT(boolean removeAttributeNull) {
-    Item outItem = super.marshalItemOUT(removeAttributeNull)
-    if (outItem == null) {
-      outItem = new Item()
-    }
-
+  Item marshalItemOUT(boolean removeAttributeNull) {
+    Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
     if (status != null) {
       outItem = outItem.withNumber("Status", status)
     } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Status")
     }
-
+    if (emailSentCount != null) {
+      outItem = outItem.withNumber("EmailSentCount", emailSentCount);
+    } else if (removeAttributeNull) {
+      outItem = outItem.removeAttribute("EmailSentCount");
+    }
+    if (emailSentLast) {
+      outItem = outItem.withString("EmailSentLast", emailSentLast);
+    } else if (removeAttributeNull) {
+      outItem = outItem.removeAttribute("EmailSentLast");
+    }
+    if (emailSentLastError) {
+      outItem = outItem.withString("EmailSentLastError", emailSentLastError);
+    } else if (removeAttributeNull) {
+      outItem = outItem.removeAttribute("EmailSentLastError");
+    }
     return outItem
   }
 
   @Override
-  public void initParameters(Map params) {
+  void initParameters(Map params) {
     super.initParameters(params)
     //if (params != null && !params.isEmpty()) {
 
     try {
       status = (Integer) params.status
+      emailSentCount = (Integer) params.emailSentCount
+      emailSentLast = params.emailSentLast
+      emailSentLastError = params.emailSentLastError
     } catch (Exception e) {
 
     }
@@ -97,11 +129,46 @@ public class IdEmail extends AIdBase {
     //}
   }
 
-  public IdEmail() {
+  IdEmail() {
   }
 
-   IdEmail(Map params) {
+  IdEmail(Map params) {
     initParameters(params)
+  }
+
+  @DynamoDBIgnore
+  public Date getLastSentDate() {
+    if (!lastSentDate) {
+      if (emailSentLast) {
+        lastSentDate = CalendarUtil.getDateFromString_CONCISE_MS(emailSentLast);
+      } else {
+        setLastSentDate(new Date());
+      }
+    }
+    return lastSentDate;
+  }
+
+  public void setLastSentDate(Date d) {
+    lastSentDate = d;
+    emailSentLast = CalendarUtil.getStringFromDate_CONCISE_MS(d);
+  }
+
+  /////////////
+  @DynamoDBIgnore
+  public Date getLastSentErrorDate() {
+    if (!lastSentErrorDate) {
+      if (emailSentLastError) {
+        lastSentErrorDate = CalendarUtil.getDateFromString_CONCISE_MS(emailSentLastError);
+      } else {
+        setLastSentErrorDate(new Date());
+      }
+    }
+    return lastSentErrorDate;
+  }
+
+  public void setLastSentErrorDate(Date d) {
+    lastSentErrorDate = d;
+    emailSentLastError = CalendarUtil.getStringFromDate_CONCISE_MS(d);
   }
 
 }

@@ -267,6 +267,11 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
     return this
   }
 
+  AMemberGroupBase withInvitedBy(IdUser user) {
+    invitedBy = user
+    return this
+  }
+
   @DynamoDBIgnore
   AIdBase getMember() {
     if (member && !bLoadMember) {
