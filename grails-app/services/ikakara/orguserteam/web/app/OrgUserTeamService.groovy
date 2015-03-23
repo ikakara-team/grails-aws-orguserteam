@@ -348,18 +348,22 @@ class OrgUserTeamService {
     return email
   }
 
-  IdEmail createEmail(String emailId) {
+  IdEmail createEmail(String emailId, IdUser user=null) {
     // create org
-    def org = new IdEmail(id: emailId)
+    def email = new IdEmail(id: emailId)
     .withCreatedUpdated()
 
-    def create = org.create()
+    if(user) {
+      email.withAlias(user)
+    }
+
+    def create = email.create()
     if(!create) {
       // failed
       return null
     }
 
-    return org
+    return email
   }
 
   IdEmail updateEmail(IdEmail email, IdUser uesr) {

@@ -54,9 +54,9 @@ class SysOrgController {
 
     orgInstance.load()
 
-    userInstance.userListAdd(orgUserTeamService.listUser(orgInstance))
+    orgInstance.userListAdd(orgUserTeamService.listUser(orgInstance))
 
-    userInstance.teamListAdd(orgUserTeamService.listTeam(orgInstance))
+    orgInstance.teamListAdd(orgUserTeamService.listTeam(orgInstance))
 
     respond orgInstance, model: [orgInstance: orgInstance]
   }
@@ -113,9 +113,9 @@ class SysOrgController {
 
     // fix the incoming parameters
     def newalias = params.aliasId
-    //userInstance.aliasId = params.curalias
+    //orgInstance.aliasId = params.curalias
 
-    orgInstance = orgUserTeamService.updateUser(userInstance, userInstance.name, userInstance.initials, userInstance.description, newalias)
+    orgInstance = orgUserTeamService.updateUser(orgInstance, orgInstance.name, orgInstance.initials, orgInstance.description, newalias)
 
     request.withFormat {
       json {
