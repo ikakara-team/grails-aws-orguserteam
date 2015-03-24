@@ -164,8 +164,8 @@ class IdOrg extends AIdBase {
     try {
       visibility = (Integer) params.visibility
       name = (String) params.name
-      imageUrl = (String) params.image_url
-      webUrl = (String) params.web_url
+      imageUrl = (String) params.imageUrl
+      webUrl = (String) params.webUrl
       description = (String) params.description
     } catch (ignored) {
     }
