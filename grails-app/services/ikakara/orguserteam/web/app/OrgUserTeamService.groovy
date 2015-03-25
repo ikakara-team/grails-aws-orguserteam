@@ -348,6 +348,24 @@ class OrgUserTeamService {
     return email
   }
 
+  List<IdEmail> listEmail(IdOrg org) {
+    List list = new IdEmailOrg().withGroup(org).queryByGroupAndType()
+    return list.collect { emailobj ->
+      IdEmail email = emailobj.member
+      email.load()
+      email
+    }
+  }
+
+  List<IdEmail> listEmail(IdTeam team) {
+    List list = new IdEmailTeam().withGroup(team).queryByGroupAndType()
+    return list.collect { emailobj ->
+      IdEmail email = emailobj.member
+      email.load()
+      email
+    }
+  }
+
   IdEmail createEmail(String emailId, IdUser user=null) {
     // create org
     def email = new IdEmail(id: emailId)
