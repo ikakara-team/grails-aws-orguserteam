@@ -408,7 +408,7 @@ class OrgUserTeamService {
   }
 
   boolean addEmailToTeam(IdUser invitedBy, IdEmail email, IdTeam team) {
-    def emailteam = new IdEmailTeam().withInvitedBy(invitedBy).withMember(email).withGroup(org).withCreatedUpdated()
+    def emailteam = new IdEmailTeam().withInvitedBy(invitedBy).withMember(email).withGroup(team).withCreatedUpdated()
     emailteam.save()
   }
 
