@@ -19,8 +19,8 @@ Installation:
 ```
   plugins {
 ...
-    compile ':aws-instance:0.3.5'
-    compile ':aws-orguserteam:0.2.3'
+    compile ':aws-instance:0.3.6'
+    compile ':aws-orguserteam:0.2.4'
 ...
   }
 ```
@@ -100,7 +100,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
-0.2.3 - add/invite users to join organizations/teams
+0.2.4 - add/invite users to join organizations/teams
 0.1.1 - fix title
 0.1   - initial checkin
 ```
