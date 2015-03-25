@@ -392,24 +392,23 @@ class OrgUserTeamService {
     return true
   }
 
-
   boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org) {
-    def userorg = new IdUserOrg().withInvitedBy(invitedBy).withMember(user).withGroup(org)
+    def userorg = new IdUserOrg().withInvitedBy(invitedBy).withMember(user).withGroup(org).withCreatedUpdated()
     userorg.save()
   }
 
   boolean addEmailToOrg(IdUser invitedBy, IdEmail email, IdOrg org) {
-    def emailorg = new IdEmailOrg().withInvitedBy(invitedBy).withMember(email).withGroup(org)
+    def emailorg = new IdEmailOrg().withInvitedBy(invitedBy).withMember(email).withGroup(org).withCreatedUpdated()
     emailorg.save()
   }
 
   boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team) {
-    def userteam = new IdUserTeam().withInvitedBy(invitedBy).withMember(user).withGroup(tea,m)
+    def userteam = new IdUserTeam().withInvitedBy(invitedBy).withMember(user).withGroup(team).withCreatedUpdated()
     userteam.save()
   }
 
   boolean addEmailToTeam(IdUser invitedBy, IdEmail email, IdTeam team) {
-    def emailteam = new IdEmailTeam().withInvitedBy(invitedBy).withMember(email).withGroup(org)
+    def emailteam = new IdEmailTeam().withInvitedBy(invitedBy).withMember(email).withGroup(org).withCreatedUpdated()
     emailteam.save()
   }
 
