@@ -61,19 +61,19 @@ grails {
 Usage:
 --------------
 
-Services:
+orgUserTeamService:
 --------------
-* orgUserTeamService
+* Id
   * ```AIdBase findIdObjBySlugId(String slugId)```
   * ```boolean exist(AIdBase id)```
-// Users
+* User
   * ```IdUser user(String userId)```
   * ```List<IdUserOrg> listUser(IdOrg org)```
   * ```List<IdUserTeam> listUser(IdTeam team)```
   * ```IdUser createUser(IdUser user, String name, String initials, String desc, String shortName)```
   * ```IdUser updateUser(IdUser user, String name, String initials, String desc, String shortName)```
   * ```boolean deleteUser(IdUser user)```
-// Orgs
+* Org
   * ```IdOrg org(String orgId)```
   * ```IdOrg getOrg(IdTeam team)```
   * ```List<IdOrgTeam> listOrg(IdTeam team)```
@@ -81,7 +81,7 @@ Services:
   * ```IdOrg createOrg(IdUser user, String orgName, String orgDescription)```
   * ```IdSlug updateOrg(IdOrg org, String name, String desc, String web_url, String shortName)```
   * ```boolean deleteOrg(IdOrg org)```
-// Teams
+* Team
   * ```IdTeam team(String teamId)```
   * ```List<IdTeam> listTeamVisible(IdOrg org, IdUser user)```
   * ```List<IdOrgTeam> listTeam(IdOrg org)```
@@ -91,7 +91,7 @@ Services:
   * ```IdSlug updateTeam(IdTeam team, String name, Integer privacy, String description, String shortName)```
   * ```boolean updateTeamOwner(IdTeam team, String orgId)```
   * ```boolean deleteTeam(IdTeam team)```
-// Emails
+* Email
   * ```IdEmail email(String emailId)```
   * ```List<IdEmailOrg> listEmail(IdOrg org)```
   * ```List<IdEmailTeam> listEmail(IdTeam team)```
