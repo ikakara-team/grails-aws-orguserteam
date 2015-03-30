@@ -58,22 +58,14 @@ class OrgUserTeamService {
     return user
   }
 
-  List<IdUser> listUser(IdOrg org) {
+  List<IdUserOrg> listUser(IdOrg org) {
     List list = new IdUserOrg().withGroup(org).queryByGroupAndType()
-    return list.collect { userobj ->
-      IdUser user = userobj.member
-      user.load()
-      user
-    }
+    return list
   }
 
-  List<IdUser> listUser(IdTeam team) {
+  List<IdUserTeam> listUser(IdTeam team) {
     List list = new IdUserTeam().withGroup(team).queryByGroupAndType()
-    return list.collect { userobj ->
-      IdUser user = userobj.member
-      user.load()
-      user
-    }
+    return list
   }
 
   IdUser createUser(IdUser user, String name, String initials, String desc, String shortName) {
@@ -190,35 +182,22 @@ class OrgUserTeamService {
     return org
   }
 
-  // This is what sucks about NOSQL (dynamo) ...
-  List<IdOrg> listOrg(IdUser user) {
-    List list = new IdUserOrg().withMember(user).queryByMemberAndType()
-
-    // we can optimize this ...
-    return list.collect { IdUserOrg userorg ->
-      def org = userorg.group
-      org.load()
-      org
-    }
-  }
-
   IdOrg getOrg(IdTeam team) {
     def list = listOrg(team)
     if(list) {
-      return list[0] // hacky, should only be one org
+      return list[0].member // hacky, should only be one org
     }
   }
 
   // NOSQL compromise for 1 to many, using many to many table
-  List<IdOrg> listOrg(IdTeam team) {
+  List<IdOrgTeam> listOrg(IdTeam team) {
     List list = new IdOrgTeam().withGroup(team).queryByGroupAndType()
+    return list
+  }
 
-    // theoretically, only 1
-    return list.collect { IdOrgTeam orgteam ->
-      def org = orgteam.member
-      org.load()
-      org
-    }
+  List<IdUserOrg> listOrg(IdUser user) {
+    List list = new IdUserOrg().withMember(user).queryByMemberAndType()
+    return list
   }
 
   IdOrg createOrg(IdUser user, String orgName, String orgDescription) {
@@ -334,103 +313,6 @@ class OrgUserTeamService {
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  // Email
-  /////////////////////////////////////////////////////////////////////////////
-  IdEmail email(String emailId) {
-    def email = new IdEmail().withId(emailId)
-    def load = email.load()
-    if(!load) {
-      // doesn't exist
-      log.error("Email Not Found: $emailId")
-      return null
-    }
-
-    return email
-  }
-
-  List<IdEmail> listEmail(IdOrg org) {
-    List list = new IdEmailOrg().withGroup(org).queryByGroupAndType()
-    return list.collect { emailobj ->
-      IdEmail email = emailobj.member
-      email.load()
-      email
-    }
-  }
-
-  List<IdEmail> listEmail(IdTeam team) {
-    List list = new IdEmailTeam().withGroup(team).queryByGroupAndType()
-    return list.collect { emailobj ->
-      IdEmail email = emailobj.member
-      email.load()
-      email
-    }
-  }
-
-  IdEmail createEmail(String emailId, IdUser user=null) {
-    // create org
-    def email = new IdEmail(id: emailId)
-    .withCreatedUpdated()
-
-    if(user) {
-      email.withAlias(user)
-    }
-
-    def create = email.create()
-    if(!create) {
-      // failed
-      return null
-    }
-
-    return email
-  }
-
-  IdEmail updateEmail(IdEmail email, IdUser uesr) {
-    def load = email.load()
-    if(!load) {
-      // not found
-      return
-    }
-
-    email.withAlias(user)
-    email.save()
-
-    return email
-  }
-
-  // return true if deleted, returns false if not found
-  boolean deleteEmail(IdEmail email) {
-    def load = email.load()
-    if(!load) {
-      // not found
-      return false
-    }
-
-    email.delete()
-
-    return true
-  }
-
-  boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org) {
-    def userorg = new IdUserOrg().withInvitedBy(invitedBy).withMember(user).withGroup(org).withCreatedUpdated()
-    userorg.save()
-  }
-
-  boolean addEmailToOrg(IdUser invitedBy, IdEmail email, IdOrg org) {
-    def emailorg = new IdEmailOrg().withInvitedBy(invitedBy).withMember(email).withGroup(org).withCreatedUpdated()
-    emailorg.save()
-  }
-
-  boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team) {
-    def userteam = new IdUserTeam().withInvitedBy(invitedBy).withMember(user).withGroup(team).withCreatedUpdated()
-    userteam.save()
-  }
-
-  boolean addEmailToTeam(IdUser invitedBy, IdEmail email, IdTeam team) {
-    def emailteam = new IdEmailTeam().withInvitedBy(invitedBy).withMember(email).withGroup(team).withCreatedUpdated()
-    emailteam.save()
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
   // Team
   /////////////////////////////////////////////////////////////////////////////
 
@@ -452,7 +334,6 @@ class OrgUserTeamService {
     List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
     for(orgobj in list) {
       IdTeam team = orgobj.group
-      team.load()
 
       // check if app is visible to user
       if(!team.orgVisible) {
@@ -463,28 +344,22 @@ class OrgUserTeamService {
         }
       }
 
+      team.load()
+
       listTeam << team
     }
 
     return listTeam
   }
 
-  List<IdTeam> listTeam(IdOrg org) {
+  List<IdOrgTeam> listTeam(IdOrg org) {
     List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
-    return list.collect { orgobj ->
-      IdTeam team = orgobj.group
-      team.load()
-      team
-    }
+    return list
   }
 
-  List<IdTeam> listTeam(IdUser user) {
+  List<IdUserTeam> listTeam(IdUser user) {
     List list = new IdUserTeam().withMember(user).queryByMemberAndType()
-    return list.collect { userobj ->
-      IdTeam team = userobj.group
-      team.load()
-      team
-    }
+    return list
   }
 
   // this is ridculous ... SQL is so much better at relationships
@@ -729,4 +604,94 @@ class OrgUserTeamService {
 
     return true
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Email
+  /////////////////////////////////////////////////////////////////////////////
+  IdEmail email(String emailId) {
+    def email = new IdEmail().withId(emailId)
+    def load = email.load()
+    if(!load) {
+      // doesn't exist
+      log.error("Email Not Found: $emailId")
+      return null
+    }
+
+    return email
+  }
+
+  List<IdEmailOrg> listEmail(IdOrg org) {
+    List list = new IdEmailOrg().withGroup(org).queryByGroupAndType()
+    return list
+  }
+
+  List<IdEmailTeam> listEmail(IdTeam team) {
+    List list = new IdEmailTeam().withGroup(team).queryByGroupAndType()
+    return list
+  }
+
+  IdEmail createEmail(String emailId, IdUser user=null) {
+    // create org
+    def email = new IdEmail(id: emailId)
+    .withCreatedUpdated()
+
+    if(user) {
+      email.withAlias(user)
+    }
+
+    def create = email.create()
+    if(!create) {
+      // failed
+      return null
+    }
+
+    return email
+  }
+
+  IdEmail updateEmail(IdEmail email, IdUser uesr) {
+    def load = email.load()
+    if(!load) {
+      // not found
+      return
+    }
+
+    email.withAlias(user)
+    email.save()
+
+    return email
+  }
+
+  // return true if deleted, returns false if not found
+  boolean deleteEmail(IdEmail email) {
+    def load = email.load()
+    if(!load) {
+      // not found
+      return false
+    }
+
+    email.delete()
+
+    return true
+  }
+
+  boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org) {
+    def userorg = new IdUserOrg().withInvitedBy(invitedBy).withMember(user).withGroup(org).withCreatedUpdated()
+    userorg.save()
+  }
+
+  boolean addEmailToOrg(IdUser invitedBy, IdEmail email, IdOrg org) {
+    def emailorg = new IdEmailOrg().withInvitedBy(invitedBy).withMember(email).withGroup(org).withCreatedUpdated()
+    emailorg.save()
+  }
+
+  boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team) {
+    def userteam = new IdUserTeam().withInvitedBy(invitedBy).withMember(user).withGroup(team).withCreatedUpdated()
+    userteam.save()
+  }
+
+  boolean addEmailToTeam(IdUser invitedBy, IdEmail email, IdTeam team) {
+    def emailteam = new IdEmailTeam().withInvitedBy(invitedBy).withMember(email).withGroup(team).withCreatedUpdated()
+    emailteam.save()
+  }
+
 }

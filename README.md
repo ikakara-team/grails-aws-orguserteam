@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.3.7'
-    compile ':aws-orguserteam:0.2.5'
+    compile ':aws-orguserteam:0.3'
 ...
   }
 ```
@@ -66,28 +66,42 @@ Services:
 * orgUserTeamService
   * ```AIdBase findIdObjBySlugId(String slugId)```
   * ```boolean exist(AIdBase id)```
+// Users
   * ```IdUser user(String userId)```
-  * ```List<IdUser> listUser(IdOrg org)```
-  * ```List<IdUser> listUser(IdTeam team)```
+  * ```List<IdUserOrg> listUser(IdOrg org)```
+  * ```List<IdUserTeam> listUser(IdTeam team)```
   * ```IdUser createUser(IdUser user, String name, String initials, String desc, String shortName)```
   * ```IdUser updateUser(IdUser user, String name, String initials, String desc, String shortName)```
   * ```boolean deleteUser(IdUser user)```
+// Orgs
   * ```IdOrg org(String orgId)```
-  * ```List<IdOrg> listOrg(IdUser user)```
   * ```IdOrg getOrg(IdTeam team)```
-  * ```List<IdOrg> listOrg(IdTeam team)```
+  * ```List<IdOrgTeam> listOrg(IdTeam team)```
+  * ```List<IdUserOrg> listOrg(IdUser user)```
   * ```IdOrg createOrg(IdUser user, String orgName, String orgDescription)```
   * ```IdSlug updateOrg(IdOrg org, String name, String desc, String web_url, String shortName)```
   * ```boolean deleteOrg(IdOrg org)```
+// Teams
   * ```IdTeam team(String teamId)```
   * ```List<IdTeam> listTeamVisible(IdOrg org, IdUser user)```
-  * ```List<IdTeam> listTeam(IdOrg org)```
-  * ```List<IdTeam> listTeam(IdUser user)```
+  * ```List<IdOrgTeam> listTeam(IdOrg org)```
+  * ```List<IdUserTeam> listTeam(IdUser user)```
   * ```List<IdTeam> listOrgTeams(IdUser user, String myOrgName)```
   * ```IdTeam createTeam(IdUser user, String teamName, Integer privacy, String orgId))```
   * ```IdSlug updateTeam(IdTeam team, String name, Integer privacy, String description, String shortName)```
   * ```boolean updateTeamOwner(IdTeam team, String orgId)```
   * ```boolean deleteTeam(IdTeam team)```
+// Emails
+  * ```IdEmail email(String emailId)```
+  * ```List<IdEmailOrg> listEmail(IdOrg org)```
+  * ```List<IdEmailTeam> listEmail(IdTeam team)```
+  * ```IdEmail createEmail(String emailId, IdUser user=null)```
+  * ```IdEmail updateEmail(IdEmail email, IdUser uesr)```
+  * ```boolean deleteEmail(IdEmail email)```
+  * ```boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org)```
+  * ```boolean addEmailToOrg(IdUser invitedBy, IdEmail email, IdOrg org)```
+  * ```boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team)```
+  * ```boolean addEmailToTeam(IdUser invitedBy, IdEmail email, IdTeam team)```
 
 Copyright & License:
 --------------
@@ -100,6 +114,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.3   - redefine return list
 0.2.5 - add/invite users to join organizations/teams
 0.1.1 - fix title
 0.1   - initial checkin
