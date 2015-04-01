@@ -279,8 +279,11 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
   }
 
   AMemberGroupBase withRoles(String... roles) {
-    memberRoles = roles
-    return this
+    return withRoles(new HashSet<>(Arrays.asList(roles)))
+  }
+
+  boolean isMemberRole(String role) {
+    return memberRoles?.contains(role)
   }
 
   @DynamoDBIgnore
@@ -323,9 +326,7 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
       memberId = member_str
     }
 
-    if(params.memberRole) {
-      memberRoles = [(String) params.memberRole]
-    }
+    // TBD memberRoles
 
     //}
   }
