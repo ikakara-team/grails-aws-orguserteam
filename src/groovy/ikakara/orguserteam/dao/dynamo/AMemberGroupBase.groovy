@@ -52,6 +52,9 @@ import ikakara.awsinstance.dao.dynamo.ADynamoObject
 @CompileStatic
 abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeObject {
 
+  public static final String MEMBERROLE_OWNER = "owner"
+  public static final String MEMBERROLE_ADMIN = "admin"
+
   private static String TABLE_NAME
 
   protected AIdBase member // mobile, email, hash
@@ -273,17 +276,31 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
     return this
   }
 
-  AMemberGroupBase withRoles(Set<String> roles) {
+  AMemberGroupBase withMemberRoles(Set<String> roles) {
     memberRoles = roles
     return this
   }
 
-  AMemberGroupBase withRoles(String... roles) {
-    return withRoles(new HashSet<>(Arrays.asList(roles)))
+  AMemberGroupBase withMemberRoles(String... roles) {
+    return withMemberRoles(new HashSet<>(Arrays.asList(roles)))
+  }
+
+  AMemberGroupBase withMemberRoles(String role) {
+    HashSet<String> hs = new HashSet<>()
+    hs.add(role)
+    return withMemberRoles(hs)
   }
 
   boolean isMemberRole(String role) {
     return memberRoles?.contains(role)
+  }
+
+  boolean isOwner() {
+    return isMemberRole(MEMBERROLE_OWNER)
+  }
+
+  boolean isAdmin() {
+    return isMemberRole(MEMBERROLE_ADMIN)
   }
 
   @DynamoDBIgnore

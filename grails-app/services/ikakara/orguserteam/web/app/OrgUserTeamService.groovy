@@ -14,6 +14,8 @@
  */
 package ikakara.orguserteam.web.app
 
+import groovy.transform.CompileStatic
+
 import ikakara.orguserteam.dao.dynamo.AIdBase
 import ikakara.orguserteam.dao.dynamo.IdSlug
 import ikakara.orguserteam.dao.dynamo.IdTeam
@@ -26,6 +28,7 @@ import ikakara.orguserteam.dao.dynamo.IdEmail
 import ikakara.orguserteam.dao.dynamo.IdEmailTeam
 import ikakara.orguserteam.dao.dynamo.IdEmailOrg
 
+@CompileStatic
 class OrgUserTeamService {
   static transactional = false
 
@@ -112,7 +115,7 @@ class OrgUserTeamService {
     if(shortName) {
       if(user.aliasId != shortName) {
         // create new slug
-        newslug = new IdSlug().withSlugId(shortName)
+        newslug = (IdSlug)new IdSlug().withSlugId(shortName)
         .withAlias(user)
         .withCreatedUpdated()
 
@@ -171,7 +174,7 @@ class OrgUserTeamService {
   // Org
   /////////////////////////////////////////////////////////////////////////////
   IdOrg org(String orgId) {
-    def org = new IdOrg().withId(orgId)
+    IdOrg org = (IdOrg)new IdOrg().withId(orgId)
     def load = org.load()
     if(!load) {
       // doesn't exist
@@ -183,9 +186,9 @@ class OrgUserTeamService {
   }
 
   IdOrg getOrg(IdTeam team) {
-    def list = listOrg(team)
+    List<IdOrgTeam> list = listOrg(team)
     if(list) {
-      return list[0].member // hacky, should only be one org
+      return (IdOrg)list[0].member // hacky, should only be one org
     }
   }
 
@@ -202,7 +205,7 @@ class OrgUserTeamService {
 
   IdOrg createOrg(IdUser user, String orgName, String orgDescription) {
     // create org
-    def org = new IdOrg(description: orgDescription)
+    IdOrg org = (IdOrg)new IdOrg(description: orgDescription)
     .initId()
     .slugify(orgName)
     .withCreatedUpdated()
@@ -214,7 +217,7 @@ class OrgUserTeamService {
     }
 
     // create slug
-    def slug = new IdSlug(id: org.aliasId)
+    def slug = (IdSlug)new IdSlug(id: org.aliasId)
     .withAlias(org)
     .withCreatedUpdated()
 
@@ -227,7 +230,8 @@ class OrgUserTeamService {
 
     if(user) {
       // add user to org
-      def userorg = new IdUserOrg(member_role: IdUserOrg.ROLE_OWNER)
+      IdUserOrg userorg = (IdUserOrg)new IdUserOrg()
+      .withMemberRoles(IdUserOrg.MEMBERROLE_OWNER)
       .withMember(user)
       .withGroup(org)
       .withCreatedUpdated()
@@ -257,7 +261,7 @@ class OrgUserTeamService {
     if(shortName) {
       if(org.aliasId != shortName) {
         // create new slug
-        newslug = new IdSlug().withSlugId(shortName)
+        newslug = (IdSlug)new IdSlug().withSlugId(shortName)
         .withAlias(org)
         .withCreatedUpdated()
 
@@ -317,7 +321,7 @@ class OrgUserTeamService {
   /////////////////////////////////////////////////////////////////////////////
 
   IdTeam team(String teamId) {
-    def team = new IdTeam().withId(teamId)
+    IdTeam team = (IdTeam)new IdTeam().withId(teamId)
     def load = team.load()
     if(!load) {
       // doesn't exist
@@ -333,7 +337,7 @@ class OrgUserTeamService {
 
     List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
     for(orgobj in list) {
-      IdTeam team = orgobj.group
+      IdTeam team = (IdTeam)orgobj.group
 
       // check if app is visible to user
       if(!team.orgVisible) {
@@ -363,20 +367,20 @@ class OrgUserTeamService {
   }
 
   // this is ridculous ... SQL is so much better at relationships
-  List<IdTeam> listOrgTeams(IdUser user, String myOrgName) {
+  List<IdOrg> listOrgTeams(IdUser user, String myOrgName) {
     Map mapApp = [:]
-    List listOrg = [new IdOrg(name: myOrgName)]
+    List<IdOrg> listOrg = [new IdOrg(name: myOrgName)]
 
     // get all the user teams and orgs
     List list = new IdUserTeam().withMember(user).queryByMember()
     // we can optimize this ...
     for(userobj in list) {
       if(userobj instanceof IdUserTeam) {
-        IdTeam team = userobj.group
+        IdTeam team = (IdTeam)userobj.group
         team.load()
         mapApp[team.id] = team
       } else if(userobj instanceof IdUserOrg) {
-        def org = userobj.group
+        IdOrg org = (IdOrg)userobj.group
         org.load()
         listOrg << org
       } else {
@@ -391,8 +395,8 @@ class OrgUserTeamService {
       // get all the teams of the orgs that the user belongs to
       // query by member and privacy
       List list_orgteam = new IdOrgTeam().withMember(org).queryByMemberAndType()
-      for(IdOrgTeam orgteam in list_orgteam) {
-        IdTeam team = orgteam.group
+      for(orgteam in list_orgteam) {
+        IdTeam team = (IdTeam)orgteam.group
 
         if(mapApp.containsKey(team.id)) {
           team = mapApp.remove(team.id)
@@ -408,14 +412,14 @@ class OrgUserTeamService {
 
     // add the remaining teams to 'my apps'
     for(team in mapApp.values()){
-      listOrg[0].teamListAdd(team)
+      listOrg[0].teamListAdd((IdTeam)team)
     }
 
     return listOrg
   }
 
   IdTeam createTeam(IdUser user, String teamName, Integer privacy, String orgId) {
-    def org
+    IdOrg org
     if(orgId) {
       // check if org exist
       org = new IdOrg(id: orgId)
@@ -427,7 +431,7 @@ class OrgUserTeamService {
     }
 
     // create team
-    def team = new IdTeam(privacy: privacy)
+    IdTeam team = (IdTeam)new IdTeam(privacy: privacy)
     .initId()
     .slugify(teamName)
     .withCreatedUpdated()
@@ -451,7 +455,8 @@ class OrgUserTeamService {
     }
 
     // add user to team
-    def userteam = new IdUserTeam()
+    IdUserTeam userteam = (IdUserTeam)new IdUserTeam()
+    .withMemberRoles(IdUserTeam.MEMBERROLE_ADMIN)
     .withMember(user)
     .withGroup(team)
     .withCreatedUpdated()
@@ -498,7 +503,7 @@ class OrgUserTeamService {
     if(shortName) {
       if(team.aliasId != shortName) {
         // create new slug
-        newslug = new IdSlug().withSlugId(shortName)
+        newslug = (IdSlug)new IdSlug().withSlugId(shortName)
         .withAlias(team)
         .withCreatedUpdated()
 
@@ -548,7 +553,7 @@ class OrgUserTeamService {
     def curOrg = getOrg(team)
 
     if((orgId || curOrg) && (curOrg?.id != orgId)) {
-      def org
+      IdOrg org
       if(orgId) {
         // check if org exist
         org = new IdOrg(id: orgId)
@@ -609,7 +614,7 @@ class OrgUserTeamService {
   // Email
   /////////////////////////////////////////////////////////////////////////////
   IdEmail email(String emailId) {
-    def email = new IdEmail().withId(emailId)
+    IdEmail email = (IdEmail)new IdEmail().withId(emailId)
     def load = email.load()
     if(!load) {
       // doesn't exist
@@ -632,7 +637,7 @@ class OrgUserTeamService {
 
   IdEmail createEmail(String emailId, IdUser user=null) {
     // create org
-    def email = new IdEmail(id: emailId).withCreatedUpdated()
+    IdEmail email = (IdEmail)new IdEmail(id: emailId).withCreatedUpdated()
 
     if(user) {
       email.withAlias(user)
@@ -647,7 +652,7 @@ class OrgUserTeamService {
     return email
   }
 
-  IdEmail updateEmail(IdEmail email, IdUser uesr) {
+  IdEmail updateEmail(IdEmail email, IdUser user) {
     def load = email.load()
     if(!load) {
       // not found
@@ -673,44 +678,44 @@ class OrgUserTeamService {
   }
 
   boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org, String... roles) {
-    def userorg = new IdUserOrg().withMember(user).withGroup(org)
+    IdUserOrg userorg = (IdUserOrg)new IdUserOrg().withMember(user).withGroup(org)
     if(userorg.load()) {
       userorg.withUpdated()
     } else {
       userorg.withCreatedUpdated()
     }
 
-    userorg.withInvitedBy(invitedBy).withRoles(roles).save()
+    userorg.withInvitedBy(invitedBy).withMemberRoles(roles).save()
   }
 
   boolean addEmailToOrg(IdUser invitedBy, String invitedName, IdEmail email, IdOrg org) {
-    def emailorg = new IdEmailOrg().withMember(email).withGroup(org)
+    IdEmailOrg emailorg = (IdEmailOrg)new IdEmailOrg().withMember(email).withGroup(org)
     if(emailorg.load()) {
       emailorg.withUpdated()
     } else {
       emailorg.withCreatedUpdated()
     }
-    emailorg.withInvitedBy(invitedBy).withInvitedName(invitedName).save()
+    emailorg.withInvitedName(invitedName).withInvitedBy(invitedBy).save()
   }
 
   boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team, String... roles) {
-    def userteam = new IdUserTeam().withMember(user).withGroup(team)
+    IdUserTeam userteam = (IdUserTeam)new IdUserTeam().withMember(user).withGroup(team)
     if(userteam.load()) {
       userteam.withUpdated()
     } else {
       userteam.withCreatedUpdated()
     }
-    userteam.withInvitedBy(invitedBy).withRoles(roles).save()
+    userteam.withInvitedBy(invitedBy).withMemberRoles(roles).save()
   }
 
   boolean addEmailToTeam(IdUser invitedBy, String invitedName, IdEmail email, IdTeam team) {
-    def emailteam = new IdEmailTeam().withMember(email).withGroup(team)
+    IdEmailTeam emailteam = (IdEmailTeam)new IdEmailTeam().withMember(email).withGroup(team)
     if(emailteam.load()) {
       emailteam.withUpdated()
     } else {
       emailteam.withCreatedUpdated()
     }
-    emailteam.withInvitedBy(invitedBy).withInvitedName(invitedName).save()
+    emailteam.withInvitedName(invitedName).withInvitedBy(invitedBy).save()
   }
 
 }
