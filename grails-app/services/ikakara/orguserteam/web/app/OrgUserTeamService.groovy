@@ -672,7 +672,7 @@ class OrgUserTeamService {
     return true
   }
 
-  boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org, String role) {
+  boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org, String... roles) {
     def userorg = new IdUserOrg().withMember(user).withGroup(org)
     if(userorg.load()) {
       userorg.withUpdated()
@@ -680,7 +680,7 @@ class OrgUserTeamService {
       userorg.withCreatedUpdated()
     }
 
-    userorg.withInvitedBy(invitedBy).withRole(role).save()
+    userorg.withInvitedBy(invitedBy).withRoles(roles).save()
   }
 
   boolean addEmailToOrg(IdUser invitedBy, String invitedName, IdEmail email, IdOrg org) {
@@ -693,14 +693,14 @@ class OrgUserTeamService {
     emailorg.withInvitedBy(invitedBy).withInvitedName(invitedName).save()
   }
 
-  boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team, String role) {
+  boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team, String... roles) {
     def userteam = new IdUserTeam().withMember(user).withGroup(team)
     if(userteam.load()) {
       userteam.withUpdated()
     } else {
       userteam.withCreatedUpdated()
     }
-    userteam.withInvitedBy(invitedBy).withRole(role).save()
+    userteam.withInvitedBy(invitedBy).withRoles(roles).save()
   }
 
   boolean addEmailToTeam(IdUser invitedBy, String invitedName, IdEmail email, IdTeam team) {

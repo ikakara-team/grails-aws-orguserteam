@@ -57,8 +57,8 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
   protected AIdBase member // mobile, email, hash
   protected AIdBase group
   protected IdUser  invitedBy
-  @DynamoDBAttribute(attributeName = "MemberRole")
-  String memberRole
+  @DynamoDBAttribute(attributeName = "MemberRoles")
+  Set<String> memberRoles
   protected boolean bLoadMember = false
   protected boolean bLoadGroup = false
   protected boolean bLoadInvitedBy = false
@@ -166,8 +166,8 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
     if (item.isPresent("InvitedById")) {
       invitedById = item.getString("InvitedById")
     }
-    if (item.isPresent("MemberRole")) {
-      memberRole = item.getString("MemberRole")
+    if (item.isPresent("MemberRoles")) {
+      memberRoles = item.getStringSet("MemberRoles")
     }
     //}
   }
@@ -194,10 +194,10 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
       outItem = outItem.removeAttribute("InvitedById")
     }
 
-    if (memberRole) {
-      outItem = outItem.withString("MemberRole", memberRole)
+    if (memberRoles) {
+      outItem = outItem.withStringSet("MemberRoles", memberRoles)
     } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("MemberRole")
+      outItem = outItem.removeAttribute("MemberRoles")
     }
 
     if (type) {
@@ -273,8 +273,13 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
     return this
   }
 
-  AMemberGroupBase withRole(String role) {
-    memberRole = role
+  AMemberGroupBase withRoles(Set<String> roles) {
+    memberRoles = roles
+    return this
+  }
+
+  AMemberGroupBase withRoles(String... roles) {
+    memberRoles = roles
     return this
   }
 
@@ -318,7 +323,10 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
       memberId = member_str
     }
 
-    memberRole = (String) params.member_role
+    if(params.memberRole) {
+      memberRoles = [(String) params.memberRole]
+    }
+
     //}
   }
 

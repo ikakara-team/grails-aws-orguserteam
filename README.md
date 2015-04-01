@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.3.7'
-    compile ':aws-orguserteam:0.3.3'
+    compile ':aws-orguserteam:0.3.4'
 ...
   }
 ```
@@ -98,9 +98,9 @@ orgUserTeamService:
   * ```IdEmail createEmail(String emailId, IdUser user=null)```
   * ```IdEmail updateEmail(IdEmail email, IdUser uesr)```
   * ```boolean deleteEmail(IdEmail email)```
-  * ```boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org, String role)```
+  * ```boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org, String... roles)```
   * ```boolean addEmailToOrg(IdUser invitedBy, String invitedName, IdEmail email, IdOrg org)```
-  * ```boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team, String role)```
+  * ```boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team, String... roles)```
   * ```boolean addEmailToTeam(IdUser invitedBy, String invitedName, IdEmail email, IdTeam team)```
 
 Copyright & License:
@@ -114,6 +114,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.3.4 - memberRole -> memberRoles
 0.3.3 - fix addUserTo()
 0.3.2 - fix getInvitedBy()
 0.3.1 - tweak email invited
