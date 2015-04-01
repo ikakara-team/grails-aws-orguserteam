@@ -310,7 +310,7 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
 
   @DynamoDBHashKey(attributeName = "MemberId")
   String getMemberId() {
-    return (String) member.valueHashKey()
+    return (String) member.id
   }
 
   void setMemberId(String id) {
@@ -319,7 +319,7 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
 
   @DynamoDBRangeKey(attributeName = "GroupId")
   String getGroupId() {
-    return (String) group.valueHashKey()
+    return (String) group.id
   }
 
   void setGroupId(String id) {
@@ -327,11 +327,11 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
   }
 
   @DynamoDBAttribute(attributeName = "InvitedById")
-  public String getInvitedById() {
-    return (String) invitedBy?.valueHashKey()
+  String getInvitedById() {
+    return (String) invitedBy?.id
   }
 
-  public void setInvitedById(String id) {
+  void setInvitedById(String id) {
     invitedBy = (IdUser)AIdBase.toId(id)
   }
 

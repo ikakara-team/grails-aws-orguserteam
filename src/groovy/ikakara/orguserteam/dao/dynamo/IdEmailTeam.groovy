@@ -30,7 +30,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 @Validateable(nullable = true)
 @Slf4j("LOG")
 @CompileStatic
-class IdEmailTeam extends AMemberGroupBase {
+class IdEmailTeam extends AIdEmailGroup {
 
   public static final String ID_TYPE = "EmailTeam"
 
