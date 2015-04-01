@@ -61,6 +61,7 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
   String memberRole
   protected boolean bLoadMember = false
   protected boolean bLoadGroup = false
+  protected boolean bLoadInvitedBy = false
 
   @Override
   synchronized String tableName() {
@@ -287,6 +288,14 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
       bLoadGroup = group.load()
     }
     return group
+  }
+
+  @DynamoDBIgnore
+  IdUser getInvitedBy() {
+    if (invitedBy && !bLoadInvitedBy) {
+      bLoadInvitedBy = invitedBy.load()
+    }
+    return invitedBy
   }
 
   @Override

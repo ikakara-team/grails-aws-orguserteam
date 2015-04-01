@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.3.7'
-    compile ':aws-orguserteam:0.3.1'
+    compile ':aws-orguserteam:0.3.2'
 ...
   }
 ```
@@ -114,6 +114,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.3.2 - fix getInvitedBy()
 0.3.1 - tweak email invited
 0.3   - redefine return list
 0.2.5 - add/invite users to join organizations/teams
