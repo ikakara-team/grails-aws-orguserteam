@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.3.7'
-    compile ':aws-orguserteam:0.3.5'
+    compile ':aws-orguserteam:0.3.6'
 ...
   }
 ```
@@ -78,6 +78,7 @@ orgUserTeamService:
   * ```IdOrg getOrg(IdTeam team)```
   * ```List<IdOrgTeam> listOrg(IdTeam team)```
   * ```List<IdUserOrg> listOrg(IdUser user)```
+  * ```List<IdEmailOrg> listOrg(IdEmail email)```
   * ```IdOrg createOrg(IdUser user, String orgName, String orgDescription)```
   * ```IdSlug updateOrg(IdOrg org, String name, String desc, String web_url, String shortName)```
   * ```boolean deleteOrg(IdOrg org)```
@@ -86,6 +87,7 @@ orgUserTeamService:
   * ```List<IdTeam> listTeamVisible(IdOrg org, IdUser user)```
   * ```List<IdOrgTeam> listTeam(IdOrg org)```
   * ```List<IdUserTeam> listTeam(IdUser user)```
+  * ```List<IdEmailTeam> listTeam(IdEmail email)```
   * ```List<IdOrg> listOrgTeams(IdUser user, String myOrgName)```
   * ```IdTeam createTeam(IdUser user, String teamName, Integer privacy, String orgId))```
   * ```IdSlug updateTeam(IdTeam team, String name, Integer privacy, String description, String shortName)```
@@ -114,6 +116,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.3.6 - fix deletes
 0.3.5 - fix memberRoles
 0.3.4 - memberRole -> memberRoles
 0.3.3 - fix addUserTo()

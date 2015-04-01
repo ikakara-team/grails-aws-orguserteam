@@ -162,9 +162,21 @@ class OrgUserTeamService {
       return false
     }
 
+    // delete all org references
+    def list = listOrg(user)
+    list.each{
+      it.delete() // delete only connection
+    }
+
+    // delete all team references
+    list = listTeam(user)
+    list.each{
+      it.delete() // delete only connection
+    }
+
     // delete slug
     new IdSlug(id: user.aliasId).delete()
-
+    // delete user
     user.delete()
 
     return true
@@ -200,6 +212,11 @@ class OrgUserTeamService {
 
   List<IdUserOrg> listOrg(IdUser user) {
     List list = new IdUserOrg().withMember(user).queryByMemberAndType()
+    return list
+  }
+
+  List<IdEmailOrg> listOrg(IdEmail email) {
+    List list = new IdEmailOrg().withMember(email).queryByMemberAndType()
     return list
   }
 
@@ -308,9 +325,28 @@ class OrgUserTeamService {
       return false
     }
 
+    // delete all teams and references
+    def list = listTeam(org)
+    list.each{
+      IdTeam team = (IdTeam)it.group
+      deleteTeam(team) // deletes both team and team-connections
+    }
+
+    // delete all user references
+    list = listUser(org)
+    list.each{
+      it.delete() // delete only connection
+    }
+
+    // delete all email references
+    list = listEmail(org)
+    list.each{
+      it.delete() // delete only connection
+    }
+
     // delete slug
     new IdSlug(id: org.aliasId).delete()
-
+    // delete org
     org.delete()
 
     return true
@@ -363,6 +399,11 @@ class OrgUserTeamService {
 
   List<IdUserTeam> listTeam(IdUser user) {
     List list = new IdUserTeam().withMember(user).queryByMemberAndType()
+    return list
+  }
+
+  List<IdEmailTeam> listTeam(IdEmail email) {
+    List list = new IdEmailTeam().withMember(email).queryByMemberAndType()
     return list
   }
 
@@ -602,9 +643,27 @@ class OrgUserTeamService {
       return false
     }
 
+    // delete all org references
+    def list = listOrg(team)
+    list.each{
+      it.delete() // delete only connection
+    }
+
+    // delete all user references
+    list = listUser(team)
+    list.each{
+      it.delete() // delete only connection
+    }
+
+    // delete all email references
+    list = listEmail(team)
+    list.each{
+      it.delete() // delete only connection
+    }
+
     // delete slug
     new IdSlug(id: team.aliasId).delete()
-
+    // delete team
     team.delete()
 
     return true
@@ -672,6 +731,19 @@ class OrgUserTeamService {
       return false
     }
 
+    // delete all org references
+    def list = listOrg(email)
+    list.each{
+      it.delete() // delete only connection
+    }
+
+    // delete all team references
+    list = listTeam(email)
+    list.each{
+      it.delete() // delete only connection
+    }
+
+    // delete email
     email.delete()
 
     return true
