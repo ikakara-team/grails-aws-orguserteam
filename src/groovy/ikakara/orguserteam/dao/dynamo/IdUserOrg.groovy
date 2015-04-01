@@ -30,6 +30,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 class IdUserOrg extends AMemberGroupBase {
 
   public static final String ID_TYPE = "UserOrg"
+  public static final String ROLE_OWNER = "owner"
   public static final String ROLE_ADMIN = "admin"
 
   @Override
@@ -43,6 +44,10 @@ class IdUserOrg extends AMemberGroupBase {
 
   IdUserOrg(Map params) {
     initParameters(params)
+  }
+
+  boolean isOwner() {
+    return ROLE_OWNER == memberRole
   }
 
   boolean isAdmin() {

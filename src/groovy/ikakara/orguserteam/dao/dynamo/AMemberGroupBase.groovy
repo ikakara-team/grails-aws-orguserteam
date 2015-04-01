@@ -273,6 +273,11 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
     return this
   }
 
+  AMemberGroupBase withRole(String role) {
+    memberRole = role
+    return this
+  }
+
   @DynamoDBIgnore
   AIdBase getMember() {
     if (member && !bLoadMember) {

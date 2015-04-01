@@ -227,7 +227,7 @@ class OrgUserTeamService {
 
     if(user) {
       // add user to org
-      def userorg = new IdUserOrg(member_role: IdUserOrg.ROLE_ADMIN)
+      def userorg = new IdUserOrg(member_role: IdUserOrg.ROLE_OWNER)
       .withMember(user)
       .withGroup(org)
       .withCreatedUpdated()
@@ -632,8 +632,7 @@ class OrgUserTeamService {
 
   IdEmail createEmail(String emailId, IdUser user=null) {
     // create org
-    def email = new IdEmail(id: emailId)
-    .withCreatedUpdated()
+    def email = new IdEmail(id: emailId).withCreatedUpdated()
 
     if(user) {
       email.withAlias(user)
@@ -655,8 +654,7 @@ class OrgUserTeamService {
       return
     }
 
-    email.withAlias(user)
-    email.save()
+    email.withAlias(user).withUpdated().save()
 
     return email
   }
@@ -674,24 +672,45 @@ class OrgUserTeamService {
     return true
   }
 
-  boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org) {
-    def userorg = new IdUserOrg().withInvitedBy(invitedBy).withMember(user).withGroup(org).withCreatedUpdated()
-    userorg.save()
+  boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org, String role) {
+    def userorg = new IdUserOrg().withMember(user).withGroup(org)
+    if(userorg.load()) {
+      userorg.withUpdated()
+    } else {
+      userorg.withCreatedUpdated()
+    }
+
+    userorg.withInvitedBy(invitedBy).withRole(role).save()
   }
 
   boolean addEmailToOrg(IdUser invitedBy, String invitedName, IdEmail email, IdOrg org) {
-    def emailorg = new IdEmailOrg().withInvitedBy(invitedBy).withInvitedName(invitedName).withMember(email).withGroup(org).withCreatedUpdated()
-    emailorg.save()
+    def emailorg = new IdEmailOrg().withMember(email).withGroup(org)
+    if(emailorg.load()) {
+      emailorg.withUpdated()
+    } else {
+      emailorg.withCreatedUpdated()
+    }
+    emailorg.withInvitedBy(invitedBy).withInvitedName(invitedName).save()
   }
 
-  boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team) {
-    def userteam = new IdUserTeam().withInvitedBy(invitedBy).withMember(user).withGroup(team).withCreatedUpdated()
-    userteam.save()
+  boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team, String role) {
+    def userteam = new IdUserTeam().withMember(user).withGroup(team)
+    if(userteam.load()) {
+      userteam.withUpdated()
+    } else {
+      userteam.withCreatedUpdated()
+    }
+    userteam.withInvitedBy(invitedBy).withRole(role).save()
   }
 
   boolean addEmailToTeam(IdUser invitedBy, String invitedName, IdEmail email, IdTeam team) {
-    def emailteam = new IdEmailTeam().withInvitedBy(invitedBy).withInvitedName(invitedName).withMember(email).withGroup(team).withCreatedUpdated()
-    emailteam.save()
+    def emailteam = new IdEmailTeam().withMember(email).withGroup(team)
+    if(emailteam.load()) {
+      emailteam.withUpdated()
+    } else {
+      emailteam.withCreatedUpdated()
+    }
+    emailteam.withInvitedBy(invitedBy).withInvitedName(invitedName).save()
   }
 
 }
