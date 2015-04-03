@@ -48,14 +48,15 @@ class OrgUserTeamService {
   /////////////////////////////////////////////////////////////////////////////
   // User
   /////////////////////////////////////////////////////////////////////////////
-  // should we verify if user exist?
-  IdUser user(String userId) {
+  IdUser user(String userId, instance=true) {
     def user = new IdUser(id: userId)
     def load = user.load()
     if(!load) {
       // doesn't exist
       log.warn("User Not Found: $userId")
-      // return null
+      if(!instance) {
+        return null
+      }
     }
 
     return user
@@ -185,13 +186,15 @@ class OrgUserTeamService {
   /////////////////////////////////////////////////////////////////////////////
   // Org
   /////////////////////////////////////////////////////////////////////////////
-  IdOrg org(String orgId) {
+  IdOrg org(String orgId, instance=true) {
     IdOrg org = (IdOrg)new IdOrg().withId(orgId)
     def load = org.load()
     if(!load) {
       // doesn't exist
-      log.error("Org Not Found: $orgId")
-      return null
+      log.warn("Org Not Found: $orgId")
+      if(!instance) {
+        return null
+      }
     }
 
     return org
@@ -356,13 +359,15 @@ class OrgUserTeamService {
   // Team
   /////////////////////////////////////////////////////////////////////////////
 
-  IdTeam team(String teamId) {
+  IdTeam team(String teamId, instance=true) {
     IdTeam team = (IdTeam)new IdTeam().withId(teamId)
     def load = team.load()
     if(!load) {
       // doesn't exist
-      log.error("Team Not Found: $teamId")
-      return null
+      log.warn("Team Not Found: $teamId")
+      if(!instance) {
+        return null
+      }
     }
 
     return team
@@ -672,13 +677,15 @@ class OrgUserTeamService {
   /////////////////////////////////////////////////////////////////////////////
   // Email
   /////////////////////////////////////////////////////////////////////////////
-  IdEmail email(String emailId) {
+  IdEmail email(String emailId, instance=true) {
     IdEmail email = (IdEmail)new IdEmail().withId(emailId)
     def load = email.load()
     if(!load) {
       // doesn't exist
-      log.error("Email Not Found: $emailId")
-      return null
+      log.warn("Email Not Found: $emailId")
+      if(!instance) {
+        return null
+      }
     }
 
     return email

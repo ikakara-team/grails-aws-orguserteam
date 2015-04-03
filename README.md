@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.3.7'
-    compile ':aws-orguserteam:0.3.6'
+    compile ':aws-orguserteam:0.3.7'
 ...
   }
 ```
@@ -67,14 +67,14 @@ orgUserTeamService:
   * ```AIdBase findIdObjBySlugId(String slugId)```
   * ```boolean exist(AIdBase id)```
 * User
-  * ```IdUser user(String userId)```
+  * ```IdUser user(String userId, instance=true)```
   * ```List<IdUserOrg> listUser(IdOrg org)```
   * ```List<IdUserTeam> listUser(IdTeam team)```
   * ```IdUser createUser(IdUser user, String name, String initials, String desc, String shortName)```
   * ```IdUser updateUser(IdUser user, String name, String initials, String desc, String shortName)```
   * ```boolean deleteUser(IdUser user)```
 * Org
-  * ```IdOrg org(String orgId)```
+  * ```IdOrg org(String orgId, instance=true)```
   * ```IdOrg getOrg(IdTeam team)```
   * ```List<IdOrgTeam> listOrg(IdTeam team)```
   * ```List<IdUserOrg> listOrg(IdUser user)```
@@ -83,7 +83,7 @@ orgUserTeamService:
   * ```IdSlug updateOrg(IdOrg org, String name, String desc, String web_url, String shortName)```
   * ```boolean deleteOrg(IdOrg org)```
 * Team
-  * ```IdTeam team(String teamId)```
+  * ```IdTeam team(String teamId, instance=true)```
   * ```List<IdTeam> listTeamVisible(IdOrg org, IdUser user)```
   * ```List<IdOrgTeam> listTeam(IdOrg org)```
   * ```List<IdUserTeam> listTeam(IdUser user)```
@@ -94,7 +94,7 @@ orgUserTeamService:
   * ```boolean updateTeamOwner(IdTeam team, String orgId)```
   * ```boolean deleteTeam(IdTeam team)```
 * Email
-  * ```IdEmail email(String emailId)```
+  * ```IdEmail email(String emailId, instance=true)```
   * ```List<IdEmailOrg> listEmail(IdOrg org)```
   * ```List<IdEmailTeam> listEmail(IdTeam team)```
   * ```IdEmail createEmail(String emailId, IdUser user=null)```
@@ -116,6 +116,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.3.7 - tweak id instance
 0.3.6 - fix deletes
 0.3.5 - fix memberRoles
 0.3.4 - memberRole -> memberRoles
