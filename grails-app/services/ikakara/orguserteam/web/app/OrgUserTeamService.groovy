@@ -25,6 +25,7 @@ import ikakara.orguserteam.dao.dynamo.IdUser
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
 import ikakara.orguserteam.dao.dynamo.IdUserTeam
 import ikakara.orguserteam.dao.dynamo.IdEmail
+import ikakara.orguserteam.dao.dynamo.AIdEmailGroup
 import ikakara.orguserteam.dao.dynamo.IdEmailTeam
 import ikakara.orguserteam.dao.dynamo.IdEmailOrg
 
@@ -754,6 +755,11 @@ class OrgUserTeamService {
     email.delete()
 
     return true
+  }
+
+  List<AIdEmailGroup> listGroup(IdEmail email) {
+    List list = new IdEmailOrg().withMember(email).queryByMember()
+    return list
   }
 
   boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org, String... roles) {
