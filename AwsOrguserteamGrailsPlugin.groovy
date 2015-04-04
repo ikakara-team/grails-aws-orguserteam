@@ -5,7 +5,7 @@ import ikakara.orguserteam.dao.dynamo.IdEmail
 import ikakara.simplemarshaller.web.app.SimpleMarshallerService
 
 class AwsOrguserteamGrailsPlugin {
-  def version = "0.4"
+  def version = "0.4.1"
   def grailsVersion = "2.2 > *"
   def loadAfter = ['aws-instance']
   def pluginExcludes = [
