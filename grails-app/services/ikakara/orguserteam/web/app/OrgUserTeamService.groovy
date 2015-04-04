@@ -374,7 +374,7 @@ class OrgUserTeamService {
     return team
   }
 
-  List<IdTeam> listTeamVisible(IdOrg org, IdUser user) {
+  List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user) {
     List listTeam = []
 
     List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
@@ -390,9 +390,7 @@ class OrgUserTeamService {
         }
       }
 
-      team.load()
-
-      listTeam << team
+      listTeam << orgobj
     }
 
     return listTeam

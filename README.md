@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.3.7'
-    compile ':aws-orguserteam:0.4'
+    compile ':aws-orguserteam:0.4.1'
 ...
   }
 ```
@@ -84,7 +84,7 @@ orgUserTeamService:
   * ```boolean deleteOrg(IdOrg org)```
 * Team
   * ```IdTeam team(String teamId, instance=true)```
-  * ```List<IdTeam> listTeamVisible(IdOrg org, IdUser user)```
+  * ```List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user)```
   * ```List<IdOrgTeam> listTeam(IdOrg org)```
   * ```List<IdUserTeam> listTeam(IdUser user)```
   * ```List<IdEmailTeam> listTeam(IdEmail email)```
@@ -117,6 +117,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.4.1 - fix listTeamVisible
 0.4   - listGroup
 0.3.7 - fix invites; member groups
 0.2.5 - add/invite users to join organizations/teams
