@@ -374,15 +374,30 @@ class OrgUserTeamService {
     return team
   }
 
-  List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user) {
+  List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles=null) {
     List listTeam = []
+
+    boolean rolevisibility = false
+
+    if(orgRoles) {
+      // allow orgusers to have visibility based on roles
+      def orguser = new IdUserOrg().withMember(user).withGroup(org)
+      orguser.load()
+      if(orguser.memberRoles) {
+        def res = orgRoles.intersect(orguser.memberRoles)
+        if(res.size() > 0) {
+          rolevisibility = true
+        }
+        log.debug "orgRoles:${orgRoles} memberRoles:${orguser.memberRoles} intersect:${res}"
+      }
+    }
 
     List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
     for(orgobj in list) {
       IdTeam team = (IdTeam)orgobj.group
 
       // check if app is visible to user
-      if(!team.orgVisible) {
+      if(!team.orgVisible && !rolevisibility) {
         // check is member is
         def userteam = team.hasMember(user)
         if(!userteam) {
