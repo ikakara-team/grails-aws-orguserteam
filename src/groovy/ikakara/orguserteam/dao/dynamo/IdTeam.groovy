@@ -54,15 +54,15 @@ class IdTeam extends AIdBase {
   String description
 
   // transient
-  AIdBase owner
+  IdOrg owner
   List<IdUser> userList = []
 
   @DynamoDBIgnore
-  AIdBase getOwner() {
+  IdOrg getOwner() {
     if (!owner) {
       // check to see if team is part of the org
-      List<AMemberGroupBase> list = new IdOrgTeam().withGroup(this).queryByGroup()
-      for (AMemberGroupBase id in list) {
+      List<IdOrgTeam> list = new IdOrgTeam().withGroup(this).queryByGroupAndType()
+      for (IdOrgTeam id in list) {
         // there should only be 1 owner; what should we do if there's more than 1???
         owner = id.member
         break
