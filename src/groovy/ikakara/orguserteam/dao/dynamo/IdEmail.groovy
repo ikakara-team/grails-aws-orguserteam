@@ -16,6 +16,7 @@ package ikakara.orguserteam.dao.dynamo
 
 import java.util.Map
 
+import groovy.transform.ToString
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -33,6 +34,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
  *
  * @author Allen
  */
+@ToString(includePackage=false, ignoreNulls=true)
 @Validateable(nullable = true)
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "createdDate", "updatedDate"])
 @Slf4j("LOG")

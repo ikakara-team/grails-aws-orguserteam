@@ -14,6 +14,7 @@
  */
 package ikakara.orguserteam.dao.dynamo
 
+import groovy.transform.ToString
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -29,6 +30,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
 /**
  * @author Allen
  */
+@ToString(includePackage=false, ignoreNulls=true)
 @Validateable(nullable = true)
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "teamList", "orgList", "status", "name", "imageUrl", "initials", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")

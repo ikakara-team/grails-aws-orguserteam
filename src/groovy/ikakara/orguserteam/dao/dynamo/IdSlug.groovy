@@ -14,6 +14,7 @@
  */
 package ikakara.orguserteam.dao.dynamo
 
+import groovy.transform.ToString
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -28,6 +29,7 @@ import ikakara.awsinstance.util.StringUtil
 /**
  * @author Allen
  */
+@ToString(includePackage=false, ignoreNulls=true)
 @Validateable(nullable = true)
 @Slf4j("LOG")
 @CompileStatic
