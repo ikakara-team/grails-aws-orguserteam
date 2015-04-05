@@ -476,10 +476,12 @@ class OrgUserTeamService {
     }
 
     // create team
-    IdTeam team = (IdTeam)new IdTeam(privacy: privacy)
+    IdTeam team = (IdTeam)new IdTeam()
     .initId()
     .slugify(teamName)
     .withCreatedUpdated()
+
+    team.privacy = privacy
 
     def create = team.create()
     if(!create) {

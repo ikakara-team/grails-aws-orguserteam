@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.4.1'
-    compile ':aws-orguserteam:0.5.2'
+    compile ':aws-orguserteam:0.5.3'
 ...
   }
 ```
@@ -117,6 +117,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.5.3 - fix create IdTeam privacy
 0.5.2 - fix IdTeam.getOwner
 0.5.1 - toString
 0.4.1 - listGroup
