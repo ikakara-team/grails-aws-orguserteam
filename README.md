@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.4'
-    compile ':aws-orguserteam:0.5'
+    compile ':aws-orguserteam:0.5.1'
 ...
   }
 ```
@@ -117,7 +117,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
-0.5   - toString
+0.5.1 - toString
 0.4.1 - listGroup
 0.3.7 - fix invites; member groups
 0.2.5 - add/invite users to join organizations/teams
