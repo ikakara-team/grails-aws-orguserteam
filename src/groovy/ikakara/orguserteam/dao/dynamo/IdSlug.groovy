@@ -29,7 +29,7 @@ import ikakara.awsinstance.util.StringUtil
 /**
  * @author Allen
  */
-@ToString(includePackage=false, ignoreNulls=true)
+@ToString(includePackage=false, ignoreNulls=true, includeSuper=true)
 @Validateable(nullable = true)
 @Slf4j("LOG")
 @CompileStatic

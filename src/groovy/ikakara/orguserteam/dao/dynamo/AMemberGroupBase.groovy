@@ -14,6 +14,7 @@
  */
 package ikakara.orguserteam.dao.dynamo
 
+import groovy.transform.ToString
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -48,6 +49,7 @@ import ikakara.awsinstance.dao.dynamo.ADynamoObject
  * @author Allen
  */
 @DynamoDBTable(tableName = "MemberGroups")
+@ToString(includePackage=false, ignoreNulls=true, includeSuper=true)
 @Slf4j("LOG")
 @CompileStatic
 abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeObject {

@@ -30,7 +30,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
 /**
  * @author Allen
  */
-@ToString(includePackage=false, ignoreNulls=true)
+@ToString(includePackage=false, ignoreNulls=true, includeSuper=true)
 @Validateable(nullable = true)
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "teamList", "userList", "visibility", "name", "imageUrl", "webUrl", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")

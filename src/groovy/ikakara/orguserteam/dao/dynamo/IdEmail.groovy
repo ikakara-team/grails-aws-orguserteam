@@ -34,7 +34,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
  *
  * @author Allen
  */
-@ToString(includePackage=false, ignoreNulls=true)
+@ToString(includePackage=false, ignoreNulls=true, includeSuper=true)
 @Validateable(nullable = true)
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "createdDate", "updatedDate"])
 @Slf4j("LOG")

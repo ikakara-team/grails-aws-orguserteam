@@ -16,6 +16,7 @@ package ikakara.orguserteam.dao.dynamo
 
 import java.util.Map
 
+import groovy.transform.ToString
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -28,6 +29,7 @@ import com.amazonaws.services.dynamodbv2.document.Item
  *
  * @author Allen
  */
+@ToString(includePackage=false, ignoreNulls=true, includeSuper=true)
 @Validateable(nullable = true)
 @Slf4j("LOG")
 @CompileStatic

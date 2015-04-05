@@ -28,7 +28,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
  *
  * @author Allen
  */
-@ToString(includePackage=false, ignoreNulls=true)
+@ToString(includePackage=false, ignoreNulls=true, includeSuper=true)
 @Validateable(nullable = true)
 @Slf4j("LOG")
 @CompileStatic
