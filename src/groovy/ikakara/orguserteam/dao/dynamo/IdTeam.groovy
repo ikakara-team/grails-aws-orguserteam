@@ -61,10 +61,10 @@ class IdTeam extends AIdBase {
   IdOrg getOwner() {
     if (!owner) {
       // check to see if team is part of the org
-      List<IdOrgTeam> list = new IdOrgTeam().withGroup(this).queryByGroupAndType()
-      for (IdOrgTeam id in list) {
+      def list = new IdOrgTeam().withGroup(this).queryByGroupAndType()
+      for (id in list) {
         // there should only be 1 owner; what should we do if there's more than 1???
-        owner = id.member
+        owner = (IdOrg)id.member
         break
       }
     }
