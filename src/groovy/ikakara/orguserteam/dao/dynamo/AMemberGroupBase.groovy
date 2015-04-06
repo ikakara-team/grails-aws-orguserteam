@@ -292,7 +292,7 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
   }
 
   AMemberGroupBase withMemberRoles(String role) {
-    if(role) {
+    if(role && !"".equals(role)) {
       HashSet<String> hs = new HashSet<>()
       hs.add(role)
       return withMemberRoles(hs)
