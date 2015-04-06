@@ -287,7 +287,7 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
     if(roles) {
       return withMemberRoles(new HashSet<>(Arrays.asList(roles)))
     } else {
-      return withMemberRoles(null)
+      return withMemberRoles((Set<String>)null)
     }
   }
 
@@ -297,7 +297,7 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
       hs.add(role)
       return withMemberRoles(hs)
     } else {
-      return withMemberRoles(null)
+      return withMemberRoles((Set<String>)null)
     }
   }
 
