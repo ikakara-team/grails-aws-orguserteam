@@ -350,6 +350,26 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
     //}
   }
 
+  @DynamoDBIgnore
+  String getMemberAliasId() {
+    return (String) member?.aliasId
+  }
+
+  @DynamoDBIgnore
+  String getGroupAliasId() {
+    return (String) group?.aliasId
+  }
+
+  @DynamoDBIgnore
+  String getMemberName() {
+    return (String) member?.name
+  }
+
+  @DynamoDBIgnore
+  String getGroupName() {
+    return (String) group?.name
+  }
+
   @DynamoDBHashKey(attributeName = "MemberId")
   String getMemberId() {
     return (String) member.id
