@@ -377,21 +377,16 @@ class OrgUserTeamService {
   boolean haveOrgRole(IdOrg org, IdUser user, Set orgRoles) {
     boolean rolevisibility = false
 
-    def orguser
-    def res
-
     if(orgRoles) {
       // allow orgusers to have visibility based on roles
-      orguser = org?.hasMember(user)
+      def orguser = org?.hasMember(user)
       if(orguser?.memberRoles) {
-        res = orgRoles.intersect(orguser.memberRoles)
+        def res = orgRoles.intersect(orguser.memberRoles)
         if(res.size() > 0) {
           rolevisibility = true
         }
       }
     }
-
-    log.debug "orgRoles:${orgRoles} memberRoles:${orguser?.memberRoles} intersect:${res}"
 
     return rolevisibility
   }
