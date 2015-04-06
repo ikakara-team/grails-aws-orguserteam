@@ -285,14 +285,18 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
 
   AMemberGroupBase withMemberRoles(String... roles) {
     if(roles) {
-      return withMemberRoles(new HashSet<>(Arrays.asList(roles)))
-    } else {
-      return withMemberRoles((Set<String>)null)
+      // remove empty strings
+      def list = Arrays.asList(roles).findAll { it != '' }
+      if(list) {
+        return withMemberRoles(new HashSet<>(list))
+      }
     }
+    return withMemberRoles((Set<String>)null)
+
   }
 
   AMemberGroupBase withMemberRoles(String role) {
-    if(role && !"".equals(role)) {
+    if(role) {
       HashSet<String> hs = new HashSet<>()
       hs.add(role)
       return withMemberRoles(hs)
