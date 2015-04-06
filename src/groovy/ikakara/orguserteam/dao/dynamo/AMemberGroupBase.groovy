@@ -284,13 +284,21 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
   }
 
   AMemberGroupBase withMemberRoles(String... roles) {
-    return withMemberRoles(new HashSet<>(Arrays.asList(roles)))
+    if(roles) {
+      return withMemberRoles(new HashSet<>(Arrays.asList(roles)))
+    } else {
+      return withMemberRoles(null)
+    }
   }
 
   AMemberGroupBase withMemberRoles(String role) {
-    HashSet<String> hs = new HashSet<>()
-    hs.add(role)
-    return withMemberRoles(hs)
+    if(role) {
+      HashSet<String> hs = new HashSet<>()
+      hs.add(role)
+      return withMemberRoles(hs)
+    } else {
+      return withMemberRoles(null)
+    }
   }
 
   boolean isMemberRole(String role) {
