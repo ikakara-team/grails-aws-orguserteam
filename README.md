@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.4.1'
-    compile ':aws-orguserteam:0.5.6'
+    compile ':aws-orguserteam:0.5.7'
 ...
   }
 ```
@@ -86,7 +86,7 @@ orgUserTeamService:
   * ```IdTeam team(String teamId, instance=true)```
   * ```boolean haveOrgRole(IdOrg org, IdUser user, Set orgRoles)```
   * ```boolean isTeamVisible(IdOrg org, IdUser user, Set orgRoles)```
-  * ```List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles)```
+  * ```List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles=null)```
   * ```List<IdOrgTeam> listTeam(IdOrg org)```
   * ```List<IdUserTeam> listTeam(IdUser user)```
   * ```List<IdEmailTeam> listTeam(IdEmail email)```
@@ -119,12 +119,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
-0.5.6 - TEAM_VISIBLE
-0.5.5 - refactor team visibility
-0.5.4 - fix team visibility
-0.5.3 - fix create IdTeam privacy
-0.5.2 - fix IdTeam.getOwner
-0.5.1 - toString
+0.5.7 - team visibility
 0.4.1 - listGroup
 0.3.7 - fix invites; member groups
 0.2.5 - add/invite users to join organizations/teams

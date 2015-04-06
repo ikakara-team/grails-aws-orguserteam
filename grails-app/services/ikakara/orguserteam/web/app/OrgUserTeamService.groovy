@@ -409,7 +409,7 @@ class OrgUserTeamService {
     return true;
   }
 
-  List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles) {
+  List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles=null) {
     List listTeam = []
 
     List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
