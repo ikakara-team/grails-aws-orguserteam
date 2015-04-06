@@ -41,8 +41,6 @@ class IdUser extends AIdBase {
 
   @DynamoDBAttribute(attributeName = "Status")
   Number status
-  @DynamoDBAttribute(attributeName = "Name")
-  String name
   @DynamoDBAttribute(attributeName = "ImageUrl")
   String imageUrl
   @DynamoDBAttribute(attributeName = "Initials")
@@ -99,9 +97,6 @@ class IdUser extends AIdBase {
     if (item.isPresent("Status")) {
       status = item.getNumber("Status")
     }
-    if (item.isPresent("Name")) {
-      name = item.getString("Name")
-    }
     if (item.isPresent("ImageUrl")) {
       imageUrl = item.getString("ImageUrl")
     }
@@ -122,11 +117,6 @@ class IdUser extends AIdBase {
       outItem = outItem.withNumber("Status", status)
     } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Status")
-    }
-    if (name) {
-      outItem = outItem.withString("Name", name)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Name")
     }
     if (imageUrl) {
       outItem = outItem.withString("ImageUrl", imageUrl)
@@ -154,7 +144,6 @@ class IdUser extends AIdBase {
 
     try {
       status = (Integer) params.status
-      name = (String) params.name
       imageUrl = (String) params.image_url
       initials = (String) params.initials
       description = (String) params.description

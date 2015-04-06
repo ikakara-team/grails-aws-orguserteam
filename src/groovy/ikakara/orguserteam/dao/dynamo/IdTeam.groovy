@@ -48,8 +48,6 @@ class IdTeam extends AIdBase {
   Number privacy = PRIVACY_PRIVATE
   @DynamoDBAttribute(attributeName = "ImageUrl")
   String imageUrl
-  @DynamoDBAttribute(attributeName = "Name")
-  String name
   @DynamoDBAttribute(attributeName = "Description")
   String description
 
@@ -123,9 +121,6 @@ class IdTeam extends AIdBase {
     if (item.isPresent("ImageUrl")) {
       imageUrl = item.getString("ImageUrl")
     }
-    if (item.isPresent("Name")) {
-      name = item.getString("Name")
-    }
     if (item.isPresent("Description")) {
       description = item.getString("Description")
     }
@@ -146,11 +141,6 @@ class IdTeam extends AIdBase {
     } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("ImageUrl")
     }
-    if (name) {
-      outItem = outItem.withString("Name", name)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Name")
-    }
     if (description) {
       outItem = outItem.withString("Description", description)
     } else if (removeAttributeNull) {
@@ -168,7 +158,6 @@ class IdTeam extends AIdBase {
     try {
       privacy = (Integer) params.privacy
       imageUrl = (String) params.image_url
-      name = (String) params.name
       description = (String) params.description
     } catch (e) {
       LOG.error("initParameters", e)

@@ -45,8 +45,6 @@ class IdOrg extends AIdBase {
 
   @DynamoDBAttribute(attributeName = "Visibility")
   Number visibility = VISIBILITY_PRIVATE
-  @DynamoDBAttribute(attributeName = "Name")
-  String name
   @DynamoDBAttribute(attributeName = "ImageUrl")
   String imageUrl
   @DynamoDBAttribute(attributeName = "WebUrl")
@@ -111,9 +109,6 @@ class IdOrg extends AIdBase {
     if (item.isPresent("Visibility")) {
       visibility = item.getNumber("Visibility")
     }
-    if (item.isPresent("Name")) {
-      name = item.getString("Name")
-    }
     if (item.isPresent("ImageUrl")) {
       imageUrl = item.getString("ImageUrl")
     }
@@ -133,11 +128,6 @@ class IdOrg extends AIdBase {
       outItem = outItem.withNumber("Visibility", visibility)
     } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("Visibility")
-    }
-    if (name) {
-      outItem = outItem.withString("Name", name)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Name")
     }
     if (imageUrl) {
       outItem = outItem.withString("ImageUrl", imageUrl)
@@ -165,7 +155,6 @@ class IdOrg extends AIdBase {
 
     try {
       visibility = (Integer) params.visibility
-      name = (String) params.name
       imageUrl = (String) params.imageUrl
       webUrl = (String) params.webUrl
       description = (String) params.description

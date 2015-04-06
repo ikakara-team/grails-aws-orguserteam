@@ -50,6 +50,8 @@ import ikakara.awsinstance.dao.dynamo.ADynamoObject
 abstract class AIdBase extends AIdObject implements ITypeObject {
   private static String TABLE_NAME
 
+  @DynamoDBAttribute(attributeName = "Name")
+  String name
   protected AIdBase alias
 
   @Override
@@ -126,6 +128,9 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
     String alias_prefix
     String alias_id
 
+    if (item.isPresent("Name")) {
+      name = item.getString("Name")
+    }
     if (item.isPresent("AliasPrefix")) {
       alias_prefix = item.getString("AliasPrefix")
     }
@@ -147,13 +152,16 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
     } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("IdType")
     }
-
+    if (name) {
+      outItem = outItem.withString("Name", name)
+    } else if (removeAttributeNull) {
+      outItem = outItem.removeAttribute("Name")
+    }
     if (alias) {
       outItem = outItem.withString("AliasPrefix", alias.typePrefix)
     } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("AliasPrefix")
     }
-
     if (alias && alias.id != "") {
       outItem = outItem.withString("AliasId", alias.id)
     } else if (removeAttributeNull) {
@@ -168,6 +176,7 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
     super.initParameters(params)
     //if (params) {
     id = (String) params.id
+    name = (String) params.name
     String alias_id = (String) params.alias_id
     String alias_prefix = (String) params.alias_prefix
     alias = toId(alias_prefix + alias_id)
