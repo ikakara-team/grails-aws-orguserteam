@@ -29,7 +29,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 @Validateable(nullable = true)
 @Slf4j("LOG")
 @CompileStatic
-class IdUserOrg extends AMemberGroupBase {
+class IdUserOrg extends AIdUserGroup {
 
   public static final String ID_TYPE = "UserOrg"
   public static final Set TEAM_VISIBLE = [MEMBERROLE_OWNER, MEMBERROLE_ADMIN] as Set

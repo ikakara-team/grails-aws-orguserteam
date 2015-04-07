@@ -22,6 +22,7 @@ import ikakara.orguserteam.dao.dynamo.IdTeam
 import ikakara.orguserteam.dao.dynamo.IdOrg
 import ikakara.orguserteam.dao.dynamo.IdOrgTeam
 import ikakara.orguserteam.dao.dynamo.IdUser
+import ikakara.orguserteam.dao.dynamo.AIdUserGroup
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
 import ikakara.orguserteam.dao.dynamo.IdUserTeam
 import ikakara.orguserteam.dao.dynamo.IdEmail
@@ -790,6 +791,13 @@ class OrgUserTeamService {
     return true
   }
 
+  // return IdUserOrg and/or IdUserTeam
+  List<AIdUserGroup> listGroup(IdUser user) {
+    List list = new IdUserOrg().withMember(user).queryByMember()
+    return list
+  }
+
+  // return IdEmailOrg and/or IdEmailTeam
   List<AIdEmailGroup> listGroup(IdEmail email) {
     List list = new IdEmailOrg().withMember(email).queryByMember()
     return list

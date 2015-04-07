@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.4.2'
-    compile ':aws-orguserteam:0.6.4'
+    compile ':aws-orguserteam:0.6.5'
 ...
   }
 ```
@@ -103,6 +103,7 @@ orgUserTeamService:
   * ```IdEmail createEmail(String emailId, IdUser user=null)```
   * ```IdEmail updateEmail(IdEmail email, IdUser uesr)```
   * ```boolean deleteEmail(IdEmail email)```
+  * ```List<AIdUserGroup> listGroup(IdUser user)```
   * ```List<AIdEmailGroup> listGroup(IdEmail email)```
   * ```boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org, String... roles)```
   * ```boolean addEmailToOrg(IdUser invitedBy, String invitedName, IdEmail email, IdOrg org)```
