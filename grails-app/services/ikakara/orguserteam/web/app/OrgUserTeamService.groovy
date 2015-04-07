@@ -374,23 +374,6 @@ class OrgUserTeamService {
     return team
   }
 
-  boolean haveOrgRole(IdOrg org, IdUser user, Set orgRoles) {
-    boolean rolevisibility = false
-
-    if(orgRoles) {
-      // allow orgusers to have visibility based on roles
-      def orguser = org?.hasMember(user)
-      if(orguser?.memberRoles) {
-        def res = orgRoles.intersect(orguser.memberRoles)
-        if(res.size() > 0) {
-          rolevisibility = true
-        }
-      }
-    }
-
-    return rolevisibility
-  }
-
   boolean isTeamVisible(IdTeam team, IdUser user, boolean orgMember) {
     // check if app is visible to user
     if(!orgMember || !team.orgVisible) {
@@ -404,17 +387,40 @@ class OrgUserTeamService {
     return true;
   }
 
+  boolean haveOrgRole(IdUserOrg orguser, Set orgRoles) {
+    boolean rolevisibility = false
+
+    if(orgRoles) {
+      if(orguser?.memberRoles) {
+        def res = orgRoles.intersect(orguser.memberRoles)
+        if(res.size() > 0) {
+          rolevisibility = true
+        }
+      }
+    }
+
+    return rolevisibility
+  }
+
+  boolean haveOrgRole(IdOrg org, IdUser user, Set orgRoles) {
+    def orguser = org?.hasMember(user)
+    return haveOrgRole(orguser, orgRoles)
+  }
+
   List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles=null) {
     List listTeam = []
 
     List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
 
-    if(haveOrgRole(org, user, orgRoles)) {
+    def orguser = org?.hasMember(user)
+
+    if(haveOrgRole(orguser, orgRoles)) {
       listTeam = list
     } else {
+      def orgMember = orguser ? true : false
       for(orgobj in list) {
         IdTeam team = (IdTeam)orgobj.group
-        if(isTeamVisible(team, user)) {
+        if(isTeamVisible(team, user, orgMember)) {
           listTeam << orgobj
         }
       }

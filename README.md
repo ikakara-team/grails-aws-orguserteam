@@ -84,8 +84,9 @@ orgUserTeamService:
   * ```boolean deleteOrg(IdOrg org)```
 * Team
   * ```IdTeam team(String teamId, instance=true)```
-  * ```boolean haveOrgRole(IdOrg org, IdUser user, Set orgRoles)```
   * ```boolean isTeamVisible(IdTeam team, IdUser user, boolean orgMember)```
+  * ```boolean haveOrgRole(IdOrg org, IdUser user, Set orgRoles)```
+  * ```boolean haveOrgRole(IdUserOrg orguser, Set orgRoles)```
   * ```List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles=null)```
   * ```List<IdOrgTeam> listTeam(IdOrg org)```
   * ```List<IdUserTeam> listTeam(IdUser user)```
