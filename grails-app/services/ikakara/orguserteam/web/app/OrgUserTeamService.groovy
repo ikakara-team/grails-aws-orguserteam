@@ -391,9 +391,9 @@ class OrgUserTeamService {
     return rolevisibility
   }
 
-  boolean isTeamVisible(IdTeam team, IdUser user) {
+  boolean isTeamVisible(IdTeam team, IdUser user, boolean orgMember) {
     // check if app is visible to user
-    if(!team.orgVisible) {
+    if(!orgMember || !team.orgVisible) {
       // check is member is
       def userteam = team.hasMember(user)
       if(!userteam) {

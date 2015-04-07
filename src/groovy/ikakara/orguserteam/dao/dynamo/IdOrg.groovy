@@ -210,7 +210,7 @@ class IdOrg extends AIdBase {
   }
 
   IdOrgTeam hasTeam(IdTeam team) {
-    // check to see if user is a member of the org
+    // check to see if team is connected to org
     IdOrgTeam orgteam = (IdOrgTeam) new IdOrgTeam().withMember(this).withGroup(team)
     boolean load = orgteam.load()
     return load ? orgteam : null

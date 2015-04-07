@@ -19,8 +19,8 @@ Installation:
 ```
   plugins {
 ...
-    compile ':aws-instance:0.4.1'
-    compile ':aws-orguserteam:0.6.3'
+    compile ':aws-instance:0.4.2'
+    compile ':aws-orguserteam:0.6.4'
 ...
   }
 ```
@@ -85,7 +85,7 @@ orgUserTeamService:
 * Team
   * ```IdTeam team(String teamId, instance=true)```
   * ```boolean haveOrgRole(IdOrg org, IdUser user, Set orgRoles)```
-  * ```boolean isTeamVisible(IdOrg org, IdUser user, Set orgRoles)```
+  * ```boolean isTeamVisible(IdTeam team, IdUser user, boolean orgMember)```
   * ```List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles=null)```
   * ```List<IdOrgTeam> listTeam(IdOrg org)```
   * ```List<IdUserTeam> listTeam(IdUser user)```
@@ -119,6 +119,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.6.4 - fix isTeamVisible
 0.6.3 - fix withMemberRoles
 0.6   - get methods for member group
 0.5.7 - team visibility
