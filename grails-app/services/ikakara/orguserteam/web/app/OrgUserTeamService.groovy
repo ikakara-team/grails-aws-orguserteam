@@ -427,18 +427,21 @@ class OrgUserTeamService {
   List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles=null) {
     List listTeam = []
 
-    List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
-
-    def orguser = org?.hasMember(user)
-
-    if(haveOrgRole(orguser, orgRoles)) {
-      listTeam = list
-    } else {
-      def orgMember = orguser ? true : false
-      for(orgobj in list) {
-        IdTeam team = (IdTeam)orgobj.group
-        if(isTeamVisible(team, user, orgMember)) {
-          listTeam << orgobj
+    if(org) { // nothing to do
+      List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
+      if(list) { // nothing to do
+        def orguser = org.hasMember(user)
+        def orgMember = orguser ? true : false
+        if(orgMember && haveOrgRole(orguser, orgRoles)) {
+          listTeam = list
+        } else {
+          // iterate through list to see which are visible to user
+          for(orgobj in list) {
+            IdTeam team = (IdTeam)orgobj.group
+            if(isTeamVisible(team, user, orgMember)) {
+              listTeam << orgobj
+            }
+          }
         }
       }
     }
