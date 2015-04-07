@@ -819,7 +819,7 @@ class OrgUserTeamService {
     return list
   }
 
-  boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org, String... roles) {
+  boolean addUserToGroup(IdUser invitedBy, IdUser user, IdOrg org, String... roles) {
     IdUserOrg userorg = (IdUserOrg)new IdUserOrg().withMember(user).withGroup(org)
     if(userorg.load()) {
       userorg.withUpdated()
@@ -830,7 +830,7 @@ class OrgUserTeamService {
     userorg.withInvitedBy(invitedBy).withMemberRoles(roles).save()
   }
 
-  boolean addEmailToOrg(IdUser invitedBy, String invitedName, IdEmail email, IdOrg org) {
+  boolean addEmailToGroup(IdUser invitedBy, String invitedName, IdEmail email, IdOrg org) {
     IdEmailOrg emailorg = (IdEmailOrg)new IdEmailOrg().withMember(email).withGroup(org)
     if(emailorg.load()) {
       emailorg.withUpdated()
@@ -840,7 +840,7 @@ class OrgUserTeamService {
     emailorg.withInvitedName(invitedName).withInvitedBy(invitedBy).save()
   }
 
-  boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team, String... roles) {
+  boolean addUserToGroup(IdUser invitedBy, IdUser user, IdTeam team, String... roles) {
     IdUserTeam userteam = (IdUserTeam)new IdUserTeam().withMember(user).withGroup(team)
     if(userteam.load()) {
       userteam.withUpdated()
@@ -850,7 +850,7 @@ class OrgUserTeamService {
     userteam.withInvitedBy(invitedBy).withMemberRoles(roles).save()
   }
 
-  boolean addEmailToTeam(IdUser invitedBy, String invitedName, IdEmail email, IdTeam team) {
+  boolean addEmailToGroup(IdUser invitedBy, String invitedName, IdEmail email, IdTeam team) {
     IdEmailTeam emailteam = (IdEmailTeam)new IdEmailTeam().withMember(email).withGroup(team)
     if(emailteam.load()) {
       emailteam.withUpdated()

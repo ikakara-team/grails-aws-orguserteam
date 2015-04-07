@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.4.2'
-    compile ':aws-orguserteam:0.6.6'
+    compile ':aws-orguserteam:0.6.7'
 ...
   }
 ```
@@ -107,10 +107,10 @@ orgUserTeamService:
   * ```boolean deleteEmail(IdEmail email)```
   * ```List<AIdUserGroup> listGroup(IdUser user)```
   * ```List<AIdEmailGroup> listGroup(IdEmail email)```
-  * ```boolean addUserToOrg(IdUser invitedBy, IdUser user, IdOrg org, String... roles)```
-  * ```boolean addEmailToOrg(IdUser invitedBy, String invitedName, IdEmail email, IdOrg org)```
-  * ```boolean addUserToTeam(IdUser invitedBy, IdUser user, IdTeam team, String... roles)```
-  * ```boolean addEmailToTeam(IdUser invitedBy, String invitedName, IdEmail email, IdTeam team)```
+  * ```boolean addUserToGroup(IdUser invitedBy, IdUser user, IdOrg org, String... roles)```
+  * ```boolean addEmailToGroup(IdUser invitedBy, String invitedName, IdEmail email, IdOrg org)```
+  * ```boolean addUserToGroup(IdUser invitedBy, IdUser user, IdTeam team, String... roles)```
+  * ```boolean addEmailToGroup(IdUser invitedBy, String invitedName, IdEmail email, IdTeam team)```
 
 Copyright & License:
 --------------
@@ -123,7 +123,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
-0.6.6 - member group enhancements
+0.6.7 - rename member group methods
 0.5.7 - team visibility
 0.4.1 - listGroup
 0.3.7 - fix invites; member groups
