@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.4.2'
-    compile ':aws-orguserteam:0.6.5'
+    compile ':aws-orguserteam:0.6.6'
 ...
   }
 ```
@@ -66,6 +66,8 @@ orgUserTeamService:
 * Id
   * ```AIdBase findIdObjBySlugId(String slugId)```
   * ```boolean exist(AIdBase id)```
+  * ```IdEmailOrg exist(IdEmail email, IdOrg org)```
+  * ```IdEmailTeam exist(IdEmail email, IdTeam team)```
 * User
   * ```IdUser user(String userId, instance=true)```
   * ```List<IdUserOrg> listUser(IdOrg org)```
@@ -121,9 +123,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
-0.6.4 - fix isTeamVisible
-0.6.3 - fix withMemberRoles
-0.6   - get methods for member group
+0.6.6 - member group enhancements
 0.5.7 - team visibility
 0.4.1 - listGroup
 0.3.7 - fix invites; member groups

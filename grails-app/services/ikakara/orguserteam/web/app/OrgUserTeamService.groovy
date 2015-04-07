@@ -47,6 +47,22 @@ class OrgUserTeamService {
     return id?.load()
   }
 
+  IdEmailOrg exist(IdEmail email, IdOrg org) {
+    def emailorg = new IdEmailOrg().withMember(email).withGroup(org)
+    if(!emailorg.load()) {
+      return null
+    }
+    return emailorg
+  }
+
+  IdEmailTeam exist(IdEmail email, IdTeam team) {
+    def emailteam = new IdEmailTeam().withMember(email).withGroup(team)
+    if(!emailteam.load()) {
+      return null
+    }
+    return emailteam
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // User
   /////////////////////////////////////////////////////////////////////////////
