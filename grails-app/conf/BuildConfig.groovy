@@ -30,7 +30,7 @@ grails.project.dependency.resolution = {
     compile ':plugin-config:0.2.0'
 
     compile ':simple-marshaller:0.1.2'
-    compile (':aws-instance:0.5') {
+    compile (':aws-instance:0.5.1') {
       export = false
     }
 
