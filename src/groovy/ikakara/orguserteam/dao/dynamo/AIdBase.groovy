@@ -44,7 +44,7 @@ import ikakara.awsinstance.dao.dynamo.ADynamoObject
  * @author Allen
  */
 @DynamoDBTable(tableName = "Ids")
-@ToString(includePackage=false, ignoreNulls=true, includeSuper=true)
+@ToString(includePackage=false, includeNames=true, ignoreNulls=true, includeSuperProperties=true)
 @Slf4j("LOG")
 @CompileStatic
 abstract class AIdBase extends AIdObject implements ITypeObject {
