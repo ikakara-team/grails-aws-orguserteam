@@ -15,7 +15,7 @@ grails.project.dependency.resolution = {
   }
 
   dependencies {
-    compile ('com.amazonaws:aws-java-sdk:1.9.30') { // http://aws.amazon.com/releasenotes/Java?browse=1
+    compile ('com.amazonaws:aws-java-sdk:1.9.31') { // http://aws.amazon.com/releasenotes/Java?browse=1
       export = false
     }
   }
@@ -30,7 +30,7 @@ grails.project.dependency.resolution = {
     compile ':plugin-config:0.2.0'
 
     compile ':simple-marshaller:0.1.2'
-    compile (':aws-instance:0.5.3') {
+    compile (':aws-instance:0.5.4') {
       export = false
     }
 
