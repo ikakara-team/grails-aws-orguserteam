@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.4'
-    compile ':aws-orguserteam:0.6.8'
+    compile ':aws-orguserteam:0.6.9'
 ...
   }
 ```
@@ -123,6 +123,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.6.9 - misc tweaks
 0.6.8 - fix listTeamVisible
 0.5.7 - team visibility
 0.4.1 - listGroup
