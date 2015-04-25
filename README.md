@@ -19,8 +19,8 @@ Installation:
 ```
   plugins {
 ...
-    compile ':aws-instance:0.5.4'
-    compile ':aws-orguserteam:0.6.9'
+    compile ':aws-instance:0.5.6'
+    compile ':aws-orguserteam:0.6.10'
 ...
   }
 ```
@@ -123,12 +123,13 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
-0.6.9 - misc tweaks
-0.6.8 - fix listTeamVisible
-0.5.7 - team visibility
-0.4.1 - listGroup
-0.3.7 - fix invites; member groups
-0.2.5 - add/invite users to join organizations/teams
-0.1.1 - fix title
-0.1   - initial checkin
+0.6.10 - bump version (should be last one)
+0.6.9  - misc tweaks
+0.6.8  - fix listTeamVisible
+0.5.7  - team visibility
+0.4.1  - listGroup
+0.3.7  - fix invites; member groups
+0.2.5  - add/invite users to join organizations/teams
+0.1.1  - fix title
+0.1    - initial checkin
 ```
