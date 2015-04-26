@@ -35,7 +35,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "teamList", "userList", "visibility", "name", "imageUrl", "webUrl", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
-class IdOrg extends AIdBase {
+class IdOrg extends AIdAccount implements TAccountOwned {
 
   public static final String ID_TYPE = "Org"
   public static final String ID_PREFIX = "@"
@@ -53,21 +53,7 @@ class IdOrg extends AIdBase {
   String description
 
   // transient
-  List<IdTeam> teamList = []
   List<IdUser> userList = []
-
-  @DynamoDBIgnore
-  List<IdTeam> getTeamList() {
-    return teamList
-  }
-
-  void teamListAdd(List<IdTeam> list) {
-    teamList.addAll(list)
-  }
-
-  void teamListAdd(IdTeam team) {
-    teamList << team
-  }
 
   @DynamoDBIgnore
   List<IdUser> getUserList() {
@@ -106,6 +92,8 @@ class IdOrg extends AIdBase {
   void marshalAttributesIN(Item item) {
     super.marshalAttributesIN(item)
     //if (map) {
+    marshalOwnerIn(item)
+
     if (item.isPresent("Visibility")) {
       visibility = item.getNumber("Visibility")
     }
@@ -124,6 +112,9 @@ class IdOrg extends AIdBase {
   @Override
   Item marshalItemOUT(boolean removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
+
+    outItem = marshalOwnerOUT(outItem, removeAttributeNull)
+
     if (visibility != null) {
       outItem = outItem.withNumber("Visibility", visibility)
     } else if (removeAttributeNull) {

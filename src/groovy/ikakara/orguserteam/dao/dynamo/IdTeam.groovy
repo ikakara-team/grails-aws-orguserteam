@@ -35,7 +35,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "owner", "userList", "privacy", "imageUrl", "name", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
-class IdTeam extends AIdBase {
+class IdTeam extends AIdBase implements TAccountOwned {
 
   public static final String ID_TYPE = "Team"
   public static final String ID_PREFIX = "!"
@@ -52,23 +52,7 @@ class IdTeam extends AIdBase {
   String description
 
   // transient
-  IdOrg owner
   List<IdUser> userList = []
-
-  @DynamoDBIgnore
-  IdOrg getOwner() {
-    if (!owner) {
-      // check to see if team is part of the org
-      def list = new IdOrgTeam().withGroup(this).queryByGroupAndType()
-      for (id in list) {
-        // there should only be 1 owner; what should we do if there's more than 1???
-        owner = (IdOrg)id.member
-        break
-      }
-    }
-
-    return owner
-  }
 
   @DynamoDBIgnore
   List<IdUser> getUserList() {
@@ -115,6 +99,8 @@ class IdTeam extends AIdBase {
   void marshalAttributesIN(Item item) {
     super.marshalAttributesIN(item)
     //if (map) {
+    marshalOwnerIn(item)
+
     if (item.isPresent("Privacy")) {
       privacy = item.getNumber("Privacy")
     }
@@ -130,6 +116,8 @@ class IdTeam extends AIdBase {
   @Override
   Item marshalItemOUT(boolean removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
+
+    outItem = marshalOwnerOUT(outItem, removeAttributeNull)
 
     if (privacy != null) {
       outItem = outItem.withNumber("Privacy", privacy)

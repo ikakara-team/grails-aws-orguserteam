@@ -73,7 +73,7 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
       Projection PROJECTION_TYPE = new Projection().withProjectionType(ProjectionType.INCLUDE)
       .withNonKeyAttributes("AliasId", "AliasPrefix")
       Projection PROJECTION_ALIAS = new Projection().withProjectionType(ProjectionType.INCLUDE)
-      .withNonKeyAttributes("IdType", "AliasPrefix")
+      .withNonKeyAttributes("IdType", "CreatedTime")
 
       CreateTableRequest req = new CreateTableRequest()
       .withTableName(tableName())
@@ -101,7 +101,7 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
         .withIndexName("Idx_AliasId")
         .withKeySchema(
           new KeySchemaElement("AliasId", KeyType.HASH),
-          new KeySchemaElement("CreatedTime", KeyType.RANGE))
+          new KeySchemaElement("AliasPrefix", KeyType.RANGE))
         .withProjection(PROJECTION_ALIAS)
         .withProvisionedThroughput(THRUPUT)
       )
@@ -280,8 +280,8 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
     queryIndex("Idx_IdType", "IdType", type)
   }
 
-  List<AIdBase> queryByTypeAndAlias() {
-    RangeKeyCondition rangeKeyCondition = new RangeKeyCondition("AliasId").eq(aliasId)
-    queryIndex("Idx_IdType", "IdType", type, rangeKeyCondition)
+  List<AIdBase> queryByAliasAndPrefix() {
+    RangeKeyCondition rangeKeyCondition = new RangeKeyCondition("AliasPrefix").eq(aliasPrefix)
+    queryIndex("Idx_AliasId", "AliasId", aliasId, rangeKeyCondition)
   }
 }

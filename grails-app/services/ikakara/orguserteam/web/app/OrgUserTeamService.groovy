@@ -16,6 +16,7 @@ package ikakara.orguserteam.web.app
 
 import groovy.transform.CompileStatic
 
+import ikakara.orguserteam.dao.dynamo.AIdAccount
 import ikakara.orguserteam.dao.dynamo.AIdBase
 import ikakara.orguserteam.dao.dynamo.IdSlug
 import ikakara.orguserteam.dao.dynamo.IdTeam
@@ -241,12 +242,19 @@ class OrgUserTeamService {
     return list
   }
 
-  IdOrg createOrg(IdUser user, String orgName, String orgDescription) {
+  IdOrg createOrg(IdUser user, String orgName, String orgDescription, IdOrg owner=null) {
     // create org
     IdOrg org = (IdOrg)new IdOrg(description: orgDescription)
     .initId()
     .slugify(orgName)
     .withCreatedUpdated()
+
+    // org owner is either (another) org or user
+    if(owner) {
+      org.withOwner(owner)
+    } else {
+      org.withOwner(user)
+    }
 
     def create = org.create()
     if(!create) {
@@ -533,6 +541,13 @@ class OrgUserTeamService {
     .initId()
     .slugify(teamName)
     .withCreatedUpdated()
+
+    // team owner is either org or user
+    if(org) {
+      team.withOwner(org)
+    } else {
+      team.withOwner(user)
+    }
 
     team.privacy = privacy
 

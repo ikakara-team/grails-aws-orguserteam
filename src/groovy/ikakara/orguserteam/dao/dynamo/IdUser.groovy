@@ -35,12 +35,10 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "teamList", "orgList", "status", "name", "imageUrl", "initials", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
-class IdUser extends AIdBase {
+class IdUser extends AIdAccount {
   public static final String ID_TYPE = "User"
   public static final String ID_PREFIX = "~"
 
-  @DynamoDBAttribute(attributeName = "Status")
-  Number status
   @DynamoDBAttribute(attributeName = "ImageUrl")
   String imageUrl
   @DynamoDBAttribute(attributeName = "Initials")
@@ -49,21 +47,7 @@ class IdUser extends AIdBase {
   String description
 
   // transient
-  List<IdTeam> teamList = []
   List<IdOrg> orgList = []
-
-  @DynamoDBIgnore
-  List<IdTeam> getTeamList() {
-    return teamList
-  }
-
-  void teamListAdd(List<IdTeam> list) {
-    teamList.addAll(list)
-  }
-
-  void teamListAdd(IdTeam team) {
-    teamList << team
-  }
 
   @DynamoDBIgnore
   List<IdOrg> getOrgList() {
@@ -94,9 +78,6 @@ class IdUser extends AIdBase {
   void marshalAttributesIN(Item item) {
     super.marshalAttributesIN(item)
     //if (map) {
-    if (item.isPresent("Status")) {
-      status = item.getNumber("Status")
-    }
     if (item.isPresent("ImageUrl")) {
       imageUrl = item.getString("ImageUrl")
     }
@@ -113,11 +94,6 @@ class IdUser extends AIdBase {
   Item marshalItemOUT(boolean removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
 
-    if (status != null) {
-      outItem = outItem.withNumber("Status", status)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Status")
-    }
     if (imageUrl) {
       outItem = outItem.withString("ImageUrl", imageUrl)
     } else if (removeAttributeNull) {
@@ -143,7 +119,6 @@ class IdUser extends AIdBase {
     //if (params) {
 
     try {
-      status = (Integer) params.status
       imageUrl = (String) params.image_url
       initials = (String) params.initials
       description = (String) params.description
