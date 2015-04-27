@@ -80,7 +80,7 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
       .withAttributeDefinitions(
         new AttributeDefinition(nameHashKey(), ScalarAttributeType.S),
         new AttributeDefinition("AliasId", ScalarAttributeType.S),
-        //new AttributeDefinition("AliasPrefix", ScalarAttributeType.S),
+        new AttributeDefinition("AliasPrefix", ScalarAttributeType.S),
         new AttributeDefinition("IdType", ScalarAttributeType.S),
         new AttributeDefinition("CreatedTime", ScalarAttributeType.S)
         //new AttributeDefinition("UpdatedTime", ScalarAttributeType.S)

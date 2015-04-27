@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.7.1'
+    compile ':aws-orguserteam:0.7.2'
 ...
   }
 ```
@@ -123,6 +123,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.7.2  - fix table creation
 0.7.1  - fix regression bug
 0.7.0  - refactor
 0.6.10 - misc tweaks
