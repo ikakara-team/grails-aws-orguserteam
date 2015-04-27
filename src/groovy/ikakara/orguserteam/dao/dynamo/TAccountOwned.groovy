@@ -24,9 +24,13 @@ import com.amazonaws.services.dynamodbv2.document.Item
 @CompileStatic
 trait TAccountOwned {
   AIdAccount owner
+  boolean bload = false
 
   @DynamoDBAttribute(attributeName = "OwnerId")
   AIdAccount getOwner() {
+    if(owner && !bload) {
+      bload = owner.load()
+    }
     return owner
   }
 
@@ -46,14 +50,11 @@ trait TAccountOwned {
   }
 
   Item marshalOwnerOUT(Item outItem, boolean removeAttributeNull) {
-
     if (owner != null) {
       outItem = outItem.withString("OwnerId", (String) owner.valueHashKey())
     } else if (removeAttributeNull) {
       outItem = outItem.removeAttribute("OwnerId")
     }
-
     return outItem
   }
-
 }

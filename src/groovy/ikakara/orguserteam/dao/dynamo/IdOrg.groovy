@@ -32,7 +32,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
  */
 @ToString(includePackage=false, includeNames=true, ignoreNulls=true, includeSuperProperties=true)
 @Validateable(nullable = true)
-@SimpleMarshaller(includes = ["id", "type", "aliasId", "teamList", "userList", "visibility", "name", "imageUrl", "webUrl", "description", "createdDate", "updatedDate"])
+@SimpleMarshaller(includes = ["id", "type", "aliasId", "owner", "teamList", "userList", "visibility", "name", "imageUrl", "webUrl", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
 class IdOrg extends AIdAccount implements TAccountOwned {
