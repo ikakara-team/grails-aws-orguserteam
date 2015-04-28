@@ -87,6 +87,10 @@ abstract class AIdObject extends ACreatedUpdatedObject {
     //}
   }
 
+  boolean equals(AIdObject obj) {
+    return valueHashKey() == obj.valueHashKey()
+  }
+
   String urlEncodedId() {
     return StringUtil.urlEncodeExt(id)
   }

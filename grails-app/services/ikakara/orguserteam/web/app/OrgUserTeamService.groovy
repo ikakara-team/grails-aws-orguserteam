@@ -219,11 +219,14 @@ class OrgUserTeamService {
     return org
   }
 
-  IdOrg getOrg(IdTeam team) {
-    List<IdOrgTeam> list = listOrg(team)
-    if(list) {
-      return (IdOrg)list[0].member // hacky, should only be one org
+  boolean isOrgVisible(IdOrg org, IdUser user) {
+    // org is visible to user when ...
+    if(org.ownerEquals(user)) { // doesn't require a network call
+      return true
     }
+
+    // user is member of org
+    return org.hasMember(user)
   }
 
   // NOSQL compromise for 1 to many, using many to many table
@@ -399,17 +402,47 @@ class OrgUserTeamService {
     return team
   }
 
+  // WARNING: this does not check if user is an orgMember w/ a role of owner/admin
   boolean isTeamVisible(IdTeam team, IdUser user, boolean orgMember) {
-    // check if app is visible to user
-    if(!orgMember || !team.orgVisible) {
-      // check is member is
-      def userteam = team.hasMember(user)
-      if(!userteam) {
-        return false
-      }
+    // team is visible to user when ...
+    if(team.ownerEquals(user)) { // doesn't require a network call
+      return true
     }
 
-    return true;
+    if(team.orgVisible && orgMember) {
+      // user is member of org and team is visible to org
+      return true
+    }
+    // user is member of team
+    return team.hasMember(user)
+  }
+
+  // This checks for everything
+  boolean isTeamVisible(IdTeam team, IdUser user) {
+    if(team.ownerEquals(user)) { // doesn't require a network call
+      return true
+    }
+
+    // team is visible to user when ...
+    if(team.hasMember(user)) { // network call
+      // user is member of team
+      return true
+    }
+
+    // check if org is team owner
+    if(!team.isOwnerOrg()) { // doesn't require network call
+      return false
+    }
+
+    IdOrg org = (IdOrg)team.owner // a network call
+
+    IdUserOrg orguser = org?.hasMember(user) // a network call
+    if(orguser && (team.orgVisible || haveOrgRole(orguser, IdUserOrg.TEAM_VISIBLE))) {
+      // user is member of org and (team is visible to org or/and user has team-visible role)
+      return true
+    }
+
+    return false
   }
 
   boolean haveOrgRole(IdUserOrg orguser, Set orgRoles) {
@@ -657,17 +690,17 @@ class OrgUserTeamService {
     return team.aliasId
   }
 
+  // ASSUMES: team loaded
   //user, params.name, params.int('privacy'), params.org, params.aliasId
   boolean updateTeamOwner(IdTeam team, String orgId) {
     //def load = team.load()
     //if(!load) {
     // not found
-    // return
+    // return false
     //}
 
-    def curOrg = getOrg(team)
-
-    if((orgId || curOrg) && (curOrg?.id != orgId)) {
+    def curAccount = team.owner
+    if((orgId || curAccount) && (curAccount?.id != orgId)) {
       IdOrg org
       if(orgId) {
         // check if org exist
@@ -679,10 +712,10 @@ class OrgUserTeamService {
         }
       }
 
-      if(curOrg) {
+      if(curAccount && team.isOwnerOrg()) {
         // delete org
         def curorgteam = new IdOrgTeam()
-        .withMember(curOrg)
+        .withMember(curAccount)
         .withGroup(team)
         def del = curorgteam.delete()
         if(!del) {
@@ -692,16 +725,21 @@ class OrgUserTeamService {
       }
 
       if(org) {
-        // add org to team
-        def orgteam = new IdOrgTeam()
-        .withMember(org)
-        .withGroup(team)
-        .withCreatedUpdated()
+        // update owner
+        team.owner = org
+        def saved = team.save()
+        if(saved) {
+          // add org to team
+          def orgteam = new IdOrgTeam()
+          .withMember(org)
+          .withGroup(team)
+          .withCreatedUpdated()
 
-        def create = orgteam.create()
-        if(!create) {
-          // failed
-          return false
+          def create = orgteam.create()
+          if(!create) {
+            // failed
+            return false
+          }
         }
       }
     }

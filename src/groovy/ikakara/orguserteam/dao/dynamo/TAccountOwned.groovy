@@ -34,6 +34,14 @@ trait TAccountOwned {
     return owner
   }
 
+  boolean isOwnerOrg() {
+    return owner instanceof IdOrg
+  }
+
+  boolean isOwnerUser() {
+    return owner instanceof IdUser
+  }
+
   void setOwner(AIdAccount o) {
     owner = o
   }
@@ -56,5 +64,10 @@ trait TAccountOwned {
       outItem = outItem.removeAttribute("OwnerId")
     }
     return outItem
+  }
+
+  boolean ownerEquals(AIdAccount account) {
+    // we're going to cheat and not load owner
+    return owner ? owner.valueHashKey() == account?.valueHashKey() : false
   }
 }

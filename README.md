@@ -4,7 +4,7 @@ Description:
 --------------
 Grails plugin, for a "Org-User-Team" design pattern used by apps like Trello.com and implemented using AWS DyanmoDB.
 
-* Org - an abstraction to organize users/teams.  Organization members can view/join teams.
+* Org  - an abstraction to organize users/teams.  Organization members can view/join teams.
 * User - a user can create/join organizations and teams and invite other users to join organizations/teams.
 * Team - an abstraction to further group users around projects, venues, boards (Trello), etc
 
@@ -49,6 +49,8 @@ grails {
   plugin {
     awsorguserteam {
       homePath = "/"
+      invalidAccessRedirectUri = "/welcome"
+      userNotFoundRedirectUri = "/profile"
       dataSource {
         dbPrefix="DEV"
         dbCreate="create" //'create', 'create-drop',''
@@ -77,7 +79,7 @@ orgUserTeamService:
   * ```boolean deleteUser(IdUser user)```
 * Org
   * ```IdOrg org(String orgId, instance=true)```
-  * ```IdOrg getOrg(IdTeam team)```
+  * ```boolean isOrgVisible(IdOrg org, IdUser user)```
   * ```List<IdOrgTeam> listOrg(IdTeam team)```
   * ```List<IdUserOrg> listOrg(IdUser user)```
   * ```List<IdEmailOrg> listOrg(IdEmail email)```
@@ -87,6 +89,7 @@ orgUserTeamService:
 * Team
   * ```IdTeam team(String teamId, instance=true)```
   * ```boolean isTeamVisible(IdTeam team, IdUser user, boolean orgMember)```
+  * ```boolean isTeamVisible(IdTeam team, IdUser user)```
   * ```boolean haveOrgRole(IdOrg org, IdUser user, Set orgRoles)```
   * ```boolean haveOrgRole(IdUserOrg orguser, Set orgRoles)```
   * ```List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles=null)```
@@ -123,6 +126,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.7.3  - refactor access validation
 0.7.2  - fix table creation
 0.7.1  - fix regression bug
 0.7.0  - refactor
