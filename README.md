@@ -20,7 +20,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.7.2'
+    compile ':aws-orguserteam:0.7.3'
 ...
   }
 ```
