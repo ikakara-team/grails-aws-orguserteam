@@ -4,9 +4,11 @@ Description:
 --------------
 Grails plugin, for a "Org-User-Team" design pattern used by apps like Trello.com and implemented using AWS DyanmoDB.
 
-* Org  - an abstraction to organize users/teams.  Organization members can view/join teams.
-* User - a user can create/join organizations and teams and invite other users to join organizations/teams.
-* Team - an abstraction to further group users around projects, venues, boards (Trello), etc
+* Account - owns Groups.  Users and organizations are accounts.
+* Group   - contains members.  Organizations and teams are groups.
+* Org     - an abstraction to organize users/teams.  Organization members can view/join teams.
+* User    - a user can create/join organizations and teams and invite other users to join organizations/teams.
+* Team    - a collection to further group users around projects, venues, boards (Trello), etc
 
 ![Class Diagram](/grails-app/assets/images/OrgUserTeam.png?raw=true "Class Diagram")
 
