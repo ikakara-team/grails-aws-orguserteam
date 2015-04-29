@@ -34,7 +34,7 @@ abstract class ATeamBaseController extends ABaseController implements IAccessCon
 
     setAttributeUserEmailAndInvited()
 
-    setAttributeMembers(user)
+    setAttributeMemberTeam(user)
 
     ///////////////////////////////////////////////////////////////////////////
     // validate access

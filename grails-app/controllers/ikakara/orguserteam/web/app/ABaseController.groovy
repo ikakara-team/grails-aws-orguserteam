@@ -20,12 +20,12 @@ import ikakara.orguserteam.dao.dynamo.IdUser
 
 @CompileStatic
 abstract class ABaseController implements IAccessController {
-  static final String ORG_KEY = "org"
-  static final String TEAM_KEY = "team"
-  static final String USER_KEY = "user"
+  static final String ORG_KEY       = "org"
+  static final String TEAM_KEY      = "team"
+  static final String USER_KEY      = "user"
   static final String USEREMAIL_KEY = "email"
-  static final String INVITED_KEY = "invited"
-  static final String MEMBERS_KEY = "members"
+  static final String MEMBER_KEY    = "member"
+  static final String INVITED_KEY   = "invited"
 
   def orgUserTeamService
 
@@ -42,10 +42,17 @@ abstract class ABaseController implements IAccessController {
     }
   }
 
-  def setAttributeMembers(IdUser user) {
+  def setAttributeMemberAll(IdUser user) {
     def userGroup = ((OrgUserTeamService)orgUserTeamService).listGroup(user)
     if(userGroup) {
-      request.setAttribute(MEMBERS_KEY, userGroup)
+      request.setAttribute(MEMBER_KEY, userGroup)
+    }
+  }
+
+  def setAttributeMemberTeam(IdUser user) {
+    def userGroup = ((OrgUserTeamService)orgUserTeamService).listTeam(user)
+    if(userGroup) {
+      request.setAttribute(MEMBER_KEY, userGroup)
     }
   }
 

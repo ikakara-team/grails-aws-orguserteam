@@ -34,7 +34,7 @@ abstract class AOrgBaseController extends ABaseController implements IAccessCont
 
     setAttributeUserEmailAndInvited()
 
-    setAttributeMembers(user)
+    setAttributeMemberAll(user)
 
     ///////////////////////////////////////////////////////////////////////////
     // validate access
