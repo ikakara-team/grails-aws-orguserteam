@@ -8,7 +8,7 @@
   </head>
   <body>
     <a href="#list-idSlug" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-    <div class="navmenu" imageUrl="navigation">
+    <div class="nav" imageUrl="navigation">
       <ul>
         <li><a class="home" href="${request.contextPath}${grailsApplication.config.grails.plugin.awsorguserteam.homePath}"><g:message code="default.home.label"/></a></li>
         <li><g:link class="create" url="[action:'create']"><g:message code="default.new.label" args="[entityNameC]" /></g:link></li>
