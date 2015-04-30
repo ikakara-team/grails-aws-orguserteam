@@ -64,6 +64,7 @@ grails {
 
 Usage:
 --------------
+See <a href="https://github.com/ikakara-team/grails-example-orguserteam">example application</a>
 
 orgUserTeamService:
 --------------
