@@ -22,7 +22,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.7.4'
+    compile ':aws-orguserteam:0.7.5'
 ...
   }
 ```
@@ -128,6 +128,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.7.5  - fix sys nav
 0.7.4  - tweak team access
 0.7.3  - refactor access validation
 0.7.2  - fix table creation
