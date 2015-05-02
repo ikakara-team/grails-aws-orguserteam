@@ -13,11 +13,11 @@ class UserTestController extends AUserBaseController {
   }
 
   String getUserEmail() {
-    return 'allen.arakaki@gmail.com'
+    return ''
   }
 
   String getUserId(){
-    return 'jssW69wg'
+    return ''
   }
 
 }
