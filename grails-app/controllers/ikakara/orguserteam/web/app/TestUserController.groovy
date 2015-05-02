@@ -1,8 +1,8 @@
 package ikakara.orguserteam.web.app
 
-import ikakara.orguserteam.web.app.AUserBaseController
+import ikakara.orguserteam.web.app.ABaseUserController
 
-class UserTestController extends AUserBaseController {
+class TestUserController extends ABaseUserController {
 
   String getOrgSlugId() {
     return params.id

@@ -12,7 +12,7 @@ import ikakara.orguserteam.dao.dynamo.IdTeam
 import ikakara.awsinstance.util.StringUtil
 
 //@GrailsCompileStatic
-abstract class AOrgBaseController extends ABaseController implements IAccessController {
+abstract class ABaseOrgController extends ABaseController implements IAccessController {
   def beforeInterceptor = [action: this.&validateAccess]
 
   // insure that user has access:

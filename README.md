@@ -29,7 +29,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.7.7'
+    compile ':aws-orguserteam:0.7.8'
 ...
   }
 ```
@@ -75,9 +75,9 @@ Usage:
 See <a href="https://github.com/ikakara-team/grails-example-orguserteam">example application</a>
 
 This plugin includes 3 (abstract) base classes so use is DRY as possible:
-* AOrgBaseController  - defines an interceptor to check for "org level access"
-* ATeamBaseController - defines an interceptor to check for "team level access"
-* AUserBaseController - defines CRUD operations for invitations, orgs and teams
+* ABaseOrgController  - defines an interceptor to check for "org level access"
+* ABaseTeamController - defines an interceptor to check for "team level access"
+* ABaseUserController - defines CRUD operations for invitations, orgs and teams
 
 To use any of the base classes, developers will need to define 4 (interface) methods:
 * String getOrgSlugId()
@@ -87,9 +87,9 @@ To use any of the base classes, developers will need to define 4 (interface) met
 
 For example,
 ```
-import ikakara.orguserteam.web.app.AUserBaseController
+import ikakara.orguserteam.web.app.ABaseUserController
 
-class UserDashboardController extends AUserBaseController {
+class UserDashboardController extends ABaseUserController {
   // Get the following from your inputs
   String getOrgSlugId() {
     return params.id
@@ -188,6 +188,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.7.8  - rename controllers
 0.7.7  - tweak joinInvitation
 0.7.6  - crud operations for orgs, teams, invitations
 0.7.5  - fix sys nav

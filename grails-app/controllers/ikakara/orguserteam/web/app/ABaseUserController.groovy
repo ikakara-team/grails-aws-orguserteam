@@ -17,7 +17,7 @@ import ikakara.orguserteam.dao.dynamo.IdTeam
 import ikakara.orguserteam.dao.dynamo.IdEmail
 
 @GrailsCompileStatic
-abstract class AUserBaseController extends ABaseController implements IAccessController {
+abstract class ABaseUserController extends ABaseController implements IAccessController {
   static allowedMethods = [
     invitations: "GET", joinInvitation: "POST", deleteInvitationTBD: "DELETE",
     orgs: "GET", updateOrgTBD: "PUT", saveOrgTBD: "POST", deleteOrgTBD: "DELETE",
