@@ -62,4 +62,11 @@ abstract class ABaseController implements IAccessController {
     }
     return newinput
   }
+
+  protected respondError(errorCode, errorMsg='', view="error${errorCode}") {
+    def model = [ success: false, error: [ code: errorCode, text: errorMsg ] ]
+    // JSON/XML/HTML appropriate response with detail
+    respond model as Object, [ model: model, status: errorCode, view: view ]
+  }
+
 }

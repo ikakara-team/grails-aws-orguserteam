@@ -5,10 +5,17 @@ Description:
 Grails plugin, for a "Org-User-Team" design pattern used by apps like Trello.com and implemented using AWS DyanmoDB.
 
 * Account - owns Groups.  Users and organizations are accounts.
+  * Each account has 1 and only 1 owner (linked to the account)
 * Group   - contains members.  Organizations and teams are groups.
-* Org     - an abstraction to organize users/teams.  Organization members can view/join teams.
+  * Each member (of a group) can have a group role, such as 'owner' or 'admin.'
+  * Roles are their effect on visibility, access, etc are developer defined.
 * User    - a user can create/join organizations and teams and invite other users to join organizations/teams.
+* Org     - an abstraction to organize users/teams.  Organization members can view/join teams.
+  * Visibility (to other users) is private (default) or public. Only members can update the Org.
+  * Only (org) owner can delete the Org which will delete all teams owned by the Org.
 * Team    - a collection to further group users around projects, venues, boards (Trello), etc
+  * Visibility (to other users) is private (default), organizational or public. Only members can update the Team.
+  * Team owner can delete the Team.  
 
 ![Class Diagram](/grails-app/assets/images/OrgUserTeam.png?raw=true "Class Diagram")
 
@@ -22,7 +29,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.7.5'
+    compile ':aws-orguserteam:0.7.6'
 ...
   }
 ```
@@ -65,6 +72,57 @@ grails {
 Usage:
 --------------
 See <a href="https://github.com/ikakara-team/grails-example-orguserteam">example application</a>
+
+This plugin includes 3 (abstract) base classes so use is DRY as possible:
+* AOrgBaseController  - defines an interceptor to check for "org level access"
+* ATeamBaseController - defines an interceptor to check for "team level access"
+* AUserBaseController - defines CRUD operations for invitations, orgs and teams
+
+To use any of the base classes, developers will need to define 4 (interface) methods:
+* String getOrgSlugId()
+* String getTeamSlugId()
+* String getUserEmail()
+* String getUserId()
+
+For example,
+```
+import ikakara.orguserteam.web.app.AUserBaseController
+
+class UserDashboardController extends AUserBaseController {
+  // Get the following from your inputs
+  String getOrgSlugId() {
+    return params.id
+  }
+
+  String getTeamSlugId() {
+    return params.teamId
+  }
+
+  // Get the following from your auth provider
+  String getUserEmail() {
+    return springSecurityService.principal?.email
+  }
+
+  String getUserId(){
+    return springSecurityService.principal?.id
+  }
+```
+
+To utilize UserDashboardController's inherited CRUD operations on invitations, orgs, teams, 
+add the following to your UrlMappings.groovy:
+```
+    // Feel free to tweak, but be sure to include '$id?'
+    "/my-invitations/$id?(.$format)?"(controller: "userDashboard", parseRequest: true) {
+      action = [GET: "invitations", POST: "joinInvitation", DELETE: "deleteInvitation"]
+    }
+    "/my-orgs/$id?(.$format)?"(controller: "userDashboard", parseRequest: true) {
+      action = [GET: "orgs", PUT: "updateOrg", POST: "saveOrg", DELETE: "deleteOrg"]
+    }
+    "/my-teams/$id?(.$format)?"(controller: "userDashboard", parseRequest: true) {
+      action = [GET: "teams", PUT: "updateTeam", POST: "saveTeam", DELETE: "deleteTeam"]
+    }
+    "/my-groups(.$format)?"(controller: "userDashboard", action: "groups")
+```
 
 orgUserTeamService:
 --------------
@@ -129,6 +187,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.7.6  - crud operations for orgs, teams, invitations
 0.7.5  - fix sys nav
 0.7.4  - tweak team access
 0.7.3  - refactor access validation

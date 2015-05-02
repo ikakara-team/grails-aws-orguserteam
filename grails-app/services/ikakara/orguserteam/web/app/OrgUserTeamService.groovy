@@ -35,7 +35,7 @@ import ikakara.orguserteam.dao.dynamo.IdEmailOrg
 class OrgUserTeamService {
   static transactional = false
 
-  def findIdObjBySlugId(String slugId) {
+  AIdBase findIdObjBySlugId(String slugId) {
     def list = new IdSlug().queryByAlias(slugId)
     if(list?.size() == 1) {
       return list[0]
@@ -46,6 +46,15 @@ class OrgUserTeamService {
 
   boolean exist(AIdBase id) {
     return id?.load()
+  }
+
+  AIdEmailGroup exist(IdEmail email, AIdBase group) {
+    if(group instanceof IdOrg) {
+      return exist(email, (IdOrg)group)
+    } else if(group instanceof IdTeam) {
+      return exist(email, (IdTeam)group)
+    }
+    return null
   }
 
   IdEmailOrg exist(IdEmail email, IdOrg org) {
@@ -72,7 +81,7 @@ class OrgUserTeamService {
     def load = user.load()
     if(!load) {
       // doesn't exist
-      log.warn("User Not Found: $userId")
+      log.debug("User Not Found: $userId")
       if(!instance) {
         return null
       }
@@ -210,7 +219,7 @@ class OrgUserTeamService {
     def load = org.load()
     if(!load) {
       // doesn't exist
-      log.warn("Org Not Found: $orgId")
+      log.debug("Org Not Found: $orgId")
       if(!instance) {
         return null
       }
@@ -393,7 +402,7 @@ class OrgUserTeamService {
     def load = team.load()
     if(!load) {
       // doesn't exist
-      log.warn("Team Not Found: $teamId")
+      log.debug("Team Not Found: $teamId")
       if(!instance) {
         return null
       }
@@ -789,7 +798,7 @@ class OrgUserTeamService {
     def load = email.load()
     if(!load) {
       // doesn't exist
-      log.warn("Email Not Found: $emailId")
+      log.debug("Email Not Found: $emailId")
       if(!instance) {
         return null
       }
