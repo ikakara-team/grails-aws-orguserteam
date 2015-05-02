@@ -85,6 +85,13 @@ abstract class AUserBaseController extends ABaseController implements IAccessCon
 
   @GrailsCompileStatic(TypeCheckingMode.SKIP)
   def joinInvitation() {
+    withForm {
+      // good request
+    }.invalidToken {
+      // bad request
+      return
+    }
+
     def user = request.getAttribute(USER_KEY)
     def email = request.getAttribute(USEREMAIL_KEY)
 

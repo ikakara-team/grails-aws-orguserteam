@@ -29,7 +29,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.7.6'
+    compile ':aws-orguserteam:0.7.7'
 ...
   }
 ```
@@ -68,7 +68,6 @@ grails {
     }
   }
 }
-
 ```
 
 Usage:
@@ -189,6 +188,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.7.7  - tweak joinInvitation
 0.7.6  - crud operations for orgs, teams, invitations
 0.7.5  - fix sys nav
 0.7.4  - tweak team access
