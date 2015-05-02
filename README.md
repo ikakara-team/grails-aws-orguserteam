@@ -8,8 +8,8 @@ Grails plugin, for a "Org-User-Team" design pattern used by apps like Trello.com
   * Each account has 1 and only 1 owner (linked to the account)
 * Group   - contains members.  Organizations and teams are groups.
   * Each member (of a group) can have a group role, such as 'owner' or 'admin.'
-  * Roles are their effect on visibility, access, etc are developer defined.
-* User    - a user can create/join organizations and teams and invite other users to join organizations/teams.
+  * Roles and their effect on visibility, access, etc are developer defined.
+* User    - can create/join organizations and teams and invite other users to join organizations/teams.
 * Org     - an abstraction to organize users/teams.  Organization members can view/join teams.
   * Visibility (to other users) is private (default) or public. Only members can update the Org.
   * Only (org) owner can delete the Org which will delete all teams owned by the Org.
@@ -60,6 +60,7 @@ grails {
       homePath = "/"
       invalidAccessRedirectUri = "/welcome"
       userNotFoundRedirectUri = "/profile"
+      defaultJoinReturnUri = "/welcome"
       dataSource {
         dbPrefix="DEV"
         dbCreate="create" //'create', 'create-drop',''
@@ -67,6 +68,7 @@ grails {
     }
   }
 }
+
 ```
 
 Usage:
