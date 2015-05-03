@@ -7,20 +7,20 @@ import ikakara.orguserteam.dao.dynamo.IdUser
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
 import ikakara.orguserteam.dao.dynamo.IdOrg
 import ikakara.orguserteam.dao.dynamo.IdSlug
-import ikakara.orguserteam.dao.dynamo.IdTeam
+import ikakara.orguserteam.dao.dynamo.IdFolder
 
 import ikakara.awsinstance.util.StringUtil
 
 //@GrailsCompileStatic
-abstract class ABaseTeamController extends ABaseController implements IAccessController {
+abstract class ABaseFolderController extends ABaseController implements IAccessController {
   def beforeInterceptor = [action: this.&validateAccess]
 
   // insure that user has access:
   // org access requires that user is member of org
-  // team access requires that user is
-  // 1) member of team
+  // folder access requires that user is
+  // 1) member of folder
   // 2) an org owner/admin
-  // 3) member of org and team is visible to org members
+  // 3) member of org and folder is visible to org members
   private validateAccess() {
     def userId    = getUserId()
 
@@ -34,41 +34,41 @@ abstract class ABaseTeamController extends ABaseController implements IAccessCon
 
     setAttributeUserEmailAndInvited()
 
-    setAttributeMemberTeam(user)
+    setAttributeMemberFolder(user)
 
     ///////////////////////////////////////////////////////////////////////////
     // validate access
     ///////////////////////////////////////////////////////////////////////////
 
-    def teamId = getTeamSlugId()
+    def folderId = getFolderSlugId()
 
-    // validate that the slug is for an team
-    def team = IdTeam.fromSlug(teamId)
-    if(!team) {
-      flash.message = "Failed to find '${teamId}'"
+    // validate that the slug is for an folder
+    def folder = IdFolder.fromSlug(folderId)
+    if(!folder) {
+      flash.message = "Failed to find '${folderId}'"
       redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
       return false
     }
 
-    // load team
-    def bload = team.load()
+    // load folder
+    def bload = folder.load()
     if(!bload) {
-      flash.message = "Failed to load '${teamId}'"
+      flash.message = "Failed to load '${folderId}'"
       redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
       return false
     }
 
-    def visible = orgUserTeamService.isTeamVisible(team, user)
+    def visible = orgUserTeamService.isFolderVisible(folder, user)
     if(!visible) {
-      flash.message = "Failed to find '${teamId}'"
+      flash.message = "Failed to find '${folderId}'"
       redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
       return false
     }
 
-    request.setAttribute(TEAM_KEY, team)
+    request.setAttribute(FOLDER_KEY, folder)
 
-    if(team.isOwnerOrg() && orgUserTeamService.isOrgVisible(team.owner, user)) {
-      request.setAttribute(ORG_KEY, team.owner)
+    if(folder.isOwnerOrg() && orgUserTeamService.isOrgVisible(folder.owner, user)) {
+      request.setAttribute(ORG_KEY, folder.owner)
     }
 
     return true

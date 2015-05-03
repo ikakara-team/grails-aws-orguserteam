@@ -35,9 +35,9 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "owner", "userList", "privacy", "imageUrl", "name", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
-class IdTeam extends AIdBase implements TAccountOwned {
+class IdFolder extends AIdBase implements TAccountOwned {
 
-  public static final String ID_TYPE = "Team"
+  public static final String ID_TYPE = "Folder"
   public static final String ID_PREFIX = "!"
 
   public static final Integer PRIVACY_PUBLIC = 0
@@ -154,14 +154,14 @@ class IdTeam extends AIdBase implements TAccountOwned {
     //}
   }
 
-  IdTeam() {
+  IdFolder() {
   }
 
-  IdTeam(Map params) {
+  IdFolder(Map params) {
     initParameters(params)
   }
 
-  IdTeam initId() {
+  IdFolder initId() {
     id = "1" + StringUtil.getRandomNumbers(9)
     return this
   }
@@ -175,7 +175,7 @@ class IdTeam extends AIdBase implements TAccountOwned {
     }
   }
 
-  IdTeam slugify(String str) {
+  IdFolder slugify(String str) {
     if (str) {
       name = str
     }
@@ -189,22 +189,22 @@ class IdTeam extends AIdBase implements TAccountOwned {
     return this
   }
 
-  static IdTeam fromSlug(String slugId) {
+  static IdFolder fromSlug(String slugId) {
     IdSlug slug = (IdSlug) new IdSlug().withId(slugId)
     boolean load = slug.load()
     if (!load) {
       return null
     }
 
-    // verify that the slug is for an app
-    AIdBase app = slug.alias
-    return (app instanceof IdTeam) ? (IdTeam) app : null
+    // verify that the slug is for a folder
+    AIdBase folder = slug.alias
+    return (folder instanceof IdFolder) ? (IdFolder) folder : null
   }
 
-  IdUserTeam hasMember(IdUser user) {
-    // check to see if user is a member of the team
-    IdUserTeam userapp = (IdUserTeam) new IdUserTeam().withMember(user).withGroup(this)
-    boolean load = userapp.load()
-    return load ? userapp : null
+  IdUserFolder hasMember(IdUser user) {
+    // check to see if user is a member of the folder
+    IdUserFolder userfolder = (IdUserFolder) new IdUserFolder().withMember(user).withGroup(this)
+    boolean load = userfolder.load()
+    return load ? userfolder : null
   }
 }

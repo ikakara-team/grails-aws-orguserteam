@@ -224,10 +224,10 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
         String type = item.getString("IdType")
         switch (type) {
         case IdUserOrg.ID_TYPE:  obj = new IdUserOrg();  break
-        case IdUserTeam.ID_TYPE: obj = new IdUserTeam(); break
-        case IdOrgTeam.ID_TYPE:  obj = new IdOrgTeam();  break
+        case IdUserFolder.ID_TYPE: obj = new IdUserFolder(); break
+        case IdOrgFolder.ID_TYPE:  obj = new IdOrgFolder();  break
         case IdEmailOrg.ID_TYPE:  obj = new IdEmailOrg();  break
-        case IdEmailTeam.ID_TYPE: obj = new IdEmailTeam(); break
+        case IdEmailFolder.ID_TYPE: obj = new IdEmailFolder(); break
         }
       }
     }

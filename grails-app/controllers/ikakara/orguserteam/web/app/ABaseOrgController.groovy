@@ -7,7 +7,7 @@ import ikakara.orguserteam.dao.dynamo.IdUser
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
 import ikakara.orguserteam.dao.dynamo.IdOrg
 import ikakara.orguserteam.dao.dynamo.IdSlug
-import ikakara.orguserteam.dao.dynamo.IdTeam
+import ikakara.orguserteam.dao.dynamo.IdFolder
 
 import ikakara.awsinstance.util.StringUtil
 
@@ -17,10 +17,10 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
 
   // insure that user has access:
   // org access requires that user is member of org
-  // team access requires that user is
-  // 1) member of team
+  // folder access requires that user is
+  // 1) member of folder
   // 2) an org owner/admin
-  // 3) member of org and team is visible to org members
+  // 3) member of org and folder is visible to org members
   private validateAccess() {
     def userId    = getUserId()
 
@@ -50,8 +50,8 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
       return false
     }
 
-    def teamId = getTeamSlugId()
-    boolean teamaccess = false
+    def folderId = getFolderSlugId()
+    boolean folderaccess = false
     boolean orgaccess = false
 
     // check to see if user is a member of the org
@@ -69,48 +69,48 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
 
       request.setAttribute(ORG_KEY, org)
 
-      if(teamId) { // see if we need team access
-        // we allow team access to org owners and admins
-        teamaccess = orgUserTeamService.haveOrgRole(org, user, IdUserOrg.TEAM_VISIBLE)
+      if(folderId) { // see if we need folder access
+        // we allow folder access to org owners and admins
+        folderaccess = orgUserTeamService.haveOrgRole(org, user, IdUserOrg.FOLDER_VISIBLE)
       }
     } else {
       // we do not have org access
     }
 
-    if(teamId) { // verify teamId
-      // validate that the slug is for an team
-      def team = IdTeam.fromSlug(teamId)
-      if(!team) {
-        flash.message = "Failed to find '${teamId}'"
+    if(folderId) { // verify folderId
+      // validate that the slug is for an folder
+      def folder = IdFolder.fromSlug(folderId)
+      if(!folder) {
+        flash.message = "Failed to find '${folderId}'"
         redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
         return false
       }
 
-      // load team
-      def bload = team.load()
+      // load folder
+      def bload = folder.load()
       if(!bload) {
-        flash.message = "Failed to load '${teamId}'"
+        flash.message = "Failed to load '${folderId}'"
         redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
         return false
       }
 
-      // make sure team owner is correct
-      if(!team.ownerEquals(org)) {
-        flash.message = "Invalid owner for '${teamId}'"
+      // make sure folder owner is correct
+      if(!folder.ownerEquals(org)) {
+        flash.message = "Invalid owner for '${folderId}'"
         redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
         return false
       }
 
-      // verify team access
-      if(!teamaccess && !orgUserTeamService.isTeamVisible(team, user, orgaccess)) {
-        flash.message = "Failed to find '${teamId}'"
+      // verify folder access
+      if(!folderaccess && !orgUserTeamService.isFolderVisible(folder, user, orgaccess)) {
+        flash.message = "Failed to find '${folderId}'"
         redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
         return false
       }
 
-      request.setAttribute(TEAM_KEY, team)
+      request.setAttribute(FOLDER_KEY, folder)
     } else if(!orgaccess) {
-      // we don't have org or team access
+      // we don't have org or folder access
       flash.message = "Failed to find '${orgId}'"
       redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
       return false

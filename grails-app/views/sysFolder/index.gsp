@@ -1,9 +1,9 @@
-<%@ page import="ikakara.orguserteam.dao.dynamo.IdTeam" %>
+<%@ page import="ikakara.orguserteam.dao.dynamo.IdFolder" %>
 <!DOCTYPE html>
 <html>
   <head>
     <meta name="layout" content="platform">
-    <g:set var="entityNameC" value="${message(code: 'IdTeam.label', default: 'IdTeam')}" />
+    <g:set var="entityNameC" value="${message(code: 'IdFolder.label', default: 'IdFolder')}" />
     <title><g:message code="default.list.label" args="[entityNameC]" /></title>
   </head>
   <body>
@@ -34,16 +34,16 @@
           </tr>
         </thead>
         <tbody>
-          <g:each in="${appList}" status="i" var="teamInstance">
+          <g:each in="${appList}" status="i" var="folderInstance">
             <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-              <td><g:link action="show" id="${teamInstance?.id?.encodeAsHTML()}">${fieldValue(bean: teamInstance, field: "id")}</g:link></td>
-              <td>${fieldValue(bean: teamInstance, field: "aliasId")}</td>
-              <td>${fieldValue(bean: teamInstance, field: "aliasPrefix")}</td>
-              <td>${fieldValue(bean: teamInstance, field: "privacy")}</td>
-              <td>${fieldValue(bean: teamInstance, field: "imageUrl")}</td>
-              <td>${fieldValue(bean: teamInstance, field: "name")}</td>
-              <td>${fieldValue(bean: teamInstance, field: "description")}</td>
-              <td>${fieldValue(bean: teamInstance, field: "createdTime")}</td>
+              <td><g:link action="show" id="${folderInstance?.id?.encodeAsHTML()}">${fieldValue(bean: folderInstance, field: "id")}</g:link></td>
+              <td>${fieldValue(bean: folderInstance, field: "aliasId")}</td>
+              <td>${fieldValue(bean: folderInstance, field: "aliasPrefix")}</td>
+              <td>${fieldValue(bean: folderInstance, field: "privacy")}</td>
+              <td>${fieldValue(bean: folderInstance, field: "imageUrl")}</td>
+              <td>${fieldValue(bean: folderInstance, field: "name")}</td>
+              <td>${fieldValue(bean: folderInstance, field: "description")}</td>
+              <td>${fieldValue(bean: folderInstance, field: "createdTime")}</td>
             </tr>
           </g:each>
         </tbody>

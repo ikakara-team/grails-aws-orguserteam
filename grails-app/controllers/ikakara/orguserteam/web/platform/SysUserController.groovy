@@ -56,7 +56,7 @@ class SysUserController {
 
     userInstance.orgListAdd(orgUserTeamService.listOrg(userInstance))
 
-    userInstance.teamListAdd(orgUserTeamService.listTeam(userInstance))
+    userInstance.folderListAdd(orgUserTeamService.listFolder(userInstance))
 
     respond userInstance, model: [userInstance: userInstance]
   }

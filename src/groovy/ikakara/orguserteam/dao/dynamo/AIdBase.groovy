@@ -216,7 +216,7 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
       return obj
     }
 
-    obj = new IdTeam().isId(id_str)
+    obj = new IdFolder().isId(id_str)
     if (obj) {
       return obj
     }
@@ -243,7 +243,7 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
         switch (type) {
         case IdUser.ID_TYPE:  obj = new IdUser();  break
         case IdOrg.ID_TYPE:   obj = new IdOrg();   break
-        case IdTeam.ID_TYPE:  obj = new IdTeam();  break
+        case IdFolder.ID_TYPE:  obj = new IdFolder();  break
         case IdEmail.ID_TYPE: obj = new IdEmail(); break
         case IdSlug.ID_TYPE:  obj = new IdSlug();  break
         }

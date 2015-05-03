@@ -1,13 +1,13 @@
 import ikakara.orguserteam.dao.dynamo.IdUser
 import ikakara.orguserteam.dao.dynamo.IdOrg
-import ikakara.orguserteam.dao.dynamo.IdTeam
+import ikakara.orguserteam.dao.dynamo.IdFolder
 import ikakara.orguserteam.dao.dynamo.IdEmail
 import ikakara.orguserteam.dao.dynamo.IdSlug
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
-import ikakara.orguserteam.dao.dynamo.IdUserTeam
-import ikakara.orguserteam.dao.dynamo.IdOrgTeam
+import ikakara.orguserteam.dao.dynamo.IdUserFolder
+import ikakara.orguserteam.dao.dynamo.IdOrgFolder
 import ikakara.orguserteam.dao.dynamo.IdEmailOrg
-import ikakara.orguserteam.dao.dynamo.IdEmailTeam
+import ikakara.orguserteam.dao.dynamo.IdEmailFolder
 
 //grails.mime.use.accept.header = true
 grails.mime.types = [ // the first one is the default format
@@ -33,4 +33,4 @@ log4j = {
 }
 
 // for testing
-grails.validateable.classes = [IdUser, IdOrg, IdTeam, IdEmail, IdSlug, IdUserOrg, IdUserTeam, IdOrgTeam, IdEmailOrg, IdEmailTeam]
+grails.validateable.classes = [IdUser, IdOrg, IdFolder, IdEmail, IdSlug, IdUserOrg, IdUserFolder, IdOrgFolder, IdEmailOrg, IdEmailFolder]

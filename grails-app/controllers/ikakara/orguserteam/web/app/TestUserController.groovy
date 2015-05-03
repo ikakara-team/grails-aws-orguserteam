@@ -8,7 +8,7 @@ class TestUserController extends ABaseUserController {
     return params.id
   }
 
-  String getTeamSlugId() {
+  String getFolderSlugId() {
     return params.appId
   }
 

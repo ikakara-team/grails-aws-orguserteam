@@ -18,7 +18,7 @@ public interface IAccessController {
 
   String getOrgSlugId();
 
-  String getTeamSlugId();
+  String getFolderSlugId();
 
   String getUserEmail();
 

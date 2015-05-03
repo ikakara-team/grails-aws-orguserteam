@@ -1,23 +1,25 @@
 # grails-aws-orguserteam
 
+Team is now Folder to disambiguate its relationship from Orgs and Users.
+
 Description:
 --------------
-Grails plugin, for a "Org-User-Team" design pattern used by apps like Trello.com and implemented using AWS DyanmoDB.
+Grails plugin, for a "Org-User-Folder" design pattern used by apps like Trello.com and implemented using AWS DyanmoDB.
 
 * Account - owns Groups.  Users and organizations are accounts.
   * Each account has 1 and only 1 owner (linked to the account)
-* Group   - contains members.  Organizations and teams are groups.
+* Group   - contains members.  Organizations and folders are groups.
   * Each member (of a group) can have a group role, such as 'owner' or 'admin.'
   * Roles and their effect on visibility, access, etc are developer defined.
-* User    - can create/join organizations and teams and invite other users to join organizations/teams.
-* Org     - an abstraction to organize users/teams.  Organization members can view/join teams.
+* User    - can create/join organizations and folders and invite other users to join organizations/folders.
+* Org     - an abstraction to organize users/folders.  Organization members can view/join folders.
   * Visibility (to other users) is private (default) or public. Only members can update the Org.
-  * Only (org) owner can delete the Org which will delete all teams owned by the Org.
-* Team    - a collection to further group users around projects, venues, boards (Trello), etc
-  * Visibility (to other users) is private (default), organizational or public. Only members can update the Team.
-  * Team owner can delete the Team.  
+  * Only (org) owner can delete the Org which will delete all folders owned by the Org.
+* Folder  - a collection to further group users around projects, venues, boards (Trello), etc
+  * Visibility (to other users) is private (default), organizational or public. Only members can update the Folder.
+  * Folder owner can delete the Folder.  
 
-![Class Diagram](/grails-app/assets/images/OrgUserTeam.png?raw=true "Class Diagram")
+![Class Diagram](/grails-app/assets/images/OrgUserFolder.png?raw=true "Class Diagram")
 
 AWS DynamoDB is a NOSQL store where 99% of the ops management is taken care of by AWS.  Developers don't need to worry about
 scalability, reliability, durability, etc.  The 1% that developers do have to worry about is managing throughput/performance via
@@ -29,7 +31,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.7.8'
+    compile ':aws-orguserteam:0.8.0'
 ...
   }
 ```
@@ -52,7 +54,7 @@ grails {
 See <a href="https://github.com/ikakara-team/grails-aws-instance">aws-instance README</a>
 
 By default, automatically creates DynamoDB tables w/ "DEV" prefix.  Sys (admin) controllers to manage
-Orgs, Users and Teams use the homePath of "/".
+Orgs, Users and Folders use the homePath of "/".
 ```
 grails {
   plugin {
@@ -76,12 +78,12 @@ See <a href="https://github.com/ikakara-team/grails-example-orguserteam">example
 
 This plugin includes 3 (abstract) base classes so use is DRY as possible:
 * ABaseOrgController  - defines an interceptor to check for "org level access"
-* ABaseTeamController - defines an interceptor to check for "team level access"
-* ABaseUserController - defines CRUD operations for invitations, orgs and teams
+* ABaseFolderController - defines an interceptor to check for "folder level access"
+* ABaseUserController - defines CRUD operations for invitations, orgs and folders
 
 To use any of the base classes, developers will need to define 4 (interface) methods:
 * String getOrgSlugId()
-* String getTeamSlugId()
+* String getFolderSlugId()
 * String getUserEmail()
 * String getUserId()
 
@@ -95,8 +97,8 @@ class UserDashboardController extends ABaseUserController {
     return params.id
   }
 
-  String getTeamSlugId() {
-    return params.teamId
+  String getFolderSlugId() {
+    return params.folderId
   }
 
   // Get the following from your auth provider
@@ -109,7 +111,7 @@ class UserDashboardController extends ABaseUserController {
   }
 ```
 
-To utilize UserDashboardController's inherited CRUD operations on invitations, orgs, teams, 
+To utilize UserDashboardController's inherited CRUD operations on invitations, orgs, folders, 
 add the following to your UrlMappings.groovy:
 ```
     // Feel free to tweak, but be sure to include '$id?'
@@ -119,54 +121,54 @@ add the following to your UrlMappings.groovy:
     "/my-orgs/$id?(.$format)?"(controller: "userDashboard", parseRequest: true) {
       action = [GET: "orgs", PUT: "updateOrg", POST: "saveOrg", DELETE: "deleteOrg"]
     }
-    "/my-teams/$id?(.$format)?"(controller: "userDashboard", parseRequest: true) {
-      action = [GET: "teams", PUT: "updateTeam", POST: "saveTeam", DELETE: "deleteTeam"]
+    "/my-folders/$id?(.$format)?"(controller: "userDashboard", parseRequest: true) {
+      action = [GET: "folders", PUT: "updateFolder", POST: "saveFolder", DELETE: "deleteFolder"]
     }
     "/my-groups(.$format)?"(controller: "userDashboard", action: "groups")
 ```
 
-orgUserTeamService:
+orgUserFolderService:
 --------------
 * Id
   * ```AIdBase findIdObjBySlugId(String slugId)```
   * ```boolean exist(AIdBase id)```
   * ```IdEmailOrg exist(IdEmail email, IdOrg org)```
-  * ```IdEmailTeam exist(IdEmail email, IdTeam team)```
+  * ```IdEmailFolder exist(IdEmail email, IdFolder folder)```
 * User
   * ```IdUser user(String userId, instance=true)```
   * ```List<IdUserOrg> listUser(IdOrg org)```
-  * ```List<IdUserTeam> listUser(IdTeam team)```
+  * ```List<IdUserFolder> listUser(IdFolder folder)```
   * ```IdUser createUser(IdUser user, String name, String initials, String desc, String shortName)```
   * ```IdUser updateUser(IdUser user, String name, String initials, String desc, String shortName)```
   * ```boolean deleteUser(IdUser user)```
 * Org
   * ```IdOrg org(String orgId, instance=true)```
   * ```boolean isOrgVisible(IdOrg org, IdUser user)```
-  * ```List<IdOrgTeam> listOrg(IdTeam team)```
+  * ```List<IdOrgFolder> listOrg(IdFolder folder)```
   * ```List<IdUserOrg> listOrg(IdUser user)```
   * ```List<IdEmailOrg> listOrg(IdEmail email)```
   * ```IdOrg createOrg(IdUser user, String orgName, String orgDescription)```
   * ```IdSlug updateOrg(IdOrg org, String name, String desc, String web_url, String shortName)```
   * ```boolean deleteOrg(IdOrg org)```
-* Team
-  * ```IdTeam team(String teamId, instance=true)```
-  * ```boolean isTeamVisible(IdTeam team, IdUser user, boolean orgMember)```
-  * ```boolean isTeamVisible(IdTeam team, IdUser user)```
+* Folder
+  * ```IdFolder folder(String folderId, instance=true)```
+  * ```boolean isFolderVisible(IdFolder folder, IdUser user, boolean orgMember)```
+  * ```boolean isFolderVisible(IdFolder folder, IdUser user)```
   * ```boolean haveOrgRole(IdOrg org, IdUser user, Set orgRoles)```
   * ```boolean haveOrgRole(IdUserOrg orguser, Set orgRoles)```
-  * ```List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles=null)```
-  * ```List<IdOrgTeam> listTeam(IdOrg org)```
-  * ```List<IdUserTeam> listTeam(IdUser user)```
-  * ```List<IdEmailTeam> listTeam(IdEmail email)```
-  * ```List<IdOrg> listOrgTeams(IdUser user, String myOrgName)```
-  * ```IdTeam createTeam(IdUser user, String teamName, Integer privacy, String orgId))```
-  * ```IdSlug updateTeam(IdTeam team, String name, Integer privacy, String description, String shortName)```
-  * ```boolean updateTeamOwner(IdTeam team, String orgId)```
-  * ```boolean deleteTeam(IdTeam team)```
+  * ```List<IdOrgFolder> listFolderVisible(IdOrg org, IdUser user, Set orgRoles=null)```
+  * ```List<IdOrgFolder> listFolder(IdOrg org)```
+  * ```List<IdUserFolder> listFolder(IdUser user)```
+  * ```List<IdEmailFolder> listFolder(IdEmail email)```
+  * ```List<IdOrg> listOrgFolders(IdUser user, String myOrgName)```
+  * ```IdFolder createFolder(IdUser user, String folderName, Integer privacy, String orgId))```
+  * ```IdSlug updateFolder(IdFolder folder, String name, Integer privacy, String description, String shortName)```
+  * ```boolean updateFolderOwner(IdFolder folder, String orgId)```
+  * ```boolean deleteFolder(IdFolder folder)```
 * Email
   * ```IdEmail email(String emailId, instance=true)```
   * ```List<IdEmailOrg> listEmail(IdOrg org)```
-  * ```List<IdEmailTeam> listEmail(IdTeam team)```
+  * ```List<IdEmailFolder> listEmail(IdFolder folder)```
   * ```IdEmail createEmail(String emailId, IdUser user=null)```
   * ```IdEmail updateEmail(IdEmail email, IdUser uesr)```
   * ```boolean deleteEmail(IdEmail email)```
@@ -174,8 +176,8 @@ orgUserTeamService:
   * ```List<AIdEmailGroup> listGroup(IdEmail email)```
   * ```boolean addUserToGroup(IdUser invitedBy, IdUser user, IdOrg org, String... roles)```
   * ```boolean addEmailToGroup(IdUser invitedBy, String invitedName, IdEmail email, IdOrg org)```
-  * ```boolean addUserToGroup(IdUser invitedBy, IdUser user, IdTeam team, String... roles)```
-  * ```boolean addEmailToGroup(IdUser invitedBy, String invitedName, IdEmail email, IdTeam team)```
+  * ```boolean addUserToGroup(IdUser invitedBy, IdUser user, IdFolder folder, String... roles)```
+  * ```boolean addEmailToGroup(IdUser invitedBy, String invitedName, IdEmail email, IdFolder folder)```
 
 Copyright & License:
 --------------
@@ -188,15 +190,8 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
-0.7.8  - rename controllers
-0.7.7  - tweak joinInvitation
-0.7.6  - crud operations for orgs, teams, invitations
-0.7.5  - fix sys nav
-0.7.4  - tweak team access
-0.7.3  - refactor access validation
-0.7.2  - fix table creation
-0.7.1  - fix regression bug
-0.7.0  - refactor
+0.8.0  - rename Team to Folder
+0.7.8  - refactor access
 0.6.10 - misc tweaks
 0.5.7  - team visibility
 0.4.1  - listGroup

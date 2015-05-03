@@ -32,7 +32,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 @Validateable(nullable = true)
 @Slf4j("LOG")
 @CompileStatic
-class IdEmailTeam extends AIdEmailGroup {
+class IdEmailFolder extends AIdEmailGroup {
 
   public static final String ID_TYPE = "EmailTeam"
 
@@ -42,10 +42,10 @@ class IdEmailTeam extends AIdEmailGroup {
     return ID_TYPE
   }
 
-  IdEmailTeam() {
+  IdEmailFolder() {
   }
 
-  IdEmailTeam(Map params) {
+  IdEmailFolder(Map params) {
     initParameters(params)
   }
 }

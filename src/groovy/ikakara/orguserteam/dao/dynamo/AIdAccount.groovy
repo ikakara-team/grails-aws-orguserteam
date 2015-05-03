@@ -34,19 +34,19 @@ abstract class AIdAccount extends AIdBase {
   Number status
 
   // transient
-  List<IdTeam> teamList = []
+  List<IdFolder> folderList = []
 
   @DynamoDBIgnore
-  List<IdTeam> getTeamList() {
-    return teamList
+  List<IdFolder> getFolderList() {
+    return folderList
   }
 
-  void teamListAdd(List<IdTeam> list) {
-    teamList.addAll(list)
+  void folderListAdd(List<IdFolder> list) {
+    folderList.addAll(list)
   }
 
-  void teamListAdd(IdTeam team) {
-    teamList << team
+  void folderListAdd(IdFolder folder) {
+    folderList << folder
   }
 
   @Override

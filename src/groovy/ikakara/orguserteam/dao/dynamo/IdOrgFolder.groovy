@@ -29,7 +29,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 @Validateable(nullable = true)
 @Slf4j("LOG")
 @CompileStatic
-class IdOrgTeam extends AMemberGroupBase {
+class IdOrgFolder extends AMemberGroupBase {
 
   public static final String ID_TYPE = "OrgTeam"
 
@@ -39,10 +39,10 @@ class IdOrgTeam extends AMemberGroupBase {
     return ID_TYPE
   }
 
-  IdOrgTeam() {
+  IdOrgFolder() {
   }
 
-  IdOrgTeam(Map params) {
+  IdOrgFolder(Map params) {
     initParameters(params)
   }
 }

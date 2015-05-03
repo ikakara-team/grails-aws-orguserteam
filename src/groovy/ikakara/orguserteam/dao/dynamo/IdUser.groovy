@@ -32,7 +32,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
  */
 @ToString(includePackage=false, includeNames=true, ignoreNulls=true, includeSuperProperties=true)
 @Validateable(nullable = true)
-@SimpleMarshaller(includes = ["id", "type", "aliasId", "teamList", "orgList", "status", "name", "imageUrl", "initials", "description", "createdDate", "updatedDate"])
+@SimpleMarshaller(includes = ["id", "type", "aliasId", "folderList", "orgList", "status", "name", "imageUrl", "initials", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
 class IdUser extends AIdAccount {

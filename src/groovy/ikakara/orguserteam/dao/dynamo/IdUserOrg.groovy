@@ -32,7 +32,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 class IdUserOrg extends AIdUserGroup {
 
   public static final String ID_TYPE = "UserOrg"
-  public static final Set TEAM_VISIBLE = [MEMBERROLE_OWNER, MEMBERROLE_ADMIN] as Set
+  public static final Set FOLDER_VISIBLE = [MEMBERROLE_OWNER, MEMBERROLE_ADMIN] as Set
 
   @Override
   @DynamoDBAttribute(attributeName = "IdType")

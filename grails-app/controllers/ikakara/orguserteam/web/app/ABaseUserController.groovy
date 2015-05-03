@@ -10,10 +10,10 @@ import ikakara.awsinstance.util.StringUtil
 
 import ikakara.orguserteam.dao.dynamo.IdUser
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
-import ikakara.orguserteam.dao.dynamo.IdUserTeam
+import ikakara.orguserteam.dao.dynamo.IdUserFolder
 import ikakara.orguserteam.dao.dynamo.IdOrg
 import ikakara.orguserteam.dao.dynamo.IdSlug
-import ikakara.orguserteam.dao.dynamo.IdTeam
+import ikakara.orguserteam.dao.dynamo.IdFolder
 import ikakara.orguserteam.dao.dynamo.IdEmail
 
 @GrailsCompileStatic
@@ -21,7 +21,7 @@ abstract class ABaseUserController extends ABaseController implements IAccessCon
   static allowedMethods = [
     invitations: "GET", joinInvitation: "POST", deleteInvitationTBD: "DELETE",
     orgs: "GET", updateOrgTBD: "PUT", saveOrgTBD: "POST", deleteOrgTBD: "DELETE",
-    teams: "GET", updateTeamTBD: "PUT", saveTeamTBD: "POST", deleteTeamTBD: "DELETE",
+    folders: "GET", updateFolderTBD: "PUT", saveFolderTBD: "POST", deleteFolderTBD: "DELETE",
     groups: "GET"
   ]
 
@@ -157,30 +157,30 @@ abstract class ABaseUserController extends ABaseController implements IAccessCon
     }
   }
 
-  def teams() {
+  def folders() {
     IdUser user = (IdUser)request.getAttribute(USER_KEY)
 
     if(params.id) {
       try {
-        IdTeam team = IdTeam.fromSlug((String)params.id)
-        if(!team) {
+        IdFolder folder = IdFolder.fromSlug((String)params.id)
+        if(!folder) {
           respondError(404, "'${params.id}' Not Found")
           return
         }
 
-        // check to see if user is a member of the team
-        def userteam = team.hasMember(user)
-        if(!userteam) {
+        // check to see if user is a member of the folder
+        def userfolder = folder.hasMember(user)
+        if(!userfolder) {
           log.error("User not member of '${params.id}'")
           respondError(404, "'${params.id}' Not Found")
           return
         }
 
-        if(!team.load()) {
+        if(!folder.load()) {
           log.error("Failed to load '${params.id}'")
         }
 
-        def map = [success: true, data: team]
+        def map = [success: true, data: folder]
 
         respond map
       } catch(e) {
@@ -189,10 +189,10 @@ abstract class ABaseUserController extends ABaseController implements IAccessCon
         return
       }
     } else {
-      List list = ((OrgUserTeamService)orgUserTeamService).listTeam(user)
-      def listTeam = list?.collect { IdUserTeam it -> it.group }
+      List list = ((OrgUserTeamService)orgUserTeamService).listFolder(user)
+      def listFolder = list?.collect { IdUserFolder it -> it.group }
 
-      def map = [success: true, data: listTeam]
+      def map = [success: true, data: listFolder]
 
       respond map
     }

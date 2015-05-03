@@ -32,7 +32,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
  */
 @ToString(includePackage=false, includeNames=true, ignoreNulls=true, includeSuperProperties=true)
 @Validateable(nullable = true)
-@SimpleMarshaller(includes = ["id", "type", "aliasId", "owner", "teamList", "userList", "visibility", "name", "imageUrl", "webUrl", "description", "createdDate", "updatedDate"])
+@SimpleMarshaller(includes = ["id", "type", "aliasId", "owner", "folderList", "userList", "visibility", "name", "imageUrl", "webUrl", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
 class IdOrg extends AIdAccount implements TAccountOwned {
@@ -200,10 +200,10 @@ class IdOrg extends AIdAccount implements TAccountOwned {
     return load ? userorg : null
   }
 
-  IdOrgTeam hasTeam(IdTeam team) {
-    // check to see if team is connected to org
-    IdOrgTeam orgteam = (IdOrgTeam) new IdOrgTeam().withMember(this).withGroup(team)
-    boolean load = orgteam.load()
-    return load ? orgteam : null
+  IdOrgFolder hasFolder(IdFolder folder) {
+    // check to see if folder is connected to org
+    IdOrgFolder orgfolder = (IdOrgFolder) new IdOrgFolder().withMember(this).withGroup(folder)
+    boolean load = orgfolder.load()
+    return load ? orgfolder : null
   }
 }

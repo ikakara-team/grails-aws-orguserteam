@@ -8,8 +8,8 @@ class UrlMappings {
     "/my-orgs/$id?(.$format)?"(controller: "testUser", parseRequest: true) {
       action = [GET: "orgs", PUT: "updateOrg", POST: "saveOrg", DELETE: "deleteOrg"]
     }
-    "/my-teams/$id?(.$format)?"(controller: "testUser", parseRequest: true) {
-      action = [GET: "teams", PUT: "updateTeam", POST: "saveTeam", DELETE: "deleteTeam"]
+    "/my-folders/$id?(.$format)?"(controller: "testUser", parseRequest: true) {
+      action = [GET: "folders", PUT: "updateFolder", POST: "saveFolder", DELETE: "deleteFolder"]
     }
     "/my-groups(.$format)?"(controller: "testUser", action: "groups")
 

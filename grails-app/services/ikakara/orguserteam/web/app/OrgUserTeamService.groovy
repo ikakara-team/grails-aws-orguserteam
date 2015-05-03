@@ -19,16 +19,16 @@ import groovy.transform.CompileStatic
 import ikakara.orguserteam.dao.dynamo.AIdAccount
 import ikakara.orguserteam.dao.dynamo.AIdBase
 import ikakara.orguserteam.dao.dynamo.IdSlug
-import ikakara.orguserteam.dao.dynamo.IdTeam
+import ikakara.orguserteam.dao.dynamo.IdFolder
 import ikakara.orguserteam.dao.dynamo.IdOrg
-import ikakara.orguserteam.dao.dynamo.IdOrgTeam
+import ikakara.orguserteam.dao.dynamo.IdOrgFolder
 import ikakara.orguserteam.dao.dynamo.IdUser
 import ikakara.orguserteam.dao.dynamo.AIdUserGroup
 import ikakara.orguserteam.dao.dynamo.IdUserOrg
-import ikakara.orguserteam.dao.dynamo.IdUserTeam
+import ikakara.orguserteam.dao.dynamo.IdUserFolder
 import ikakara.orguserteam.dao.dynamo.IdEmail
 import ikakara.orguserteam.dao.dynamo.AIdEmailGroup
-import ikakara.orguserteam.dao.dynamo.IdEmailTeam
+import ikakara.orguserteam.dao.dynamo.IdEmailFolder
 import ikakara.orguserteam.dao.dynamo.IdEmailOrg
 
 @CompileStatic
@@ -51,8 +51,8 @@ class OrgUserTeamService {
   AIdEmailGroup exist(IdEmail email, AIdBase group) {
     if(group instanceof IdOrg) {
       return exist(email, (IdOrg)group)
-    } else if(group instanceof IdTeam) {
-      return exist(email, (IdTeam)group)
+    } else if(group instanceof IdFolder) {
+      return exist(email, (IdFolder)group)
     }
     return null
   }
@@ -65,12 +65,12 @@ class OrgUserTeamService {
     return emailorg
   }
 
-  IdEmailTeam exist(IdEmail email, IdTeam team) {
-    def emailteam = (IdEmailTeam)new IdEmailTeam().withMember(email).withGroup(team)
-    if(!emailteam.load()) {
+  IdEmailFolder exist(IdEmail email, IdFolder folder) {
+    def emailfolder = (IdEmailFolder)new IdEmailFolder().withMember(email).withGroup(folder)
+    if(!emailfolder.load()) {
       return null
     }
-    return emailteam
+    return emailfolder
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -95,8 +95,8 @@ class OrgUserTeamService {
     return list
   }
 
-  List<IdUserTeam> listUser(IdTeam team) {
-    List list = new IdUserTeam().withGroup(team).queryByGroupAndType()
+  List<IdUserFolder> listUser(IdFolder folder) {
+    List list = new IdUserFolder().withGroup(folder).queryByGroupAndType()
     return list
   }
 
@@ -197,8 +197,8 @@ class OrgUserTeamService {
       it.delete() // delete only connection
     }
 
-    // delete all team references
-    list = listTeam(user)
+    // delete all folder references
+    list = listFolder(user)
     list.each{
       it.delete() // delete only connection
     }
@@ -239,8 +239,8 @@ class OrgUserTeamService {
   }
 
   // NOSQL compromise for 1 to many, using many to many table
-  List<IdOrgTeam> listOrg(IdTeam team) {
-    List list = new IdOrgTeam().withGroup(team).queryByGroupAndType()
+  List<IdOrgFolder> listOrg(IdFolder folder) {
+    List list = new IdOrgFolder().withGroup(folder).queryByGroupAndType()
     return list
   }
 
@@ -366,11 +366,11 @@ class OrgUserTeamService {
       return false
     }
 
-    // delete all teams and references
-    def list = listTeam(org)
+    // delete all folders and references
+    def list = listFolder(org)
     list.each{
-      IdTeam team = (IdTeam)it.group
-      deleteTeam(team) // deletes both team and team-connections
+      IdFolder folder = (IdFolder)it.group
+      deleteFolder(folder) // deletes both folder and folder-connections
     }
 
     // delete all user references
@@ -394,60 +394,60 @@ class OrgUserTeamService {
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  // Team
+  // Folder
   /////////////////////////////////////////////////////////////////////////////
 
-  IdTeam team(String teamId, instance=true) {
-    IdTeam team = (IdTeam)new IdTeam().withId(teamId)
-    def load = team.load()
+  IdFolder folder(String folderId, instance=true) {
+    IdFolder folder = (IdFolder)new IdFolder().withId(folderId)
+    def load = folder.load()
     if(!load) {
       // doesn't exist
-      log.debug("Team Not Found: $teamId")
+      log.debug("Folder Not Found: $folderId")
       if(!instance) {
         return null
       }
     }
 
-    return team
+    return folder
   }
 
   // WARNING: this does not check if user is an orgMember w/ a role of owner/admin
-  boolean isTeamVisible(IdTeam team, IdUser user, boolean orgMember) {
-    // team is visible to user when ...
-    if(team.ownerEquals(user)) { // doesn't require a network call
+  boolean isFolderVisible(IdFolder folder, IdUser user, boolean orgMember) {
+    // folder is visible to user when ...
+    if(folder.ownerEquals(user)) { // doesn't require a network call
       return true
     }
 
-    if(team.orgVisible && orgMember) {
-      // user is member of org and team is visible to org
+    if(folder.orgVisible && orgMember) {
+      // user is member of org and folder is visible to org
       return true
     }
-    // user is member of team
-    return team.hasMember(user)
+    // user is member of folder
+    return folder.hasMember(user)
   }
 
   // This checks for everything
-  boolean isTeamVisible(IdTeam team, IdUser user) {
-    if(team.ownerEquals(user)) { // doesn't require a network call
+  boolean isFolderVisible(IdFolder folder, IdUser user) {
+    if(folder.ownerEquals(user)) { // doesn't require a network call
       return true
     }
 
-    // team is visible to user when ...
-    if(team.hasMember(user)) { // network call
-      // user is member of team
+    // folder is visible to user when ...
+    if(folder.hasMember(user)) { // network call
+      // user is member of folder
       return true
     }
 
-    // check if org is team owner
-    if(!team.isOwnerOrg()) { // doesn't require network call
+    // check if org is folder owner
+    if(!folder.isOwnerOrg()) { // doesn't require network call
       return false
     }
 
-    IdOrg org = (IdOrg)team.owner // a network call
+    IdOrg org = (IdOrg)folder.owner // a network call
 
     IdUserOrg orguser = org?.hasMember(user) // a network call
-    if(orguser && (team.orgVisible || haveOrgRole(orguser, IdUserOrg.TEAM_VISIBLE))) {
-      // user is member of org and (team is visible to org or/and user has team-visible role)
+    if(orguser && (folder.orgVisible || haveOrgRole(orguser, IdUserOrg.FOLDER_VISIBLE))) {
+      // user is member of org and (folder is visible to org or/and user has folder-visible role)
       return true
     }
 
@@ -474,59 +474,59 @@ class OrgUserTeamService {
     return haveOrgRole(orguser, orgRoles)
   }
 
-  List<IdOrgTeam> listTeamVisible(IdOrg org, IdUser user, Set orgRoles=null) {
-    List listTeam = []
+  List<IdOrgFolder> listFolderVisible(IdOrg org, IdUser user, Set orgRoles=null) {
+    List listFolder = []
 
     if(org) { // nothing to do
-      List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
+      List list = new IdOrgFolder().withMember(org).queryByMemberAndType()
       if(list) { // nothing to do
         def orguser = org.hasMember(user)
         def orgMember = orguser ? true : false
         if(orgMember && haveOrgRole(orguser, orgRoles)) {
-          listTeam = list
+          listFolder = list
         } else {
           // iterate through list to see which are visible to user
           for(orgobj in list) {
-            IdTeam team = (IdTeam)orgobj.group
-            if(isTeamVisible(team, user, orgMember)) {
-              listTeam << orgobj
+            IdFolder folder = (IdFolder)orgobj.group
+            if(isFolderVisible(folder, user, orgMember)) {
+              listFolder << orgobj
             }
           }
         }
       }
     }
 
-    return listTeam
+    return listFolder
   }
 
-  List<IdOrgTeam> listTeam(IdOrg org) {
-    List list = new IdOrgTeam().withMember(org).queryByMemberAndType()
+  List<IdOrgFolder> listFolder(IdOrg org) {
+    List list = new IdOrgFolder().withMember(org).queryByMemberAndType()
     return list
   }
 
-  List<IdUserTeam> listTeam(IdUser user) {
-    List list = new IdUserTeam().withMember(user).queryByMemberAndType()
+  List<IdUserFolder> listFolder(IdUser user) {
+    List list = new IdUserFolder().withMember(user).queryByMemberAndType()
     return list
   }
 
-  List<IdEmailTeam> listTeam(IdEmail email) {
-    List list = new IdEmailTeam().withMember(email).queryByMemberAndType()
+  List<IdEmailFolder> listFolder(IdEmail email) {
+    List list = new IdEmailFolder().withMember(email).queryByMemberAndType()
     return list
   }
 
   // this is ridculous ... SQL is so much better at relationships
-  List<IdOrg> listOrgTeams(IdUser user, String myOrgName) {
+  List<IdOrg> listFolderByOrg(IdUser user, String myOrgName) {
     Map mapApp = [:]
     List<IdOrg> listOrg = [new IdOrg(name: myOrgName)]
 
-    // get all the user teams and orgs
-    List list = new IdUserTeam().withMember(user).queryByMember()
+    // get all the user folders and orgs
+    List list = new IdUserFolder().withMember(user).queryByMember()
     // we can optimize this ...
     for(userobj in list) {
-      if(userobj instanceof IdUserTeam) {
-        IdTeam team = (IdTeam)userobj.group
-        team.load()
-        mapApp[team.id] = team
+      if(userobj instanceof IdUserFolder) {
+        IdFolder folder = (IdFolder)userobj.group
+        folder.load()
+        mapApp[folder.id] = folder
       } else if(userobj instanceof IdUserOrg) {
         IdOrg org = (IdOrg)userobj.group
         org.load()
@@ -540,33 +540,33 @@ class OrgUserTeamService {
     for(int i = 1; i < size; i++) {
       def org = listOrg[i]
 
-      // get all the teams of the orgs that the user belongs to
+      // get all the folders of the orgs that the user belongs to
       // query by member and privacy
-      List list_orgteam = new IdOrgTeam().withMember(org).queryByMemberAndType()
-      for(orgteam in list_orgteam) {
-        IdTeam team = (IdTeam)orgteam.group
+      List list_orgfolder = new IdOrgFolder().withMember(org).queryByMemberAndType()
+      for(orgfolder in list_orgfolder) {
+        IdFolder folder = (IdFolder)orgfolder.group
 
-        if(mapApp.containsKey(team.id)) {
-          team = mapApp.remove(team.id)
-          org.teamListAdd(team)
+        if(mapApp.containsKey(folder.id)) {
+          folder = mapApp.remove(folder.id)
+          org.folderListAdd(folder)
         } else {
-          team.load()
-          if(team.isOrgVisible()) {
-            org.teamListAdd(team)
+          folder.load()
+          if(folder.isOrgVisible()) {
+            org.folderListAdd(folder)
           }
         }
       }
     }
 
-    // add the remaining teams to 'my apps'
-    for(team in mapApp.values()){
-      listOrg[0].teamListAdd((IdTeam)team)
+    // add the remaining folders to 'my apps'
+    for(folder in mapApp.values()){
+      listOrg[0].folderListAdd((IdFolder)folder)
     }
 
     return listOrg
   }
 
-  IdTeam createTeam(IdUser user, String teamName, Integer privacy, String orgId) {
+  IdFolder createFolder(IdUser user, String folderName, Integer privacy, String orgId) {
     IdOrg org
     if(orgId) {
       // check if org exist
@@ -578,77 +578,77 @@ class OrgUserTeamService {
       }
     }
 
-    // create team
-    IdTeam team = (IdTeam)new IdTeam()
+    // create folder
+    IdFolder folder = (IdFolder)new IdFolder()
     .initId()
-    .slugify(teamName)
+    .slugify(folderName)
     .withCreatedUpdated()
 
-    // team owner is either org or user
+    // folder owner is either org or user
     if(org) {
-      team.withOwner(org)
+      folder.withOwner(org)
     } else {
-      team.withOwner(user)
+      folder.withOwner(user)
     }
 
-    team.privacy = privacy
+    folder.privacy = privacy
 
-    def create = team.create()
+    def create = folder.create()
     if(!create) {
       // failed
       return null
     }
 
     // create slug
-    def slug = new IdSlug(id: team.aliasId)
-    .withAlias(team)
+    def slug = new IdSlug(id: folder.aliasId)
+    .withAlias(folder)
     .withCreatedUpdated()
 
     create = slug.create()
     if(!create) {
       // failed
-      team.delete()
+      folder.delete()
       return null
     }
 
-    // add user to team
-    IdUserTeam userteam = (IdUserTeam)new IdUserTeam()
-    .withMemberRoles(IdUserTeam.MEMBERROLE_ADMIN)
+    // add user to folder
+    IdUserFolder userfolder = (IdUserFolder)new IdUserFolder()
+    .withMemberRoles(IdUserFolder.MEMBERROLE_ADMIN)
     .withMember(user)
-    .withGroup(team)
+    .withGroup(folder)
     .withCreatedUpdated()
 
-    create = userteam.create()
+    create = userfolder.create()
     if(!create) {
       // failed
-      team.delete()
+      folder.delete()
       slug.delete()
       return null
     }
 
     if(org) {
-      // add org to team
-      def orgteam = new IdOrgTeam()
+      // add org to folder
+      def orgfolder = new IdOrgFolder()
       .withMember(org)
-      .withGroup(team)
+      .withGroup(folder)
       .withCreatedUpdated()
 
-      create = orgteam.create()
+      create = orgfolder.create()
       if(!create) {
         // failed
-        userteam.delete()
-        team.delete()
+        userfolder.delete()
+        folder.delete()
         slug.delete()
         return null
       }
     }
 
-    return team
+    return folder
   }
 
   //user, params.name, params.int('privacy'), params.org, params.aliasId
-  String updateTeam(IdTeam team, String name, Integer privacy, String description, String shortName) {
-    //def load = team.load()
+  String updateFolder(IdFolder folder, String name, Integer privacy, String description, String shortName) {
+    //def load = folder.load()
     //if(!load) {
     // not found
     // return
@@ -658,10 +658,10 @@ class OrgUserTeamService {
     def newslug
 
     if(shortName) {
-      if(team.aliasId != shortName) {
+      if(folder.aliasId != shortName) {
         // create new slug
         newslug = (IdSlug)new IdSlug().withSlugId(shortName)
-        .withAlias(team)
+        .withAlias(folder)
         .withCreatedUpdated()
 
         def create = newslug.create()
@@ -670,20 +670,20 @@ class OrgUserTeamService {
           return null
         }
 
-        oldslug = team.alias
-        team.withAlias(newslug)
+        oldslug = folder.alias
+        folder.withAlias(newslug)
       }
     }
 
     if(name) {
-      team.name  = name
+      folder.name  = name
     }
 
-    team.privacy = privacy
-    team.description = description
+    folder.privacy = privacy
+    folder.description = description
 
-    team.updatedDate = new Date()
-    def save = team.save()
+    folder.updatedDate = new Date()
+    def save = folder.save()
     if(save) {
       // cleanup old slug
       if(oldslug) {
@@ -696,19 +696,19 @@ class OrgUserTeamService {
       }
     }
 
-    return team.aliasId
+    return folder.aliasId
   }
 
-  // ASSUMES: team loaded
+  // ASSUMES: folder loaded
   //user, params.name, params.int('privacy'), params.org, params.aliasId
-  boolean updateTeamOwner(IdTeam team, String orgId) {
-    //def load = team.load()
+  boolean updateFolderOwner(IdFolder folder, String orgId) {
+    //def load = folder.load()
     //if(!load) {
     // not found
     // return false
     //}
 
-    def curAccount = team.owner
+    def curAccount = folder.owner
     if((orgId || curAccount) && (curAccount?.id != orgId)) {
       IdOrg org
       if(orgId) {
@@ -721,12 +721,12 @@ class OrgUserTeamService {
         }
       }
 
-      if(curAccount && team.isOwnerOrg()) {
+      if(curAccount && folder.isOwnerOrg()) {
         // delete org
-        def curorgteam = new IdOrgTeam()
+        def curorgfolder = new IdOrgFolder()
         .withMember(curAccount)
-        .withGroup(team)
-        def del = curorgteam.delete()
+        .withGroup(folder)
+        def del = curorgfolder.delete()
         if(!del) {
           // failed
           return false
@@ -735,16 +735,16 @@ class OrgUserTeamService {
 
       if(org) {
         // update owner
-        team.owner = org
-        def saved = team.save()
+        folder.owner = org
+        def saved = folder.save()
         if(saved) {
-          // add org to team
-          def orgteam = new IdOrgTeam()
+          // add org to folder
+          def orgfolder = new IdOrgFolder()
           .withMember(org)
-          .withGroup(team)
+          .withGroup(folder)
           .withCreatedUpdated()
 
-          def create = orgteam.create()
+          def create = orgfolder.create()
           if(!create) {
             // failed
             return false
@@ -757,35 +757,35 @@ class OrgUserTeamService {
   }
 
   // return true if deleted, returns false if not found
-  boolean deleteTeam(IdTeam team) {
-    def load = team.load()
+  boolean deleteFolder(IdFolder folder) {
+    def load = folder.load()
     if(!load) {
       // not found
       return false
     }
 
     // delete all org references
-    def list = listOrg(team)
+    def list = listOrg(folder)
     list.each{
       it.delete() // delete only connection
     }
 
     // delete all user references
-    list = listUser(team)
+    list = listUser(folder)
     list.each{
       it.delete() // delete only connection
     }
 
     // delete all email references
-    list = listEmail(team)
+    list = listEmail(folder)
     list.each{
       it.delete() // delete only connection
     }
 
     // delete slug
-    new IdSlug(id: team.aliasId).delete()
-    // delete team
-    team.delete()
+    new IdSlug(id: folder.aliasId).delete()
+    // delete folder
+    folder.delete()
 
     return true
   }
@@ -812,8 +812,8 @@ class OrgUserTeamService {
     return list
   }
 
-  List<IdEmailTeam> listEmail(IdTeam team) {
-    List list = new IdEmailTeam().withGroup(team).queryByGroupAndType()
+  List<IdEmailFolder> listEmail(IdFolder folder) {
+    List list = new IdEmailFolder().withGroup(folder).queryByGroupAndType()
     return list
   }
 
@@ -860,8 +860,8 @@ class OrgUserTeamService {
       it.delete() // delete only connection
     }
 
-    // delete all team references
-    list = listTeam(email)
+    // delete all folder references
+    list = listFolder(email)
     list.each{
       it.delete() // delete only connection
     }
@@ -872,13 +872,13 @@ class OrgUserTeamService {
     return true
   }
 
-  // return IdUserOrg and/or IdUserTeam
+  // return IdUserOrg and/or IdUserFolder
   List<AIdUserGroup> listGroup(IdUser user) {
     List list = new IdUserOrg().withMember(user).queryByMember()
     return list
   }
 
-  // return IdEmailOrg and/or IdEmailTeam
+  // return IdEmailOrg and/or IdEmailFolder
   List<AIdEmailGroup> listGroup(IdEmail email) {
     List list = new IdEmailOrg().withMember(email).queryByMember()
     return list
@@ -905,24 +905,24 @@ class OrgUserTeamService {
     emailorg.withInvitedName(invitedName).withInvitedBy(invitedBy).save()
   }
 
-  boolean addUserToGroup(IdUser invitedBy, IdUser user, IdTeam team, String... roles) {
-    IdUserTeam userteam = (IdUserTeam)new IdUserTeam().withMember(user).withGroup(team)
-    if(userteam.load()) {
-      userteam.withUpdated()
+  boolean addUserToGroup(IdUser invitedBy, IdUser user, IdFolder folder, String... roles) {
+    IdUserFolder userfolder = (IdUserFolder)new IdUserFolder().withMember(user).withGroup(folder)
+    if(userfolder.load()) {
+      userfolder.withUpdated()
     } else {
-      userteam.withCreatedUpdated()
+      userfolder.withCreatedUpdated()
     }
-    userteam.withInvitedBy(invitedBy).withMemberRoles(roles).save()
+    userfolder.withInvitedBy(invitedBy).withMemberRoles(roles).save()
   }
 
-  boolean addEmailToGroup(IdUser invitedBy, String invitedName, IdEmail email, IdTeam team) {
-    IdEmailTeam emailteam = (IdEmailTeam)new IdEmailTeam().withMember(email).withGroup(team)
-    if(emailteam.load()) {
-      emailteam.withUpdated()
+  boolean addEmailToGroup(IdUser invitedBy, String invitedName, IdEmail email, IdFolder folder) {
+    IdEmailFolder emailfolder = (IdEmailFolder)new IdEmailFolder().withMember(email).withGroup(folder)
+    if(emailfolder.load()) {
+      emailfolder.withUpdated()
     } else {
-      emailteam.withCreatedUpdated()
+      emailfolder.withCreatedUpdated()
     }
-    emailteam.withInvitedName(invitedName).withInvitedBy(invitedBy).save()
+    emailfolder.withInvitedName(invitedName).withInvitedBy(invitedBy).save()
   }
 
 }
