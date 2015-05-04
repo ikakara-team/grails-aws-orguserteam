@@ -17,7 +17,7 @@ Grails plugin, for a "Org-User-Folder" design pattern used by apps like Trello.c
   * Only (org) owner can delete the Org which will delete all folders owned by the Org.
 * Folder  - a collection to further group users around projects, venues, boards (Trello), etc
   * Visibility (to other users) is private (default), organizational or public. Only members can update the Folder.
-  * Folder owner can delete the Folder.  
+  * Folder owner can delete the Folder.
 
 ![Class Diagram](/grails-app/assets/images/OrgUserFolder.png?raw=true "Class Diagram")
 
@@ -31,7 +31,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.8.1'
+    compile ':aws-orguserteam:0.8.2'
 ...
   }
 ```
@@ -111,7 +111,7 @@ class UserDashboardController extends ABaseUserController {
   }
 ```
 
-To utilize UserDashboardController's inherited CRUD operations on invitations, orgs, folders, 
+To utilize UserDashboardController's inherited CRUD operations on invitations, orgs, folders,
 add the following to your UrlMappings.groovy:
 ```
     // Feel free to tweak, but be sure to include '$id?'
@@ -190,6 +190,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.8.2  - fix org visibility
 0.8.1  - owner access
 0.8.0  - rename Team to Folder
 0.7.8  - refactor access

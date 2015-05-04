@@ -69,11 +69,11 @@ class IdOrg extends AIdAccount implements TAccountOwned {
   }
 
   boolean isVisibilityPrivate() {
-    return visibility.intValue() == VISIBILITY_PRIVATE
+    return visibility?.intValue() == VISIBILITY_PRIVATE
   }
 
   boolean isVisibilityPublic() {
-    return visibility.intValue() == VISIBILITY_PUBLIC
+    return visibility?.intValue() == VISIBILITY_PUBLIC
   }
 
   @Override
