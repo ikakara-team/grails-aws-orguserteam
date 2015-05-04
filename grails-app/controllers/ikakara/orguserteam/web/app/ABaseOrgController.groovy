@@ -11,7 +11,7 @@ import ikakara.orguserteam.dao.dynamo.IdFolder
 
 import ikakara.awsinstance.util.StringUtil
 
-//@GrailsCompileStatic
+@GrailsCompileStatic
 abstract class ABaseOrgController extends ABaseController implements IAccessController {
   def beforeInterceptor = [action: this.&validateAccess]
 
@@ -21,12 +21,12 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
   // 1) member of folder
   // 2) an org owner/admin
   // 3) member of org and folder is visible to org members
-  private validateAccess() {
+  protected validateAccess() {
     def userId    = getUserId()
 
-    def user = orgUserTeamService.user(userId, false)
+    def user = ((OrgUserTeamService)orgUserTeamService).user(userId, false)
     if(!user) {
-      redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.userNotFoundRedirectUri
+      redirectUserNotFoundRedirectUri()
       return false
     }
 
@@ -46,7 +46,7 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
     def org = IdOrg.fromSlug(orgId)
     if(!org) {
       flash.message = "Failed to find '${orgId}'"
-      redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+      redirectInvalidAccessRedirectUri()
       return false
     }
 
@@ -63,7 +63,7 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
       def bload = org.load()
       if(!bload) {
         flash.message = "Failed to load '${orgId}'"
-        redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+        redirectInvalidAccessRedirectUri()
         return false
       }
 
@@ -71,7 +71,7 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
 
       if(folderId) { // see if we need folder access
         // we allow folder access to org owners and admins
-        folderaccess = orgUserTeamService.haveOrgRole(org, user, IdUserOrg.FOLDER_VISIBLE)
+        folderaccess = ((OrgUserTeamService)orgUserTeamService).haveOrgRole(org, user, IdUserOrg.FOLDER_VISIBLE)
       }
     } else {
       // we do not have org access
@@ -82,7 +82,7 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
       def folder = IdFolder.fromSlug(folderId)
       if(!folder) {
         flash.message = "Failed to find '${folderId}'"
-        redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+        redirectInvalidAccessRedirectUri()
         return false
       }
 
@@ -90,21 +90,21 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
       def bload = folder.load()
       if(!bload) {
         flash.message = "Failed to load '${folderId}'"
-        redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+        redirectInvalidAccessRedirectUri()
         return false
       }
 
       // make sure folder owner is correct
       if(!folder.ownerEquals(org)) {
         flash.message = "Invalid owner for '${folderId}'"
-        redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+        redirectInvalidAccessRedirectUri()
         return false
       }
 
       // verify folder access
-      if(!folderaccess && !orgUserTeamService.isFolderVisible(folder, user, orgaccess)) {
+      if(!folderaccess && !((OrgUserTeamService)orgUserTeamService).isFolderVisible(folder, user, orgaccess)) {
         flash.message = "Failed to find '${folderId}'"
-        redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+        redirectInvalidAccessRedirectUri()
         return false
       }
 
@@ -112,7 +112,7 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
     } else if(!orgaccess) {
       // we don't have org or folder access
       flash.message = "Failed to find '${orgId}'"
-      redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+      redirectInvalidAccessRedirectUri()
       return false
     }
 

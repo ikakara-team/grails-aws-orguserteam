@@ -1,4 +1,3 @@
-
 <%@ page import="ikakara.orguserteam.dao.dynamo.IdFolder" %>
 <!DOCTYPE html>
 <html>
@@ -35,7 +34,7 @@
           </li>
         </g:if>
 
-                <g:if test="${folderInstance?.aliasPrefix}">
+        <g:if test="${folderInstance?.aliasPrefix}">
           <li class="fieldcontain">
             <span id="aliasPrefix-label" class="property-label"><g:message code="idApp.aliasPrefix.label" default="Alias Prefix" /></span>
             <span class="property-value" aria-labelledby="aliasPrefix-label"><g:fieldValue bean="${folderInstance}" field="aliasPrefix"/></span>

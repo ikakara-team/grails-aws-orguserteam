@@ -30,7 +30,7 @@ abstract class ABaseUserController extends ABaseController implements IAccessCon
   def beforeInterceptor = [action: this.&validateAccess]
 
   // Assumption: users can access their own info
-  private validateAccess() {
+  protected validateAccess() {
     String userId = getUserId()
 
     IdUser user = ((OrgUserTeamService)orgUserTeamService).user(userId)
@@ -41,7 +41,6 @@ abstract class ABaseUserController extends ABaseController implements IAccessCon
     return true
   }
 
-  //@GrailsCompileStatic(TypeCheckingMode.SKIP)
   def invitations() {
     IdEmail email = (IdEmail)request.getAttribute(USEREMAIL_KEY)
 
@@ -113,7 +112,7 @@ abstract class ABaseUserController extends ABaseController implements IAccessCon
       flash.message = "Failed to find ${params.id}"
     }
 
-    redirect uri: grailsApplication.config.grails.plugin.awsorguserteam?.defaultReturnUri
+    redirectDefaultReturnUri()
   }
 
   def orgs() {

@@ -11,7 +11,7 @@ import ikakara.orguserteam.dao.dynamo.IdFolder
 
 import ikakara.awsinstance.util.StringUtil
 
-//@GrailsCompileStatic
+@GrailsCompileStatic
 abstract class ABaseFolderController extends ABaseController implements IAccessController {
   def beforeInterceptor = [action: this.&validateAccess]
 
@@ -21,12 +21,12 @@ abstract class ABaseFolderController extends ABaseController implements IAccessC
   // 1) member of folder
   // 2) an org owner/admin
   // 3) member of org and folder is visible to org members
-  private validateAccess() {
+  protected validateAccess() {
     def userId    = getUserId()
 
-    def user = orgUserTeamService.user(userId, false)
+    def user = ((OrgUserTeamService)orgUserTeamService).user(userId, false)
     if(!user) {
-      redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.userNotFoundRedirectUri
+      redirectUserNotFoundRedirectUri()
       return false
     }
 
@@ -46,7 +46,7 @@ abstract class ABaseFolderController extends ABaseController implements IAccessC
     def folder = IdFolder.fromSlug(folderId)
     if(!folder) {
       flash.message = "Failed to find '${folderId}'"
-      redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+      redirectInvalidAccessRedirectUri()
       return false
     }
 
@@ -54,20 +54,20 @@ abstract class ABaseFolderController extends ABaseController implements IAccessC
     def bload = folder.load()
     if(!bload) {
       flash.message = "Failed to load '${folderId}'"
-      redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+      redirectInvalidAccessRedirectUri()
       return false
     }
 
-    def visible = orgUserTeamService.isFolderVisible(folder, user)
+    def visible = ((OrgUserTeamService)orgUserTeamService).isFolderVisible(folder, user)
     if(!visible) {
       flash.message = "Failed to find '${folderId}'"
-      redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+      redirectInvalidAccessRedirectUri()
       return false
     }
 
     request.setAttribute(FOLDER_KEY, folder)
 
-    if(folder.isOwnerOrg() && orgUserTeamService.isOrgVisible(folder.owner, user)) {
+    if(folder.isOwnerOrg() && ((OrgUserTeamService)orgUserTeamService).isOrgVisible((IdOrg)folder.owner, user)) {
       request.setAttribute(ORG_KEY, folder.owner)
     }
 

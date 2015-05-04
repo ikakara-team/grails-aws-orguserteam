@@ -14,11 +14,12 @@
  */
 package ikakara.orguserteam.web.app
 
-import groovy.transform.CompileStatic
+import grails.compiler.GrailsCompileStatic
+import groovy.transform.TypeCheckingMode
 
 import ikakara.orguserteam.dao.dynamo.IdUser
 
-@CompileStatic
+@GrailsCompileStatic
 abstract class ABaseController implements IAccessController {
   static final String ORG_KEY       = "org"
   static final String USER_KEY      = "user"
@@ -29,7 +30,7 @@ abstract class ABaseController implements IAccessController {
 
   def orgUserTeamService
 
-  def setAttributeUserEmailAndInvited() {
+  protected setAttributeUserEmailAndInvited() {
     def useremail = getUserEmail()
 
     def email = ((OrgUserTeamService)orgUserTeamService).email(useremail, false)
@@ -42,14 +43,14 @@ abstract class ABaseController implements IAccessController {
     }
   }
 
-  def setAttributeMemberAll(IdUser user) {
+  protected setAttributeMemberAll(IdUser user) {
     def userGroup = ((OrgUserTeamService)orgUserTeamService).listGroup(user)
     if(userGroup) {
       request.setAttribute(MEMBER_KEY, userGroup)
     }
   }
 
-  def setAttributeMemberFolder(IdUser user) {
+  protected setAttributeMemberFolder(IdUser user) {
     def userGroup = ((OrgUserTeamService)orgUserTeamService).listFolder(user)
     if(userGroup) {
       request.setAttribute(MEMBER_KEY, userGroup)
@@ -67,6 +68,21 @@ abstract class ABaseController implements IAccessController {
     def model = [ success: false, error: [ code: errorCode, text: errorMsg ] ]
     // JSON/XML/HTML appropriate response with detail
     respond model as Object, [ model: model, status: errorCode, view: view ]
+  }
+
+  @GrailsCompileStatic(TypeCheckingMode.SKIP)
+  protected redirectUserNotFoundRedirectUri() {
+    redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.userNotFoundRedirectUri
+  }
+
+  @GrailsCompileStatic(TypeCheckingMode.SKIP)
+  protected redirectInvalidAccessRedirectUri() {
+    redirect uri: grailsApplication.config.grails.plugin.awsorguserteam.invalidAccessRedirectUri
+  }
+
+  @GrailsCompileStatic(TypeCheckingMode.SKIP)
+  protected redirectDefaultReturnUri() {
+    redirect uri: grailsApplication.config.grails.plugin.awsorguserteam?.defaultReturnUri
   }
 
 }
