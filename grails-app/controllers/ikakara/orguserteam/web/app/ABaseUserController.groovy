@@ -113,7 +113,7 @@ abstract class ABaseUserController extends ABaseController implements IAccessCon
       flash.message = "Failed to find ${params.id}"
     }
 
-    redirect uri: grailsApplication.config.grails.plugin.awsorguserteam?.defaultJoinReturnUri
+    redirect uri: grailsApplication.config.grails.plugin.awsorguserteam?.defaultReturnUri
   }
 
   def orgs() {
@@ -127,16 +127,21 @@ abstract class ABaseUserController extends ABaseController implements IAccessCon
           return
         }
 
-        // check to see if user is a member of the org
-        def userorg = org.hasMember(user)
-        if(!userorg) {
-          log.error("User not member of '${params.id}'")
+        if(!org.load()) {
+          log.error("Failed to load '${params.id}'")
           respondError(404, "'${params.id}' Not Found")
           return
         }
 
-        if(!org.load()) {
-          log.error("Failed to load '${params.id}'")
+        if(!org.ownerEquals(user)) {
+          // not an owner
+          // check to see if user is a member of the org
+          def userorg = org.hasMember(user)
+          if(!userorg) {
+            log.info("User not member of '${params.id}'")
+            respondError(404, "'${params.id}' Not Found")
+            return
+          }
         }
 
         def map = [success: true, data: org]
@@ -168,16 +173,21 @@ abstract class ABaseUserController extends ABaseController implements IAccessCon
           return
         }
 
-        // check to see if user is a member of the folder
-        def userfolder = folder.hasMember(user)
-        if(!userfolder) {
-          log.error("User not member of '${params.id}'")
+        if(!folder.load()) {
+          log.error("Failed to load '${params.id}'")
           respondError(404, "'${params.id}' Not Found")
           return
         }
 
-        if(!folder.load()) {
-          log.error("Failed to load '${params.id}'")
+        if(!folder.ownerEquals(user)) {
+          // not an owner
+          // check to see if user is a member of the folder
+          def userfolder = folder.hasMember(user)
+          if(!userfolder) {
+            log.error("User not member of '${params.id}'")
+            respondError(404, "'${params.id}' Not Found")
+            return
+          }
         }
 
         def map = [success: true, data: folder]

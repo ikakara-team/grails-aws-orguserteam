@@ -31,7 +31,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.8.0'
+    compile ':aws-orguserteam:0.8.1'
 ...
   }
 ```
@@ -61,8 +61,8 @@ grails {
     awsorguserteam {
       homePath = "/"
       invalidAccessRedirectUri = "/welcome"
-      userNotFoundRedirectUri = "/profile"
-      defaultJoinReturnUri = "/welcome"
+      userNotFoundRedirectUri = "/my-profile"
+      defaultReturnUri = "/welcome"
       dataSource {
         dbPrefix="DEV"
         dbCreate="create" //'create', 'create-drop',''
@@ -160,7 +160,7 @@ orgUserFolderService:
   * ```List<IdOrgFolder> listFolder(IdOrg org)```
   * ```List<IdUserFolder> listFolder(IdUser user)```
   * ```List<IdEmailFolder> listFolder(IdEmail email)```
-  * ```List<IdOrg> listOrgFolders(IdUser user, String myOrgName)```
+  * ```List<IdOrg> listFolderByOrg(IdUser user, String myOrgName)```
   * ```IdFolder createFolder(IdUser user, String folderName, Integer privacy, String orgId))```
   * ```IdSlug updateFolder(IdFolder folder, String name, Integer privacy, String description, String shortName)```
   * ```boolean updateFolderOwner(IdFolder folder, String orgId)```
@@ -190,6 +190,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.8.1  - owner access
 0.8.0  - rename Team to Folder
 0.7.8  - refactor access
 0.6.10 - misc tweaks
