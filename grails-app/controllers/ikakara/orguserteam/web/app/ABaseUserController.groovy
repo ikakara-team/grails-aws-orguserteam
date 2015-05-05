@@ -20,9 +20,7 @@ import ikakara.orguserteam.dao.dynamo.IdEmail
 abstract class ABaseUserController extends ABaseController implements IAccessController {
   static allowedMethods = [
     invitations: "GET", joinInvitation: "POST", deleteInvitationTBD: "DELETE",
-    orgs: "GET", updateOrgTBD: "PUT", saveOrgTBD: "POST", deleteOrgTBD: "DELETE",
-    folders: "GET", updateFolderTBD: "PUT", saveFolderTBD: "POST", deleteFolderTBD: "DELETE",
-    groups: "GET"
+    orgs: "GET", saveOrgTBD: "POST", folders: "GET", groups: "GET"
   ]
 
   static responseFormats = ['json','xml']

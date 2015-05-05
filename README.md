@@ -31,7 +31,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.8.3'
+    compile ':aws-orguserteam:0.8.4'
 ...
   }
 ```
@@ -114,14 +114,15 @@ class UserDashboardController extends ABaseUserController {
 To utilize UserDashboardController's inherited CRUD operations on invitations, orgs, folders,
 add the following to your UrlMappings.groovy:
 ```
-    // Feel free to tweak, but be sure to include '$id?'
     "/my-invitations/$id?(.$format)?"(controller: "userDashboard", parseRequest: true) {
       action = [GET: "invitations", POST: "joinInvitation", DELETE: "deleteInvitation"]
     }
-    "/my-orgs/$id?(.$format)?"(controller: "userDashboard", parseRequest: true) {
+    "/my-orgs/$id?(.$format)?"(parseRequest: true) {
+      controller = [GET: "userDashboard", PUT: "orgDashboard", POST: "userDashboard", DELETE: "orgDashboard"]
       action = [GET: "orgs", PUT: "updateOrg", POST: "saveOrg", DELETE: "deleteOrg"]
     }
-    "/my-folders/$id?(.$format)?"(controller: "userDashboard", parseRequest: true) {
+    "/my-folders/$id?(.$format)?"(parseRequest: true) {
+      controller = [GET: "userDashboard", PUT: "orgDashboard", POST: "orgDashboard", DELETE: "orgDashboard"]
       action = [GET: "folders", PUT: "updateFolder", POST: "saveFolder", DELETE: "deleteFolder"]
     }
     "/my-groups(.$format)?"(controller: "userDashboard", action: "groups")
@@ -190,6 +191,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.8.4  - fix null org access
 0.8.3  - fix base class protection
 0.8.2  - fix org visibility
 0.8.1  - owner access

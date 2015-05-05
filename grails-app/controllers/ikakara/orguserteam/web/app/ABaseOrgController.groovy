@@ -13,6 +13,11 @@ import ikakara.awsinstance.util.StringUtil
 
 @GrailsCompileStatic
 abstract class ABaseOrgController extends ABaseController implements IAccessController {
+  static allowedMethods = [
+    updateOrgTBD: "PUT", deleteOrgTBD: "DELETE",
+    updateFolderTBD: "PUT", saveFolderTBD: "POST", deleteFolderTBD: "DELETE",
+  ]
+
   def beforeInterceptor = [action: this.&validateAccess]
 
   // insure that user has access:
@@ -45,9 +50,8 @@ abstract class ABaseOrgController extends ABaseController implements IAccessCont
     // validate that the slug is for an org
     def org = IdOrg.fromSlug(orgId)
     if(!org) {
-      flash.message = "Failed to find '${orgId}'"
-      redirectInvalidAccessRedirectUri()
-      return false
+      // no org, but we'll let the request pass through
+      return true
     }
 
     def folderId = getFolderSlugId()
