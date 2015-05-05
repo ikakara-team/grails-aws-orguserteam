@@ -31,7 +31,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.8.4'
+    compile ':aws-orguserteam:0.8.5'
 ...
   }
 ```
@@ -163,6 +163,7 @@ orgUserTeamService:
   * ```List<IdEmailFolder> listFolder(IdEmail email)```
   * ```List<IdOrg> listFolderByOrg(IdUser user, String myOrgName)```
   * ```IdFolder createFolder(IdUser user, String folderName, Integer privacy, String orgId))```
+  * ```IdFolder createFolder(IdUser user, String folderName, Integer privacy, IdOrg org)```
   * ```IdSlug updateFolder(IdFolder folder, String name, Integer privacy, String description, String shortName)```
   * ```boolean updateFolderOwner(IdFolder folder, String orgId)```
   * ```boolean deleteFolder(IdFolder folder)```
@@ -191,6 +192,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.8.5  - createFolder
 0.8.4  - fix null org access
 0.8.3  - fix base class protection
 0.8.2  - fix org visibility

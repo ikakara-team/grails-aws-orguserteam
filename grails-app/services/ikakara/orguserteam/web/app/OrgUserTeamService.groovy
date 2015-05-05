@@ -577,7 +577,10 @@ class OrgUserTeamService {
         return null
       }
     }
+    return createFolder(user, folderName, privacy, org)
+  }
 
+  IdFolder createFolder(IdUser user, String folderName, Integer privacy, IdOrg org) {
     // create folder
     IdFolder folder = (IdFolder)new IdFolder()
     .initId()
