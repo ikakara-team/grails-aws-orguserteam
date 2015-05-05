@@ -127,7 +127,7 @@ add the following to your UrlMappings.groovy:
     "/my-groups(.$format)?"(controller: "userDashboard", action: "groups")
 ```
 
-orgUserFolderService:
+orgUserTeamService:
 --------------
 * Id
   * ```AIdBase findIdObjBySlugId(String slugId)```
