@@ -5,7 +5,7 @@ import ikakara.orguserteam.dao.dynamo.IdEmail
 import ikakara.simplemarshaller.web.app.SimpleMarshallerService
 
 class AwsOrguserteamGrailsPlugin {
-  def version = "0.8.5"
+  def version = "0.8.6"
   def grailsVersion = "2.2 > *"
   def loadAfter = ['aws-instance']
   def pluginExcludes = [
@@ -13,6 +13,7 @@ class AwsOrguserteamGrailsPlugin {
     "grails-app/views/error.gsp",
     "grails-app/views/index.gsp",
     "grails-app/controllers/ikakara/orguserteam/web/app/TestUserController.groovy",
+    "grails-app/controllers/ikakara/orguserteam/web/app/TestOrgController.groovy",
     "web-app/**"
   ]
   def title = "AWS Org-User-Team Plugin"

@@ -31,7 +31,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.5.7'
-    compile ':aws-orguserteam:0.8.5'
+    compile ':aws-orguserteam:0.8.6'
 ...
   }
 ```
@@ -192,6 +192,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.8.6  - cleanup
 0.8.5  - createFolder
 0.8.4  - fix null org access
 0.8.3  - fix base class protection
