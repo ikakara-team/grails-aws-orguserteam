@@ -6,19 +6,12 @@
   </label>
   <g:textField name="id" required="" value="${emailInstance?.id}"/>
 </div>
-<div class="fieldcontain ${hasErrors(bean: emailInstance, field: 'aliasId', 'error')}">
-  <label for="aliasId">
-    <g:message code="IdEmail.aliasId.label" default="Alias" />
-  </label>
-  <g:field name="aliasId" type="tel" value="${emailInstance?.aliasId}" />
-</div>
 
-<div class="fieldcontain ${hasErrors(bean: emailInstance, field: 'status', 'error')} required">
+<div class="fieldcontain ${hasErrors(bean: emailInstance, field: 'status', 'error')}">
   <label for="status">
     <g:message code="IdEmail.status.label" default="Status" />
-    <span class="required-indicator">*</span>
   </label>
-  <g:field name="status" type="number" value="${emailInstance?.status}" required=""/>
+  <g:field name="status" type="number" value="${emailInstance?.status}" />
 </div>
 
 <!--div class="fieldcontain ${hasErrors(bean: emailInstance, field: 'created_time', 'error')} required">

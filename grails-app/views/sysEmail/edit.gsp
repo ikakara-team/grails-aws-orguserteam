@@ -3,11 +3,11 @@
 <html>
   <head>
     <meta name="layout" content="platform">
-    <g:set var="entityName" value="${message(code: 'idEmail.label', default: 'IdEmail')}" />
+    <g:set var="entityName" value="${message(code: 'IdEmail.label', default: 'IdEmail')}" />
     <title><g:message code="default.edit.label" args="[entityName]" /></title>
   </head>
   <body>
-    <a href="#edit-idEmail" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
+    <a href="#edit-IdEmail" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
     <div class="nav" role="navigation">
       <ul>
         <li><a class="home" href="${request.contextPath}${grailsApplication.config.grails.plugin.awsorguserteam.homePath}"><g:message code="default.home.label"/></a></li>
@@ -15,7 +15,7 @@
         <li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
         </ul>
       </div>
-      <div id="edit-idEmail" class="content scaffold-edit" role="main">
+      <div id="edit-IdEmail" class="content scaffold-edit" role="main">
         <h1><g:message code="default.edit.label" args="[entityName]" /></h1>
       <g:if test="${flash.message}">
         <div class="message" role="status">${flash.message}</div>

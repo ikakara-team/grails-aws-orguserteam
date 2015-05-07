@@ -2,18 +2,18 @@
 <html>
   <head>
     <meta name="layout" content="platform">
-    <g:set var="entityName" value="${message(code: 'idEmail.label', default: 'IdEmail')}" />
+    <g:set var="entityName" value="${message(code: 'IdEmail.label', default: 'IdEmail')}" />
     <title><g:message code="default.create.label" args="[entityName]" /></title>
   </head>
   <body>
-    <a href="#create-idEmail" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
+    <a href="#create-IdEmail" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
     <div class="nav" role="navigation">
       <ul>
         <li><a class="home" href="${request.contextPath}${grailsApplication.config.grails.plugin.awsorguserteam.homePath}"><g:message code="default.home.label"/></a></li>
         <li><g:link class="list" action="index"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
         </ul>
       </div>
-      <div id="create-idEmail" class="content scaffold-create" role="main">
+      <div id="create-IdEmail" class="content scaffold-create" role="main">
         <h1><g:message code="default.create.label" args="[entityName]" /></h1>
       <g:if test="${flash.message}">
         <div class="message" role="status">${flash.message}</div>
