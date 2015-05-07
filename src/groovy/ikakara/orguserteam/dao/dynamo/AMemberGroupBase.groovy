@@ -182,18 +182,6 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
   Item marshalItemOUT(List removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
 
-    if (member != null) {
-      outItem = outItem.withString("MemberId", (String) member.valueHashKey())
-    } else if (removeAttributeNull != null) {
-      removeAttributeNull.add("MemberId")
-    }
-
-    if (group) {
-      outItem = outItem.withString("GroupId", (String) group.valueHashKey())
-    } else if (removeAttributeNull != null) {
-      removeAttributeNull.add("GroupId")
-    }
-
     if (invitedBy) {
       outItem = outItem.withString("InvitedById", (String) invitedBy.valueHashKey())
     } else if (removeAttributeNull != null) {
