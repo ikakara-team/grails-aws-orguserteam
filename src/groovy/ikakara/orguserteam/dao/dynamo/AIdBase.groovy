@@ -52,6 +52,9 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
 
   @DynamoDBAttribute(attributeName = "DisplayName")
   String name
+  @DynamoDBAttribute(attributeName = "IdStatus")
+  Number status
+
   protected AIdBase alias
 
   @Override
@@ -131,6 +134,9 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
     if (item.isPresent("DisplayName")) {
       name = item.getString("DisplayName")
     }
+    if (item.isPresent("IdStatus")) {
+      status = item.getNumber("IdStatus")
+    }
     if (item.isPresent("AliasPrefix")) {
       alias_prefix = item.getString("AliasPrefix")
     }
@@ -157,6 +163,11 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
     } else if (removeAttributeNull != null) {
       removeAttributeNull.add("DisplayName")
     }
+    if (status != null) {
+      outItem = outItem.withNumber("IdStatus", status)
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("IdStatus")
+    }
     if (alias) {
       outItem = outItem.withString("AliasPrefix", alias.typePrefix)
     } else if (removeAttributeNull != null) {
@@ -177,6 +188,7 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
     //if (params) {
     id = (String) params.id
     name = (String) params.name
+    status = (Integer) params.status
     String alias_id = (String) params.alias_id
     String alias_prefix = (String) params.alias_prefix
     alias = toId(alias_prefix + alias_id)
@@ -270,6 +282,11 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
   @DynamoDBAttribute(attributeName = "AliasPrefix")
   String getAliasPrefix() {
     alias?.typePrefix
+  }
+
+  AIdBase withStatus(int s) {
+    status = s
+    return this
   }
 
   List<AIdBase> queryByAlias(String aliasId) {

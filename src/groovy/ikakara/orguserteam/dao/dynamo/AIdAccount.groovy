@@ -30,9 +30,6 @@ import com.amazonaws.services.dynamodbv2.document.Item
 @CompileStatic
 abstract class AIdAccount extends AIdBase {
 
-  @DynamoDBAttribute(attributeName = "Status")
-  Number status
-
   // transient
   List<IdFolder> folderList = []
 
@@ -49,52 +46,11 @@ abstract class AIdAccount extends AIdBase {
     folderList << folder
   }
 
-  @Override
-  void marshalAttributesIN(Item item) {
-    super.marshalAttributesIN(item)
-    //if (map) {
-    if (item.isPresent("Status")) {
-      status = item.getNumber("Status")
-    }
-    //}
-  }
-
-  @Override
-  Item marshalItemOUT(List removeAttributeNull) {
-    Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
-
-    if (status != null) {
-      outItem = outItem.withNumber("Status", status)
-    } else if (removeAttributeNull != null) {
-      removeAttributeNull.add("Status")
-    }
-
-    return outItem
-  }
-
-  @Override
-  void initParameters(Map params) {
-    super.initParameters(params)
-    //if (params) {
-
-    try {
-      status = (Integer) params.status
-    } catch (ignored) {
-    }
-
-    //}
-  }
-
   AIdAccount() {
   }
 
   AIdAccount(Map params) {
     initParameters(params)
-  }
-
-  AIdAccount withStatus(int s) {
-    status = s
-    return this
   }
 
   static AIdAccount toIdAccount(String id_str) {

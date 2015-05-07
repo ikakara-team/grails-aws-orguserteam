@@ -35,7 +35,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.6.0'
-    compile ':aws-orguserteam:0.9.1'
+    compile ':aws-orguserteam:0.9.2'
 ...
   }
 ```
@@ -194,6 +194,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.9.2  - refactor/rename Status
 0.9.1  - fix for UpdateItemSpec
 0.9.0  - update marshalItemOUT - breaking changes
 0.8.6  - rename Team to Folder

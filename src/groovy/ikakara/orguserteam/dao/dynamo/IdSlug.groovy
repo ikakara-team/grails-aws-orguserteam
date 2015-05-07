@@ -37,11 +37,7 @@ class IdSlug extends AIdBase {
 
   public static final String ID_TYPE = "Slug"
   public static final String ID_PREFIX = "#"
-
   public static final int SLUG_MINLENGTH = 8
-
-  @DynamoDBAttribute(attributeName = "Status")
-  Number status
 
   @Override
   @DynamoDBIgnore
@@ -53,42 +49,6 @@ class IdSlug extends AIdBase {
   @DynamoDBAttribute(attributeName = "IdType")
   String getType() {
     return ID_TYPE
-  }
-
-  @Override
-  void marshalAttributesIN(Item item) {
-    super.marshalAttributesIN(item)
-    //if (map) {
-    if (item.isPresent("Status")) {
-      status = item.getNumber("Status")
-    }
-    //}
-  }
-
-  @Override
-  Item marshalItemOUT(List removeAttributeNull) {
-    Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
-
-    if (status != null) {
-      outItem = outItem.withNumber("Status", status)
-    } else if (removeAttributeNull != null) {
-      removeAttributeNull.add("Status")
-    }
-
-    return outItem
-  }
-
-  @Override
-  void initParameters(Map params) {
-    super.initParameters(params)
-    //if (params) {
-
-    try {
-      status = (Integer) params.status
-    } catch (ignored) {
-    }
-
-    //}
   }
 
   IdSlug() {

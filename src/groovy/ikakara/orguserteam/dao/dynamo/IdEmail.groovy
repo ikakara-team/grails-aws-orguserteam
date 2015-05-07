@@ -44,8 +44,6 @@ class IdEmail extends AIdBase {
   static public final String ID_TYPE = "Email"
   static public final String ID_PREFIX = '$'
 
-  @DynamoDBAttribute(attributeName = "Status")
-  Number status
   @DynamoDBAttribute(attributeName = "EmailSentCount")
   Number emailSentCount;
   @DynamoDBAttribute(attributeName = "EmailSentLast")
@@ -73,9 +71,6 @@ class IdEmail extends AIdBase {
   void marshalAttributesIN(Item item) {
     super.marshalAttributesIN(item)
     //if (map != null && !map.isEmpty()) {
-    if (item.isPresent("Status")) {
-      status = item.getNumber("Status")
-    }
     if (item.isPresent("EmailSentCount")) {
       emailSentCount = item.getNumber("EmailSentCount");
     }
@@ -91,11 +86,6 @@ class IdEmail extends AIdBase {
   @Override
   Item marshalItemOUT(List removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
-    if (status != null) {
-      outItem = outItem.withNumber("Status", status)
-    } else if (removeAttributeNull != null) {
-      removeAttributeNull.add("Status")
-    }
     if (emailSentCount != null) {
       outItem = outItem.withNumber("EmailSentCount", emailSentCount);
     } else if (removeAttributeNull != null) {
@@ -120,7 +110,6 @@ class IdEmail extends AIdBase {
     //if (params != null && !params.isEmpty()) {
 
     try {
-      status = (Integer) params.status
       emailSentCount = (Integer) params.emailSentCount
       emailSentLast = params.emailSentLast
       emailSentLastError = params.emailSentLastError
