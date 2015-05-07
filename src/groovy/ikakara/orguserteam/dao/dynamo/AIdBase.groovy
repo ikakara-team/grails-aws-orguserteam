@@ -50,7 +50,7 @@ import ikakara.awsinstance.dao.dynamo.ADynamoObject
 abstract class AIdBase extends AIdObject implements ITypeObject {
   private static String TABLE_NAME
 
-  @DynamoDBAttribute(attributeName = "Name")
+  @DynamoDBAttribute(attributeName = "DisplayName")
   String name
   protected AIdBase alias
 
@@ -128,8 +128,8 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
     String alias_prefix
     String alias_id
 
-    if (item.isPresent("Name")) {
-      name = item.getString("Name")
+    if (item.isPresent("DisplayName")) {
+      name = item.getString("DisplayName")
     }
     if (item.isPresent("AliasPrefix")) {
       alias_prefix = item.getString("AliasPrefix")
@@ -153,9 +153,9 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
       removeAttributeNull.add("IdType")
     }
     if (name) {
-      outItem = outItem.withString("Name", name)
+      outItem = outItem.withString("DisplayName", name)
     } else if (removeAttributeNull != null) {
-      removeAttributeNull.add("Name")
+      removeAttributeNull.add("DisplayName")
     }
     if (alias) {
       outItem = outItem.withString("AliasPrefix", alias.typePrefix)

@@ -115,7 +115,7 @@ class SysSlugController {
       return
     }
 
-    slugInstance.updatedDate = new Date()
+    slugInstance.withUpdated()
     slugInstance.save()
 
     request.withFormat {

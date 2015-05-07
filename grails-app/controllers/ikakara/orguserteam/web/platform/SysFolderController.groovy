@@ -115,7 +115,7 @@ class SysFolderController {
       return
     }
 
-    folderInstance.updatedDate = new Date()
+    folderInstance.withUpdated()
     folderInstance.save()
 
     request.withFormat {

@@ -166,7 +166,7 @@ class OrgUserTeamService {
     user.description = desc
     user.initials = initials
 
-    user.updatedDate = new Date()
+    user.withUpdated()
     def save = user.save()
     if(save) {
       // cleanup old slug
@@ -341,7 +341,7 @@ class OrgUserTeamService {
     org.description = desc
     org.webUrl = web_url
 
-    org.updatedDate = new Date()
+    org.withUpdated()
     def save = org.save()
     if(save) {
       // cleanup old slug
@@ -685,7 +685,7 @@ class OrgUserTeamService {
     folder.privacy = privacy
     folder.description = description
 
-    folder.updatedDate = new Date()
+    folder.withUpdated()
     def save = folder.save()
     if(save) {
       // cleanup old slug

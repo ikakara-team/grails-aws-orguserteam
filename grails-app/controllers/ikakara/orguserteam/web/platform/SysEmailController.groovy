@@ -39,9 +39,6 @@ class SysEmailController {
 
     int count = results ? results.size() : 0
 
-    def json = results as JSON
-    //log.debug ">>>>>>>>>>>>>>>>>>>>>>>>>$json"
-
     respond results, model: [emailList: results, emailCount: count]
   }
 
@@ -62,10 +59,10 @@ class SysEmailController {
       return
     }
 
-    emailInstance = orgUserTeamService.createEmail(params.id)
+    emailInstance = orgUserTeamService.createEmail(emailInstance.id)
 
     if(!emailInstance) {
-      flash.message = "Failed to create: $emailInstance.id"
+      flash.message = "Failed to create: ${params.id}"
       render view: 'create', model:[emailInstance: emailInstance]
       return
     }
@@ -78,8 +75,8 @@ class SysEmailController {
         render orgInstance as XML, [status: CREATED]
       }
       '*' {
-        flash.message = message(code: 'default.created.message', args: [message(code: 'adminApp.label', default: 'IdEmail'), emailInstance.id])
-        redirect action: 'show', id: emailInstance.id
+        flash.message = message(code: 'default.created.message', args: [message(code: 'adminApp.label', default: 'IdEmail'), emailInstance?.id])
+        redirect action: 'show', id: emailInstance?.urlEncodedId()
       }
     }
   }
@@ -89,6 +86,8 @@ class SysEmailController {
       response.sendError(404)
       return
     }
+
+    println "${emailInstance} ${params}"
 
     emailInstance.urlDecodeId((String)params.id)
     emailInstance.load()
@@ -106,14 +105,17 @@ class SysEmailController {
       emailInstance.urlDecodeId((String)params.id)
     }
 
-    println "update>>>>>>>>>>>>>>>>" + emailInstance.id
+
 
     if (emailInstance.hasErrors()) {
       respond emailInstance.errors, view:'edit'
       return
     }
 
-    emailInstance.setUpdatedDate(new Date())
+    emailInstance.withUpdated()
+
+    println "update>>>>>>>>>>>>>>>>" + emailInstance.writeOverCreated
+
     emailInstance.save()
 
     request.withFormat {
@@ -125,7 +127,7 @@ class SysEmailController {
       }
       '*' {
         flash.message = message(code: 'default.updated.message', args: [message(code: 'IdEmail.label', default: 'IdEmail'), emailInstance.id])
-        redirect action: 'show', id: emailInstance.id
+        redirect action: 'show', id: emailInstance.urlEncodedId()
       }
     }
   }

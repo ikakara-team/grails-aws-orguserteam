@@ -13,15 +13,13 @@ import ikakara.awsinstance.util.StringUtil
 
 @GrailsCompileStatic
 abstract class ABaseFolderController extends ABaseController implements IAccessController {
-  def beforeInterceptor = [action: this.&validateAccess]
-
   // insure that user has access:
   // org access requires that user is member of org
   // folder access requires that user is
   // 1) member of folder
   // 2) an org owner/admin
   // 3) member of org and folder is visible to org members
-  protected validateAccess() {
+  boolean validateAccess() {
     def userId    = getUserId()
 
     def user = ((OrgUserTeamService)orgUserTeamService).user(userId, false)

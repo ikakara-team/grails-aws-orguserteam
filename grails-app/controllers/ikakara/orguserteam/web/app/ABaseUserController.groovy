@@ -25,10 +25,8 @@ abstract class ABaseUserController extends ABaseController implements IAccessCon
 
   static responseFormats = ['json','xml']
 
-  def beforeInterceptor = [action: this.&validateAccess]
-
   // Assumption: users can access their own info
-  protected validateAccess() {
+  boolean validateAccess() {
     String userId = getUserId()
 
     IdUser user = ((OrgUserTeamService)orgUserTeamService).user(userId)

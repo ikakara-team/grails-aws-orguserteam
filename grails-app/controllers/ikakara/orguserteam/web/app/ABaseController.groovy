@@ -28,6 +28,8 @@ abstract class ABaseController implements IAccessController {
   static final String MEMBER_KEY    = "member"
   static final String INVITED_KEY   = "invited"
 
+  def beforeInterceptor = [action: this.&validateAccess]
+
   def orgUserTeamService
 
   protected setAttributeUserEmailAndInvited() {
