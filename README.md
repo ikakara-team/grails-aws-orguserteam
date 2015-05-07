@@ -2,6 +2,10 @@
 
 Team is now Folder to disambiguate its relationship from Orgs and Users.
 
+Example Application:
+--------------
+See <a href="https://github.com/ikakara-team/grails-example-orguserteam">example application</a>
+
 Description:
 --------------
 Grails plugin, for a "Org-User-Folder" design pattern used by apps like Trello.com and implemented using AWS DyanmoDB.
@@ -74,8 +78,6 @@ grails {
 
 Usage:
 --------------
-See <a href="https://github.com/ikakara-team/grails-example-orguserteam">example application</a>
-
 This plugin includes 3 (abstract) base classes so use is DRY as possible:
 * ABaseOrgController  - defines an interceptor to check for "org level access"
 * ABaseFolderController - defines an interceptor to check for "folder level access"
