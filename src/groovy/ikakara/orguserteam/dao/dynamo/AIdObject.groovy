@@ -75,7 +75,7 @@ abstract class AIdObject extends ACreatedUpdatedObject {
   }
 
   @Override
-  Item marshalItemOUT(boolean removeAttributeNull) {
+  Item marshalItemOUT(List removeAttributeNull) {
     super.marshalItemOUT(removeAttributeNull) ?: new Item()
   }
 

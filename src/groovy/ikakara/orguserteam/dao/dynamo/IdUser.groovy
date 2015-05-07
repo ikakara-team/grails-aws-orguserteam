@@ -91,23 +91,23 @@ class IdUser extends AIdAccount {
   }
 
   @Override
-  Item marshalItemOUT(boolean removeAttributeNull) {
+  Item marshalItemOUT(List removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
 
     if (imageUrl) {
       outItem = outItem.withString("ImageUrl", imageUrl)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("ImageUrl")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("ImageUrl")
     }
     if (initials) {
       outItem = outItem.withString("Initials", initials)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Initials")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("Initials")
     }
     if (description) {
       outItem = outItem.withString("Description", description)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Description")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("Description")
     }
 
     return outItem

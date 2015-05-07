@@ -114,25 +114,25 @@ class IdFolder extends AIdBase implements TAccountOwned {
   }
 
   @Override
-  Item marshalItemOUT(boolean removeAttributeNull) {
+  Item marshalItemOUT(List removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
 
     outItem = marshalOwnerOUT(outItem, removeAttributeNull)
 
     if (privacy != null) {
       outItem = outItem.withNumber("Privacy", privacy)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Privacy")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("Privacy")
     }
     if (imageUrl) {
       outItem = outItem.withString("ImageUrl", imageUrl)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("ImageUrl")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("ImageUrl")
     }
     if (description) {
       outItem = outItem.withString("Description", description)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Description")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("Description")
     }
 
     return outItem

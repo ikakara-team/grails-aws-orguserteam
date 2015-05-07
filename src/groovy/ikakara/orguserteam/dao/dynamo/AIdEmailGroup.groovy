@@ -49,13 +49,13 @@ abstract class AIdEmailGroup extends AMemberGroupBase {
   }
 
   @Override
-  Item marshalItemOUT(boolean removeAttributeNull) {
+  Item marshalItemOUT(List removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
 
     if (invitedName) {
       outItem = outItem.withString("InvitedName", invitedName);
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("InvitedName");
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("InvitedName");
     }
 
     return outItem

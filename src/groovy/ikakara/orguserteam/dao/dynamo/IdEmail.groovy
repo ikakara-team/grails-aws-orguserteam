@@ -89,27 +89,27 @@ class IdEmail extends AIdBase {
   }
 
   @Override
-  Item marshalItemOUT(boolean removeAttributeNull) {
+  Item marshalItemOUT(List removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
     if (status != null) {
       outItem = outItem.withNumber("Status", status)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Status")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("Status")
     }
     if (emailSentCount != null) {
       outItem = outItem.withNumber("EmailSentCount", emailSentCount);
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("EmailSentCount");
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("EmailSentCount");
     }
     if (emailSentLast) {
       outItem = outItem.withString("EmailSentLast", emailSentLast);
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("EmailSentLast");
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("EmailSentLast");
     }
     if (emailSentLastError) {
       outItem = outItem.withString("EmailSentLastError", emailSentLastError);
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("EmailSentLastError");
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("EmailSentLastError");
     }
     return outItem
   }

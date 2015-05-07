@@ -144,28 +144,28 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
   }
 
   @Override
-  Item marshalItemOUT(boolean removeAttributeNull) {
+  Item marshalItemOUT(List removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
 
     if (type) {
       outItem = outItem.withString("IdType", type)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("IdType")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("IdType")
     }
     if (name) {
       outItem = outItem.withString("Name", name)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Name")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("Name")
     }
     if (alias) {
       outItem = outItem.withString("AliasPrefix", alias.typePrefix)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("AliasPrefix")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("AliasPrefix")
     }
     if (alias && alias.id != "") {
       outItem = outItem.withString("AliasId", alias.id)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("AliasId")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("AliasId")
     }
 
     return outItem

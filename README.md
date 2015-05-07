@@ -30,7 +30,7 @@ Installation:
 ```
   plugins {
 ...
-    compile ':aws-instance:0.5.7'
+    compile ':aws-instance:0.6.0'
     compile ':aws-orguserteam:0.8.6'
 ...
   }

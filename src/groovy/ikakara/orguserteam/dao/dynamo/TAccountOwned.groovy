@@ -57,11 +57,11 @@ trait TAccountOwned {
     }
   }
 
-  Item marshalOwnerOUT(Item outItem, boolean removeAttributeNull) {
+  Item marshalOwnerOUT(Item outItem, List removeAttributeNull) {
     if (owner != null) {
       outItem = outItem.withString("OwnerId", (String) owner.valueHashKey())
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("OwnerId")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("OwnerId")
     }
     return outItem
   }

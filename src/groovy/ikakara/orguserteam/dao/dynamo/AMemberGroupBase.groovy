@@ -59,6 +59,7 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
 
   private static String TABLE_NAME
 
+  // transient
   protected AIdBase member // mobile, email, hash
   protected AIdBase group
   protected IdUser  invitedBy
@@ -178,37 +179,37 @@ abstract class AMemberGroupBase extends ACreatedUpdatedObject implements ITypeOb
   }
 
   @Override
-  Item marshalItemOUT(boolean removeAttributeNull) {
+  Item marshalItemOUT(List removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
 
     if (member != null) {
       outItem = outItem.withString("MemberId", (String) member.valueHashKey())
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("MemberId")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("MemberId")
     }
 
     if (group) {
       outItem = outItem.withString("GroupId", (String) group.valueHashKey())
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("GroupId")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("GroupId")
     }
 
     if (invitedBy) {
       outItem = outItem.withString("InvitedById", (String) invitedBy.valueHashKey())
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("InvitedById")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("InvitedById")
     }
 
     if (memberRoles) {
       outItem = outItem.withStringSet("MemberRoles", memberRoles)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("MemberRoles")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("MemberRoles")
     }
 
     if (type) {
       outItem = outItem.withString("IdType", type)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("IdType")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("IdType")
     }
 
     return outItem

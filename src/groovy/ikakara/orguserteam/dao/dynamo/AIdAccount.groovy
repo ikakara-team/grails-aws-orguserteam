@@ -60,13 +60,13 @@ abstract class AIdAccount extends AIdBase {
   }
 
   @Override
-  Item marshalItemOUT(boolean removeAttributeNull) {
+  Item marshalItemOUT(List removeAttributeNull) {
     Item outItem = super.marshalItemOUT(removeAttributeNull) ?: new Item()
 
     if (status != null) {
       outItem = outItem.withNumber("Status", status)
-    } else if (removeAttributeNull) {
-      outItem = outItem.removeAttribute("Status")
+    } else if (removeAttributeNull != null) {
+      removeAttributeNull.add("Status")
     }
 
     return outItem

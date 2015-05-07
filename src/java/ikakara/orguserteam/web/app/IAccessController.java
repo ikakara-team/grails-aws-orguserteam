@@ -24,4 +24,6 @@ public interface IAccessController {
 
   String getUserId();
 
+  boolean validateAccess();
+
 }
