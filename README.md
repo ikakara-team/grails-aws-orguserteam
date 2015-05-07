@@ -31,7 +31,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.6.0'
-    compile ':aws-orguserteam:0.8.6'
+    compile ':aws-orguserteam:0.9.0'
 ...
   }
 ```
@@ -192,13 +192,8 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
-0.8.6  - cleanup
-0.8.5  - createFolder
-0.8.4  - fix null org access
-0.8.3  - fix base class protection
-0.8.2  - fix org visibility
-0.8.1  - owner access
-0.8.0  - rename Team to Folder
+0.9.0  - update marshalItemOUT - breaking changes
+0.8.6  - rename Team to Folder
 0.7.8  - refactor access
 0.6.10 - misc tweaks
 0.5.7  - team visibility
