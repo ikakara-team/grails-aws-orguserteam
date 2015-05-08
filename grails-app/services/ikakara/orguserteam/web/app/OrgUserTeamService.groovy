@@ -16,6 +16,7 @@ package ikakara.orguserteam.web.app
 
 import groovy.transform.CompileStatic
 
+import ikakara.orguserteam.dao.dynamo.AIdAccount
 import ikakara.orguserteam.dao.dynamo.AIdBase
 import ikakara.orguserteam.dao.dynamo.IdSlug
 import ikakara.orguserteam.dao.dynamo.IdFolder
@@ -29,6 +30,7 @@ import ikakara.orguserteam.dao.dynamo.IdEmail
 import ikakara.orguserteam.dao.dynamo.AIdEmailGroup
 import ikakara.orguserteam.dao.dynamo.IdEmailFolder
 import ikakara.orguserteam.dao.dynamo.IdEmailOrg
+import ikakara.orguserteam.dao.dynamo.TIdGroup
 
 @CompileStatic
 class OrgUserTeamService {
@@ -514,9 +516,9 @@ class OrgUserTeamService {
   }
 
   // this is ridculous ... SQL is so much better at relationships
-  List<IdOrg> listFolderByOrg(IdUser user, String myOrgName) {
-    Map mapApp = [:]
-    List<IdOrg> listOrg = [new IdOrg(name: myOrgName)]
+  List<AIdAccount> listFolderByAccount(IdUser user, String acountName) {
+    Map<String, IdFolder> mapFolder = [:]
+    List<AIdAccount> listAccount = [(AIdAccount)new IdUser(name: acountName)]
 
     // get all the user folders and orgs
     List list = new IdUserFolder().withMember(user).queryByMember()
@@ -525,19 +527,21 @@ class OrgUserTeamService {
       if(userobj instanceof IdUserFolder) {
         IdFolder folder = (IdFolder)userobj.group
         folder.load()
-        mapApp[folder.id] = folder
+        folder.memberInfo = (AIdUserGroup)userobj
+        mapFolder[folder.id] = folder
       } else if(userobj instanceof IdUserOrg) {
         IdOrg org = (IdOrg)userobj.group
         org.load()
-        listOrg << org
+        org.memberInfo = (AIdUserGroup)userobj
+        listAccount << org
       } else {
         // unknown class
       }
     }
 
-    int size = listOrg.size()
+    int size = listAccount.size()
     for(int i = 1; i < size; i++) {
-      def org = listOrg[i]
+      def org = listAccount[i]
 
       // get all the folders of the orgs that the user belongs to
       // query by member and privacy
@@ -545,8 +549,8 @@ class OrgUserTeamService {
       for(orgfolder in list_orgfolder) {
         IdFolder folder = (IdFolder)orgfolder.group
 
-        if(mapApp.containsKey(folder.id)) {
-          folder = mapApp.remove(folder.id)
+        if(mapFolder.containsKey(folder.id)) {
+          folder = mapFolder.remove(folder.id)
           org.folderListAdd(folder)
         } else {
           folder.load()
@@ -557,12 +561,21 @@ class OrgUserTeamService {
       }
     }
 
+    Map<String, AIdAccount> mapAccount = [:]
+
     // add the remaining folders to 'my apps'
-    for(folder in mapApp.values()){
-      listOrg[0].folderListAdd((IdFolder)folder)
+    for(folder in mapFolder.values()){
+      if(folder.ownerEquals(user)) {
+        listAccount[0].folderListAdd((IdFolder)folder)
+      } else {
+        if(!mapAccount.containsKey(folder.owner.aliasId)) {
+          mapAccount[folder.owner.aliasId] = folder.owner
+        }
+        mapAccount[folder.owner.aliasId].folderListAdd(folder)
+      }
     }
 
-    return listOrg
+    return listAccount + mapAccount.values()
   }
 
   IdFolder createFolder(IdUser user, String folderName, Integer privacy, String orgId) {

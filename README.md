@@ -35,7 +35,7 @@ Installation:
   plugins {
 ...
     compile ':aws-instance:0.6.0'
-    compile ':aws-orguserteam:0.9.3'
+    compile ':aws-orguserteam:0.9.4'
 ...
   }
 ```
@@ -163,7 +163,7 @@ orgUserTeamService:
   * ```List<IdOrgFolder> listFolder(IdOrg org)```
   * ```List<IdUserFolder> listFolder(IdUser user)```
   * ```List<IdEmailFolder> listFolder(IdEmail email)```
-  * ```List<IdOrg> listFolderByOrg(IdUser user, String myOrgName)```
+  * ```List<IdOrg> listFolderByAccount(IdUser user, String myAccountName)```
   * ```IdFolder createFolder(IdUser user, String folderName, Integer privacy, String orgId))```
   * ```IdFolder createFolder(IdUser user, String folderName, Integer privacy, IdOrg org)```
   * ```IdSlug updateFolder(IdFolder folder, String name, Integer privacy, String description, String shortName)```
@@ -194,6 +194,7 @@ Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
 History:
 --------------
 ```
+0.9.4  - listFolderByAccount
 0.9.3  - more refactoring
 0.9.2  - refactor/rename Status
 0.9.1  - fix for UpdateItemSpec

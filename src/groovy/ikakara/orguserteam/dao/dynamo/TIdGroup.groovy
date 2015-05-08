@@ -24,7 +24,12 @@ import com.amazonaws.services.dynamodbv2.document.Item
 @Slf4j("LOG")
 @CompileStatic
 trait TIdGroup {
-  // transient
+  // Contains info regarding a user's membership to a group
+  AIdUserGroup memberInfo
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Groups have members
+  /////////////////////////////////////////////////////////////////////////////
   List<IdUser> userList = []
 
   @DynamoDBIgnore
@@ -40,7 +45,11 @@ trait TIdGroup {
     userList << user
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // Groups have an owner
+  /////////////////////////////////////////////////////////////////////////////
   AIdAccount owner
+  // transient
   boolean bload = false
 
   @DynamoDBAttribute(attributeName = "OwnerId")
