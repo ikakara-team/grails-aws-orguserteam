@@ -35,7 +35,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "owner", "folderList", "userList", "visibility", "name", "imageUrl", "webUrl", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
-class IdOrg extends AIdAccount implements TAccountOwned {
+class IdOrg extends AIdAccount implements TIdGroup {
 
   public static final String ID_TYPE = "Org"
   public static final String ID_PREFIX = "@"
@@ -51,22 +51,6 @@ class IdOrg extends AIdAccount implements TAccountOwned {
   String webUrl
   @DynamoDBAttribute(attributeName = "Description")
   String description
-
-  // transient
-  List<IdUser> userList = []
-
-  @DynamoDBIgnore
-  List<IdUser> getUserList() {
-    return userList
-  }
-
-  void userListAdd(List<IdUser> list) {
-    userList.addAll(list)
-  }
-
-  void userListAdd(IdUser user) {
-    userList << user
-  }
 
   boolean isVisibilityPrivate() {
     return visibility?.intValue() == VISIBILITY_PRIVATE

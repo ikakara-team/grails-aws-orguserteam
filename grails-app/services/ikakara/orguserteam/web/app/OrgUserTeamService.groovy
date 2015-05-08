@@ -16,7 +16,6 @@ package ikakara.orguserteam.web.app
 
 import groovy.transform.CompileStatic
 
-import ikakara.orguserteam.dao.dynamo.AIdAccount
 import ikakara.orguserteam.dao.dynamo.AIdBase
 import ikakara.orguserteam.dao.dynamo.IdSlug
 import ikakara.orguserteam.dao.dynamo.IdFolder

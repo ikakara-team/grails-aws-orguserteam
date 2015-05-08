@@ -35,7 +35,7 @@ import ikakara.simplemarshaller.annotation.SimpleMarshaller
 @SimpleMarshaller(includes = ["id", "type", "aliasId", "owner", "userList", "privacy", "imageUrl", "name", "description", "createdDate", "updatedDate"])
 @Slf4j("LOG")
 @CompileStatic
-class IdFolder extends AIdBase implements TAccountOwned {
+class IdFolder extends AIdBase implements TIdGroup {
 
   public static final String ID_TYPE = "Folder"
   public static final String ID_PREFIX = "!"
@@ -50,22 +50,6 @@ class IdFolder extends AIdBase implements TAccountOwned {
   String imageUrl
   @DynamoDBAttribute(attributeName = "Description")
   String description
-
-  // transient
-  List<IdUser> userList = []
-
-  @DynamoDBIgnore
-  List<IdUser> getUserList() {
-    return userList
-  }
-
-  void userListAdd(List<IdUser> list) {
-    userList.addAll(list)
-  }
-
-  void userListAdd(IdUser user) {
-    userList << user
-  }
 
   boolean isPrivacyPrivate() {
     return privacy.intValue() == PRIVACY_PRIVATE

@@ -18,7 +18,6 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore
-import com.amazonaws.services.dynamodbv2.document.Item
 
 @Slf4j("LOG")
 @CompileStatic

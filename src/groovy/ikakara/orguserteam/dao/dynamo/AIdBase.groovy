@@ -217,6 +217,7 @@ abstract class AIdBase extends AIdObject implements ITypeObject {
     }
   }
 
+  // There is probably better way of doing this
   static AIdBase toId(String id_str) {
     AIdBase obj = new IdUser().isId(id_str)
     if (obj) {

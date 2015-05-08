@@ -40,11 +40,11 @@ trait TIdGroup {
     userList << user
   }
 
-  TIdAccount owner
+  AIdAccount owner
   boolean bload = false
 
   @DynamoDBAttribute(attributeName = "OwnerId")
-  TIdAccount getOwner() {
+  AIdAccount getOwner() {
     if(owner && !bload) {
       bload = owner.load()
     }
@@ -59,18 +59,18 @@ trait TIdGroup {
     return owner instanceof IdUser
   }
 
-  void setOwner(TIdAccount o) {
+  void setOwner(AIdAccount o) {
     owner = o
   }
 
-  TIdGroup withOwner(TIdAccount o) {
+  TIdGroup withOwner(AIdAccount o) {
     owner = o
     return this
   }
 
   void marshalOwnerIn(Item item) {
     if (item.isPresent("OwnerId")) {
-      owner = toIdAccount(item.getString("OwnerId"))
+      owner = AIdAccount.toIdAccount(item.getString("OwnerId"))
     }
   }
 
@@ -83,21 +83,9 @@ trait TIdGroup {
     return outItem
   }
 
-  boolean ownerEquals(TIdAccount account) {
+  boolean ownerEquals(AIdAccount account) {
     // we're going to cheat and not load owner
     return owner ? owner.valueHashKey() == account?.valueHashKey() : false
   }
 
-  // There is probably better way of doing this
-  private TIdAccount toIdAccount(String id_str) {
-    TIdAccount obj = (TIdAccount)new IdUser().isId(id_str)
-    if (obj) {
-      return obj
-    }
-
-    obj = (TIdAccount)new IdOrg().isId(id_str)
-    if (obj) {
-      return obj
-    }
-  }
 }

@@ -28,23 +28,7 @@ import com.amazonaws.services.dynamodbv2.document.Item
 @ToString(includePackage=false, includeNames=true, ignoreNulls=true, includeSuperProperties=true)
 @Slf4j("LOG")
 @CompileStatic
-abstract class AIdAccount extends AIdBase {
-
-  // transient
-  List<IdFolder> folderList = []
-
-  @DynamoDBIgnore
-  List<IdFolder> getFolderList() {
-    return folderList
-  }
-
-  void folderListAdd(List<IdFolder> list) {
-    folderList.addAll(list)
-  }
-
-  void folderListAdd(IdFolder folder) {
-    folderList << folder
-  }
+abstract class AIdAccount extends AIdBase implements TIdAccount {
 
   AIdAccount() {
   }
@@ -53,6 +37,7 @@ abstract class AIdAccount extends AIdBase {
     initParameters(params)
   }
 
+  // There is probably better way of doing this
   static AIdAccount toIdAccount(String id_str) {
     AIdAccount obj = (AIdAccount)new IdUser().isId(id_str)
     if (obj) {
