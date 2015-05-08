@@ -37,6 +37,14 @@ abstract class AIdAccount extends AIdBase implements TIdAccount {
     initParameters(params)
   }
 
+  boolean isAccountOrg() {
+    return this instanceof IdOrg
+  }
+
+  boolean isAccountUser() {
+    return this instanceof IdUser
+  }
+
   // There is probably better way of doing this
   static AIdAccount toIdAccount(String id_str) {
     AIdAccount obj = (AIdAccount)new IdUser().isId(id_str)

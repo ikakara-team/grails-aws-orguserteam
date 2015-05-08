@@ -564,12 +564,21 @@ class OrgUserTeamService {
     Map<String, AIdAccount> mapAccount = [:]
 
     // add the remaining folders to 'my apps'
-    for(folder in mapFolder.values()){
+    for(IdFolder folder in mapFolder.values()){
       if(folder.ownerEquals(user)) {
         listAccount[0].folderListAdd((IdFolder)folder)
       } else {
         if(!mapAccount.containsKey(folder.owner.aliasId)) {
-          mapAccount[folder.owner.aliasId] = folder.owner
+          if(folder.isOwnerOrg()) {
+            if(((IdOrg)folder.owner).ownerEquals(user)) {
+              mapAccount[folder.owner.aliasId] = folder.owner
+            } else {
+              // user doesn't have access to owner
+              mapAccount[folder.owner.aliasId] = new IdOrg(name: folder.owner.name)
+            }
+          } else {
+            mapAccount[folder.owner.aliasId] = new IdUser(name: folder.owner.name)
+          }
         }
         mapAccount[folder.owner.aliasId].folderListAdd(folder)
       }
