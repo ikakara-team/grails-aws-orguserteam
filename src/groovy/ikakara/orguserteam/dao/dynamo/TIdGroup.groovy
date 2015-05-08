@@ -18,16 +18,33 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore
 import com.amazonaws.services.dynamodbv2.document.Item
 
 @Slf4j("LOG")
 @CompileStatic
-trait TAccountOwned {
-  AIdAccount owner
+trait TIdGroup {
+  // transient
+  List<IdUser> userList = []
+
+  @DynamoDBIgnore
+  List<IdUser> getUserList() {
+    return userList
+  }
+
+  void userListAdd(List<IdUser> list) {
+    userList.addAll(list)
+  }
+
+  void userListAdd(IdUser user) {
+    userList << user
+  }
+
+  TIdAccount owner
   boolean bload = false
 
   @DynamoDBAttribute(attributeName = "OwnerId")
-  AIdAccount getOwner() {
+  TIdAccount getOwner() {
     if(owner && !bload) {
       bload = owner.load()
     }
@@ -42,18 +59,18 @@ trait TAccountOwned {
     return owner instanceof IdUser
   }
 
-  void setOwner(AIdAccount o) {
+  void setOwner(TIdAccount o) {
     owner = o
   }
 
-  TAccountOwned withOwner(AIdAccount o) {
+  TIdGroup withOwner(TIdAccount o) {
     owner = o
     return this
   }
 
   void marshalOwnerIn(Item item) {
     if (item.isPresent("OwnerId")) {
-      owner = AIdAccount.toIdAccount(item.getString("OwnerId"))
+      owner = toIdAccount(item.getString("OwnerId"))
     }
   }
 
@@ -66,8 +83,21 @@ trait TAccountOwned {
     return outItem
   }
 
-  boolean ownerEquals(AIdAccount account) {
+  boolean ownerEquals(TIdAccount account) {
     // we're going to cheat and not load owner
     return owner ? owner.valueHashKey() == account?.valueHashKey() : false
+  }
+
+  // There is probably better way of doing this
+  private TIdAccount toIdAccount(String id_str) {
+    TIdAccount obj = (TIdAccount)new IdUser().isId(id_str)
+    if (obj) {
+      return obj
+    }
+
+    obj = (TIdAccount)new IdOrg().isId(id_str)
+    if (obj) {
+      return obj
+    }
   }
 }
