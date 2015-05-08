@@ -307,7 +307,7 @@ class OrgUserTeamService {
     return org
   }
 
-  String updateOrg(IdOrg org, String name, String desc, String web_url, String shortName) {
+  String updateOrg(IdOrg org, String name, String desc, String web_url, String shortName, Integer vis = null) {
     def load = org.load()
     if(!load) {
       // not found
@@ -339,6 +339,7 @@ class OrgUserTeamService {
       org.name  = name
     }
 
+    org.visibility = vis
     org.description = desc
     org.webUrl = web_url
 
