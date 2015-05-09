@@ -726,26 +726,14 @@ class OrgUserTeamService {
 
   // ASSUMES: folder loaded
   //user, params.name, params.int('privacy'), params.org, params.aliasId
-  boolean updateFolderOwner(IdFolder folder, String orgId) {
-    //def load = folder.load()
-    //if(!load) {
-    // not found
-    // return false
-    //}
+  boolean updateFolderOwner(IdFolder folder, AIdAccount newOwner) {
+    if(!newOwner || !folder) {
+      return false
+    }
 
     def curAccount = folder.owner
-    if((orgId || curAccount) && (curAccount?.id != orgId)) {
-      IdOrg org
-      if(orgId) {
-        // check if org exist
-        org = new IdOrg(id: orgId)
-        def load = org.load()
-        if(!load) {
-          // failed
-          return false
-        }
-      }
-
+    if(!curAccount || !(curAccount.equals(newOwner))) {
+      // cleanup existing owner
       if(curAccount && folder.isOwnerOrg()) {
         // delete org
         def curorgfolder = new IdOrgFolder()
@@ -758,23 +746,25 @@ class OrgUserTeamService {
         }
       }
 
-      if(org) {
-        // update owner
-        folder.owner = org
-        def saved = folder.save()
-        if(saved) {
-          // add org to folder
+      // update owner
+      folder.owner = newOwner
+      def saved = folder.save()
+      if(saved) {
+        // if new owner is org
+        if(folder.isOwnerOrg()) {
+          // add folder to org
           def orgfolder = new IdOrgFolder()
-          .withMember(org)
+          .withMember((IdOrg)newOwner)
           .withGroup(folder)
           .withCreatedUpdated()
-
           def create = orgfolder.create()
           if(!create) {
-            // failed
             return false
           }
         }
+
+      } else {
+        return false
       }
     }
 
