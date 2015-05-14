@@ -2,6 +2,19 @@
 
 Team is now Folder to disambiguate its relationship from Orgs and Users.
 
+Org-User-Folder is a very common "design pattern" used in just about every SAAS
+app.  In the past, the relationships would be easily represented in SQL.  However,
+this meant that you would have to setup/configure/maintain a DB.  Even in the cloud,
+there is still devops work.  So welcome to modern development where services and 
+plugins are the building blocks of apps, rather than libraries.
+
+There are tradeoffs with using NOSQL (service) vs SQL (box):  
+1) Boxes require devops!  Prefer services to boxes :)
+2) NOSQL sucks at relationships ... Prefer services to boxes!!!
+
+This plugin takes care of the suckiness of NOSQL, in preference to keeping devops
+to a minimum.
+
 Example Application:
 --------------
 See <a href="https://github.com/ikakara-team/grails-example-orguserteam">example application</a>
@@ -189,6 +202,12 @@ Copyright 2014-2015 Allen Arakaki.  All Rights Reserved.
 
 ```
 Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
+```
+
+Roadmap:
+```
+1.0.0 - Member access annotation (for controllers/actions) and configuration
+1.1.0 - (Usage) Documentation
 ```
 
 History:
