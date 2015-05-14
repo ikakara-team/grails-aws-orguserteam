@@ -9,8 +9,8 @@ there is still devops work.  So welcome to modern development where services and
 plugins are the building blocks of apps, rather than libraries.
 
 There are tradeoffs with using NOSQL (service) vs SQL (box):  
-1) Boxes require devops!  Prefer services to boxes :)
-2) NOSQL sucks at relationships ... Prefer services to boxes!!!
+* Boxes require devops!  Prefer services to boxes :)
+* NOSQL sucks at relationships ... Prefer services to boxes!!!
 
 This plugin takes care of the suckiness of NOSQL, in preference to keeping devops
 to a minimum.
