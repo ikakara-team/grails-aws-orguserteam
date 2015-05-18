@@ -6,7 +6,7 @@ Org-User-Folder is a very common "design pattern" used in just about every SAAS
 app.  In the past, the relationships would be easily represented in SQL.  However,
 this meant that you would have to setup/configure/maintain a DB.  Even in the cloud,
 there is still devops work.  So welcome to modern development where services and 
-plugins are the building blocks of apps, rather than libraries.
+plugins are the building blocks of apps, rather than "boxes" and libraries.
 
 There are tradeoffs with using NOSQL (service) vs SQL (box):  
 * Boxes require devops!  Prefer services to boxes :)
