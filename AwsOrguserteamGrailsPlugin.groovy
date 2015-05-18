@@ -16,9 +16,17 @@ class AwsOrguserteamGrailsPlugin {
     "grails-app/controllers/ikakara/orguserteam/web/app/TestOrgController.groovy",
     "web-app/**"
   ]
-  def title = "AWS Org-User-Team Plugin"
+  def title = "AWS Org-User-Folder Plugin"
   def author = "Allen Arakaki"
-  def description = 'Uses AWS DynamoDB to store relationships between Orgs, Users and Folders (Teams).'
+  def description = '''Team is now Folder to disambiguate its relationship from Orgs and Users.
+
+Org-User-Folder is a very common "design pattern" used in just about every SAAS app. In the past, the relationships would be easily represented in SQL. However, this meant that you would have to setup/configure/maintain a DB. Even in the cloud, there is still devops work. So welcome to modern development where services and plugins are the building blocks of apps, rather than "boxes" and libraries.
+
+There are tradeoffs with using NOSQL (service) vs SQL (box):
+* Boxes require devops! Prefer services to boxes :)
+* NOSQL sucks at relationships ... Prefer services to boxes!!!\n\
+
+This plugin takes care of the suckiness of NOSQL, in preference to keeping devops to a minimum.'''
   def documentation = "http://grails.org/plugin/aws-orguserteam"
   def license = "APACHE"
   def issueManagement = [url: 'https://github.com/ikakara-team/grails-aws-orguserteam/issues']
