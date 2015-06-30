@@ -47,8 +47,8 @@ Installation:
 ```
   plugins {
 ...
-    compile ':aws-instance:0.6.7'
-    compile ':aws-orguserteam:0.9.7'
+    compile ':aws-instance:0.7.0'
+    compile ':aws-orguserteam:0.9.8'
 ...
   }
 ```
@@ -198,7 +198,7 @@ orgUserTeamService:
 
 Copyright & License:
 --------------
-Copyright 2014-2015 Allen Arakaki.  All Rights Reserved.
+Copyright 2014-2015 the original author or authors.
 
 ```
 Apache 2 License - http://www.apache.org/licenses/LICENSE-2.0
@@ -214,6 +214,7 @@ Roadmap:
 History:
 --------------
 ```
+0.9.8  - update copyright
 0.9.7  - updateFolderOwner
 0.9.6  - fix visibility
 0.9.5  - fix access
