@@ -15,7 +15,7 @@ grails.project.dependency.resolution = {
   }
 
   dependencies {
-    compile ('com.amazonaws:aws-java-sdk:1.10.2') { // http://aws.amazon.com/releasenotes/Java?browse=1
+    compile ('com.amazonaws:aws-java-sdk:1.10.7') { // http://aws.amazon.com/releasenotes/Java?browse=1
       export = false // allow user to use another version
     }
   }
@@ -29,7 +29,7 @@ grails.project.dependency.resolution = {
     // needed for config management
     compile ':plugin-config:0.2.1'
 
-    compile ':simple-marshaller:0.1.4'
+    compile ':simple-marshaller:0.1.5'
     compile (':aws-instance:0.7.0') {
       export = false // allow user to use another version
     }
